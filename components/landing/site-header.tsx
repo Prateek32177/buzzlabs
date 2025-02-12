@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { signOutAction } from '@/app/actions';
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -15,7 +14,7 @@ export function SiteHeader() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className='fixed top-4 -translate-x-1/2 z-50 w-11/12 max-w-7xl'
+      className='fixed top-4 transform -translate-x-1/2 z-50 w-11/12 max-w-7xl'
     >
       <div className='rounded-full bg-white/80 shadow-lg backdrop-blur-md'>
         <div className='container flex h-16 items-center justify-between px-8'>

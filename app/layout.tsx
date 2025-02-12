@@ -1,4 +1,7 @@
+import HeaderAuth from '@/components/header-auth';
+import { ThemeSwitcher } from '@/components/theme-switcher';
 import { ThemeProvider } from 'next-themes';
+import Link from 'next/link';
 import './globals.css';
 import { Mona_Sans as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
@@ -37,8 +40,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className=' min-h-screen'>
-            <div className=' p-5'>{children}</div>
+          <main className='flex min-h-screen flex-col flex-1 gap-20  items-center '>
+            <div className=' max-w-5xl p-5 '>{children}</div>
           </main>
         </ThemeProvider>
       </body>

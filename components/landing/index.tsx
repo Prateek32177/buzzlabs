@@ -12,7 +12,7 @@ import { ArrowRight } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className='relative flex min-h-screen flex-col'>
+    <div className='relative flex min-h-screen flex-col items-center'>
       <SiteHeader />
       <main className='flex-1'>
         <Hero />

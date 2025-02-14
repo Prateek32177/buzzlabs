@@ -1,11 +1,13 @@
 import { createClient } from '@/utils/supabase/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 // GET single webhook
 export async function GET(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const { id } = await params;
+
   try {
     const supabase = await createClient();
 
@@ -20,13 +22,12 @@ export async function GET(
     const { data: webhook, error } = await supabase
       .from('webhooks')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .single();
 
     if (error) throw error;
 
-    // Format response to match frontend expectations
     return NextResponse.json({
       id: webhook.id,
       name: webhook.name,
@@ -48,9 +49,11 @@ export async function GET(
 
 // PATCH update webhook
 export async function PATCH(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const { id } = await params;
+
   try {
     const supabase = await createClient();
 
@@ -62,9 +65,8 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const json = await request.json();
-
-    // Convert frontend field names to database field names
+    const json = await req.json();
+    console.log('trying to update webhook', json);
     const updates = {
       name: json.name,
       is_active: json.isActive,
@@ -77,15 +79,14 @@ export async function PATCH(
 
     const { data: webhook, error } = await supabase
       .from('webhooks')
-      .update(updates)
-      .eq('id', params.id)
+      .update(json)
+      .eq('id', id)
       .eq('user_id', user.id)
       .select()
       .single();
 
     if (error) throw error;
 
-    // Format response to match frontend expectations
     return NextResponse.json({
       id: webhook.id,
       name: webhook.name,
@@ -107,9 +108,11 @@ export async function PATCH(
 
 // DELETE webhook
 export async function DELETE(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { id: string } },
 ) {
+  const { id } = await params;
+
   try {
     const supabase = await createClient();
 
@@ -124,7 +127,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('webhooks')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id);
 
     if (error) throw error;

@@ -377,12 +377,21 @@ function WebhookDetails({
             <Label htmlFor='url' className='text-right'>
               URL
             </Label>
-            <Input
-              id='url'
-              value={webhook.url}
-              readOnly
-              className='col-span-3'
-            />
+            <div className='col-span-3 flex'>
+              <Input
+                id='url'
+                value={webhook.url}
+                readOnly
+                className='col-span-3'
+              />
+              <Button
+                variant='secondary'
+                className='rounded-l-none'
+                onClick={() => copyToClipboard(webhook.url)}
+              >
+                <Clipboard className='h-4 w-4' />
+              </Button>
+            </div>
           </div>
           <div className='grid grid-cols-4 items-center gap-4'>
             <Label htmlFor='secret' className='text-right'>
@@ -597,8 +606,6 @@ function SlackConfig({
                   setSlackConfig({
                     ...slackConfig,
                     webhookUrl: e.target.value,
-                    channelName: webhook.slackConfig?.channelName || '',
-                    templateId: webhook.slackConfig?.templateId || '',
                   })
                 }
                 className='col-span-3'
@@ -614,9 +621,7 @@ function SlackConfig({
                 onChange={e =>
                   setSlackConfig({
                     ...slackConfig,
-                    webhookUrl: webhook.slackConfig?.webhookUrl || '',
                     channelName: e.target.value,
-                    templateId: webhook.slackConfig?.templateId || '',
                   })
                 }
                 className='col-span-3'
@@ -630,8 +635,6 @@ function SlackConfig({
                 onValueChange={value =>
                   setSlackConfig({
                     ...slackConfig,
-                    webhookUrl: webhook.slackConfig?.webhookUrl || '',
-                    channelName: webhook.slackConfig?.channelName || '',
                     templateId: value,
                   })
                 }

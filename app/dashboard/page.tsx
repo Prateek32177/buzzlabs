@@ -1,8 +1,21 @@
-export default function Page({
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
+
+export default async function Page({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect('/sign-in');
+  }
+
   return (
     <main>
       <div className='fixed inset-0 overflow-hidden' aria-hidden='true'>

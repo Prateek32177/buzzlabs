@@ -19,28 +19,35 @@ export async function GET(req: Request) {
     const { data: webhooks, error } = await supabase
       .from('webhooks')
       .select('*')
-      .eq('user_id', user.id)
-      .limit(1);
+      .eq('user_id', user.id);
+
     if (!webhooks || webhooks.length === 0) {
       throw new Error('No webhooks found');
     }
-    const decryptedToken = await SecureWebhookService.getWebhookSecret(
-      webhooks[0].id,
-    );
     if (error) throw error;
 
     // Map database fields to frontend expected format
-    const formattedWebhooks = webhooks.map(webhook => ({
-      id: webhook.id,
-      name: webhook.name,
-      url: webhook.url,
-      secret: decryptedToken,
-      isActive: webhook.is_active,
-      notifyEmail: webhook.notify_email,
-      notifySlack: webhook.notify_slack,
-      emailConfig: webhook.email_config,
-      slackConfig: webhook.slack_config,
-    }));
+    const formattedWebhooks = await Promise.all(
+      webhooks.map(async webhook => {
+        let decryptedToken;
+        try {
+          decryptedToken = await Encryption.decrypt(webhook.secret);
+        } catch (e) {
+          decryptedToken = 'Decryption failed';
+        }
+        return {
+          id: webhook.id,
+          name: webhook.name,
+          url: webhook.url,
+          secret: decryptedToken,
+          isActive: webhook.is_active,
+          notifyEmail: webhook.notify_email,
+          notifySlack: webhook.notify_slack,
+          emailConfig: webhook.email_config,
+          slackConfig: webhook.slack_config,
+        };
+      }),
+    );
 
     return NextResponse.json(formattedWebhooks);
   } catch (error) {

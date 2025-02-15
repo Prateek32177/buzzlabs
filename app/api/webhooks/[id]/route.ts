@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-
+import { SecureWebhookService } from '@/utils/encryption';
 // GET single webhook
 export async function GET(
   req: NextRequest,
@@ -27,12 +27,12 @@ export async function GET(
       .single();
 
     if (error) throw error;
-
+    const decryptedToken = await SecureWebhookService.getWebhookSecret(id);
     return NextResponse.json({
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: webhook.secret,
+      secret: decryptedToken,
       isActive: webhook.is_active,
       notifyEmail: webhook.notify_email,
       notifySlack: webhook.notify_slack,
@@ -67,16 +67,6 @@ export async function PATCH(
 
     const json = await req.json();
 
-    const updates = {
-      name: json.name,
-      is_active: json.isActive,
-      notify_email: json.notifyEmail,
-      notify_slack: json.notifySlack,
-      email_config: json.email_config,
-      slack_config: json.slack_config,
-      updated_at: new Date().toISOString(),
-    };
-
     const { data: webhook, error } = await supabase
       .from('webhooks')
       .update(json)
@@ -86,12 +76,12 @@ export async function PATCH(
       .single();
 
     if (error) throw error;
-
+    const decryptedToken = await SecureWebhookService.getWebhookSecret(id);
     return NextResponse.json({
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: webhook.secret,
+      secret: decryptedToken,
       isActive: webhook.is_active,
       notifyEmail: webhook.notify_email,
       notifySlack: webhook.notify_slack,

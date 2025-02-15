@@ -267,32 +267,14 @@ export function WebhookManagement() {
     }
   };
 
-  const generateSecret = () => {
-    return (
-      Math.random().toString(36).substring(2, 15) +
-      Math.random().toString(36).substring(2, 15)
-    );
-  };
-
   const handleNotificationToggle = async (
     id: string,
     field: 'notifyEmail' | 'notifySlack',
   ) => {
     const webhook = webhooks.find(w => w.id === id);
     if (!webhook) return;
-
-    // If already enabled, show config
-    if (webhook[field]) {
-      if (field === 'notifyEmail') {
-        setShowEmailConfig(id);
-      } else {
-        setShowSlackConfig(id);
-      }
-      return;
-    }
-
     // If trying to enable, show config first
-    if (!webhook[field]) {
+    else if (!webhook[field]) {
       if (field === 'notifyEmail') {
         setShowEmailConfig(id);
       } else {
@@ -302,7 +284,7 @@ export function WebhookManagement() {
     }
 
     // If disabling, proceed with toggle
-    await toggleWebhook(id, field);
+    else await toggleWebhook(id, field);
   };
 
   const contextValue = {
@@ -535,7 +517,11 @@ function WebhookDetails({
           <Button
             variant='secondary'
             className='rounded-l-none'
-            onClick={() => copyToClipboard(webhook.url)}
+            onClick={() =>
+              copyToClipboard(
+                `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}`,
+              )
+            }
           >
             <Clipboard className='h-4 w-4' />
           </Button>

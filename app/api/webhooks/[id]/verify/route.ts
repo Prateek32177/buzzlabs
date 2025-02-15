@@ -36,7 +36,7 @@ export async function POST(
     // Get webhook payload
     const payload = await req.json();
 
-    if (webhook[0].notify_email) {
+    if (webhook[0].is_active && webhook[0].notify_email) {
       await sendEmail({
         from: 'alerts@brokersify.in',
         to: 'prateek56489@gmail.com',
@@ -46,7 +46,7 @@ export async function POST(
           payload,
         },
       });
-    } else if (webhook[0].notify_slack) {
+    } else if (webhook[0].is_active && webhook[0].notify_slack) {
       sendSlackNotification({
         webhookUrl: webhook[0].slack_config.webhook_url,
         channelName: webhook[0].slack_config.channel_name,

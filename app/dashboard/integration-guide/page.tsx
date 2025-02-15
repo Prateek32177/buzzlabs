@@ -13,28 +13,20 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Clipboard, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export default function IntegrationsGuide() {
   const [activeTab, setActiveTab] = useState('overview');
   const [testPayload, setTestPayload] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
 
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({
-        title: 'Copied!',
-        description: 'Copied to clipboard',
-      });
+      toast.success('Copied!', { description: 'Copied to clipboard' });
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to copy to clipboard',
-        variant: 'destructive',
-      });
+      toast.error('Error', { description: 'Failed to copy to clipboard' });
     }
   };
 

@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -93,7 +93,6 @@ export function WebhookManagement() {
   const [isLoadingId, setIsLoadingId] = useState<string | null>(null);
   const [showEmailConfig, setShowEmailConfig] = useState<string | null>(null);
   const [showSlackConfig, setShowSlackConfig] = useState<string | null>(null);
-  const { toast } = useToast();
   const [isFetching, setIsFetching] = useState(true);
   const [showDetails, setShowDetails] = useState<string | null>(null);
 
@@ -109,10 +108,8 @@ export function WebhookManagement() {
       const data = await response.json();
       setWebhooks(data);
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to fetch webhooks',
-        variant: 'destructive',
       });
     } finally {
       setIsFetching(false);
@@ -120,6 +117,7 @@ export function WebhookManagement() {
   };
 
   const addWebhook = async () => {
+    setIsLoading(true);
     if (newWebhookName) {
       try {
         const response = await fetch('/api/webhooks', {
@@ -136,16 +134,15 @@ export function WebhookManagement() {
         const webhook = await response.json();
         setWebhooks([...webhooks, webhook]);
         setNewWebhookName('');
-        toast({
-          title: 'Webhook Created',
-          description: `New webhook "${newWebhookName}" has been created.`,
+        setIsLoading(false);
+        toast.success('Webhook Created', {
+          description: `New webhook ${newWebhookName} has been created.`,
         });
       } catch (error) {
-        toast({
-          title: 'Error',
+        setIsLoading(false);
+        toast.error('Error', {
           description:
             error instanceof Error ? error.message : 'Failed to create webhook',
-          variant: 'destructive',
         });
       }
     }
@@ -192,11 +189,9 @@ export function WebhookManagement() {
         setShowSlackConfig(id);
       }
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description:
           error instanceof Error ? error.message : 'Failed to update webhook',
-        variant: 'destructive',
       });
     } finally {
       setIsLoadingId(null);
@@ -212,15 +207,13 @@ export function WebhookManagement() {
       if (!response.ok) throw new Error('Failed to delete webhook');
 
       setWebhooks(webhooks.filter(webhook => webhook.id !== id));
-      toast({
-        title: 'Webhook Deleted',
-        description: 'The webhook has been deleted.',
+
+      toast.success('Webhook Deleted', {
+        description: 'he webhook has been deleted.',
       });
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to delete webhook',
-        variant: 'destructive',
       });
     }
   };
@@ -251,16 +244,11 @@ export function WebhookManagement() {
         webhooks.map(webhook => (webhook.id === id ? updatedWebhook : webhook)),
       );
 
-      toast({
-        title: 'Success',
-        description: 'Configuration updated successfully',
-      });
+      toast.success('Configuration updated successfully');
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description:
           error instanceof Error ? error.message : 'Failed to update webhook',
-        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -467,23 +455,17 @@ function WebhookDetails({
   isLoading: boolean;
 }) {
   const [name, setName] = useState(webhook.name);
-  const { toast } = useToast();
+
   const { setShowEmailConfig, setShowSlackConfig } = useWebhook();
   const { copyToClipboard } = useClipboard();
 
   const handleNameUpdate = async () => {
     try {
       await onUpdate(webhook.id, { name });
-      toast({
-        title: 'Success',
-        description: 'Webhook name updated successfully',
-      });
+
+      toast.success('Webhook name updated successfully');
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to update webhook name',
-        variant: 'destructive',
-      });
+      toast.error('Error', { description: 'Failed to update webhook name' });
     }
   };
 
@@ -673,11 +655,7 @@ function EmailConfig({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!emailConfig.recipientEmail) {
-      // toast({
-      //   title: 'Error',
-      //   description: 'Recipient email is required',
-      //   variant: 'destructive',
-      // });
+      toast.error('Error', { description: 'Recipient email is required' });
       return;
     }
     await onUpdate({ emailConfig });
@@ -814,7 +792,6 @@ function SlackConfig({
   onCancel: () => void;
   isLoading: boolean;
 }) {
-  const { toast } = useToast();
   const [slackConfig, setSlackConfig] = useState(
     webhook.slackConfig || {
       webhookUrl: '',
@@ -826,11 +803,7 @@ function SlackConfig({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!slackConfig.webhookUrl) {
-      toast({
-        title: 'Error',
-        description: 'Webhook URL is required',
-        variant: 'destructive',
-      });
+      toast.error('Error', { description: 'Webhook URL is required' });
       return;
     }
     await onUpdate({ slackConfig });

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import './globals.css';
 import { Mona_Sans as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -51,7 +51,7 @@ export default function RootLayout({
           <main className='flex min-h-screen flex-col flex-1 gap-20  items-center '>
             {children}
           </main>
-          <Toaster />
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

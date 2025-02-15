@@ -66,7 +66,7 @@ export async function PATCH(
     }
 
     const json = await req.json();
-    console.log('trying to update webhook', json);
+
     const updates = {
       name: json.name,
       is_active: json.isActive,

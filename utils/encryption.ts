@@ -117,7 +117,7 @@ export class SecureWebhookService {
       // Store in database
       const { data, error } = await (await supabase)
         .from('webhooks')
-        .update({ encrypted_secret: packedData })
+        .update({ secret: packedData })
         .eq('id', webhookId);
 
       if (error) throw error;
@@ -138,14 +138,14 @@ export class SecureWebhookService {
       const supabase = createClient();
       const { data, error } = await (await supabase)
         .from('webhooks')
-        .select('encrypted_secret')
+        .select('secret')
         .eq('id', webhookId)
         .single();
 
       if (error || !data) throw new Error('Webhook not found');
 
       // Decrypt the secret
-      return await Encryption.decrypt(data.encrypted_secret);
+      return await Encryption.decrypt(data.secret);
     } catch (error) {
       console.error('Failed to retrieve webhook secret:', error);
       throw error;

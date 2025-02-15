@@ -2,6 +2,7 @@ import { WebhookSecurity } from '@/utils/webhook-security';
 import { Encryption } from '@/utils/encryption';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
+import { SecureWebhookService } from '@/utils/encryption';
 
 export async function GET(req: Request) {
   try {
@@ -18,8 +19,14 @@ export async function GET(req: Request) {
     const { data: webhooks, error } = await supabase
       .from('webhooks')
       .select('*')
-      .eq('user_id', user.id);
-
+      .eq('user_id', user.id)
+      .limit(1);
+    if (!webhooks || webhooks.length === 0) {
+      throw new Error('No webhooks found');
+    }
+    const decryptedToken = await SecureWebhookService.getWebhookSecret(
+      webhooks[0].id,
+    );
     if (error) throw error;
 
     // Map database fields to frontend expected format
@@ -27,7 +34,7 @@ export async function GET(req: Request) {
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: webhook.secret,
+      secret: decryptedToken,
       isActive: webhook.is_active,
       notifyEmail: webhook.notify_email,
       notifySlack: webhook.notify_slack,
@@ -57,25 +64,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Generate webhook secret
-    const webhookSecret = WebhookSecurity.generateSecret();
+    // Generate and encrypt webhook secret
+    const rawSecret = WebhookSecurity.generateSecret();
     const webhookId = crypto.randomUUID();
-
-    // Create webhook in database
+    const encryptedData = await Encryption.encrypt(rawSecret);
     const { data: webhook, error } = await supabase
       .from('webhooks')
       .insert({
         id: webhookId,
         user_id: user.id,
+        secret: encryptedData,
         name,
         url: `/api/webhooks/${webhookId}/verify`,
-        secret: webhookSecret,
         is_active: true,
         notify_email: false,
         notify_slack: false,
         email_config: null,
         slack_config: null,
-        created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .select()
@@ -83,12 +88,12 @@ export async function POST(req: Request) {
 
     if (error) throw error;
 
-    // Format response to match frontend expectations
+    // Return decrypted secret to client
     return NextResponse.json({
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: webhook.secret,
+      secret: rawSecret,
       isActive: webhook.is_active,
       notifyEmail: webhook.notify_email,
       notifySlack: webhook.notify_slack,

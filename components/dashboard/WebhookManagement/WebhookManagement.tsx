@@ -38,7 +38,17 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clipboard, Eye, Trash2, Slack, Mail, Loader2 } from 'lucide-react';
+import {
+  Clipboard,
+  Eye,
+  Trash2,
+  Slack,
+  Mail,
+  Loader2,
+  Settings,
+} from 'lucide-react';
+import { WebhookContext, useWebhook } from './WebhookContext';
+import { useClipboard } from './useClipboard';
 
 type Webhook = {
   id: string;
@@ -59,11 +69,33 @@ type Webhook = {
   } | null;
 };
 
+type WebhookContextType = {
+  webhooks: Webhook[];
+  isLoading: boolean;
+  isLoadingId: string | null;
+  showEmailConfig: string | null;
+  showSlackConfig: string | null;
+  showDetails: string | null;
+  setShowEmailConfig: (id: string | null) => void;
+  setShowSlackConfig: (id: string | null) => void;
+  setShowDetails: (id: string | null) => void;
+  toggleWebhook: (
+    id: string,
+    field: 'isActive' | 'notifyEmail' | 'notifySlack',
+  ) => Promise<void>;
+  updateWebhookConfig: (id: string, config: Partial<Webhook>) => Promise<void>;
+};
+
 export function WebhookManagement() {
   const [webhooks, setWebhooks] = useState<Webhook[]>([]);
   const [newWebhookName, setNewWebhookName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingId, setIsLoadingId] = useState<string | null>(null);
+  const [showEmailConfig, setShowEmailConfig] = useState<string | null>(null);
+  const [showSlackConfig, setShowSlackConfig] = useState<string | null>(null);
   const { toast } = useToast();
+  const [isFetching, setIsFetching] = useState(true);
+  const [showDetails, setShowDetails] = useState<string | null>(null);
 
   useEffect(() => {
     fetchWebhooks();
@@ -71,6 +103,7 @@ export function WebhookManagement() {
 
   const fetchWebhooks = async () => {
     try {
+      setIsFetching(true);
       const response = await fetch('/api/webhooks');
       if (!response.ok) throw new Error('Failed to fetch webhooks');
       const data = await response.json();
@@ -81,6 +114,8 @@ export function WebhookManagement() {
         description: 'Failed to fetch webhooks',
         variant: 'destructive',
       });
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -121,29 +156,41 @@ export function WebhookManagement() {
     field: 'isActive' | 'notifyEmail' | 'notifySlack',
   ) => {
     try {
-      setIsLoading(true);
+      setIsLoadingId(id);
       const webhook = webhooks.find(w => w.id === id);
       if (!webhook) return;
 
-      // Convert camelCase to snake_case for the API
-      const fieldMapping = {
-        isActive: 'is_active',
-        notifyEmail: 'notify_email',
-        notifySlack: 'notify_slack',
+      const updates = {
+        is_active: field === 'isActive' ? !webhook.isActive : webhook.isActive,
+        notify_email:
+          field === 'notifyEmail' ? !webhook.notifyEmail : webhook.notifyEmail,
+        notify_slack:
+          field === 'notifySlack' ? !webhook.notifySlack : webhook.notifySlack,
       };
 
       const response = await fetch(`/api/webhooks/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          [fieldMapping[field]]: !webhook[field],
-        }),
+        body: JSON.stringify(updates),
       });
 
-      if (!response.ok) throw new Error('Failed to update webhook');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update webhook');
+      }
 
       const updatedWebhook = await response.json();
       setWebhooks(webhooks.map(w => (w.id === id ? updatedWebhook : w)));
+
+      // Show config dialog if enabling notifications
+      if (field === 'notifyEmail' && updates.notify_email) {
+        // Show email config dialog
+        setShowEmailConfig(id);
+      }
+      if (field === 'notifySlack' && updates.notify_slack) {
+        // Show slack config dialog
+        setShowSlackConfig(id);
+      }
     } catch (error) {
       toast({
         title: 'Error',
@@ -152,7 +199,7 @@ export function WebhookManagement() {
         variant: 'destructive',
       });
     } finally {
-      setIsLoading(false);
+      setIsLoadingId(null);
     }
   };
 
@@ -227,120 +274,204 @@ export function WebhookManagement() {
     );
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: 'Copied to Clipboard',
-      description: 'The text has been copied to your clipboard.',
-    });
+  const handleNotificationToggle = async (
+    id: string,
+    field: 'notifyEmail' | 'notifySlack',
+  ) => {
+    const webhook = webhooks.find(w => w.id === id);
+    if (!webhook) return;
+
+    // If already enabled, show config
+    if (webhook[field]) {
+      if (field === 'notifyEmail') {
+        setShowEmailConfig(id);
+      } else {
+        setShowSlackConfig(id);
+      }
+      return;
+    }
+
+    // If trying to enable, show config first
+    if (!webhook[field]) {
+      if (field === 'notifyEmail') {
+        setShowEmailConfig(id);
+      } else {
+        setShowSlackConfig(id);
+      }
+      return;
+    }
+
+    // If disabling, proceed with toggle
+    await toggleWebhook(id, field);
+  };
+
+  const contextValue = {
+    webhooks,
+    isLoading,
+    isLoadingId,
+    showEmailConfig,
+    showSlackConfig,
+    showDetails,
+    setShowEmailConfig,
+    setShowSlackConfig,
+    setShowDetails,
+    toggleWebhook,
+    updateWebhookConfig,
   };
 
   return (
-    <div className='space-y-6'>
-      <Card>
-        <CardHeader>
-          <CardTitle>Create New Webhook</CardTitle>
-          <CardDescription>
-            Add a new webhook to your notification system.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className='flex items-center space-x-2'>
-            <Input
-              placeholder='New Webhook Name'
-              value={newWebhookName}
-              onChange={e => setNewWebhookName(e.target.value)}
-            />
-            <Button onClick={addWebhook}>Add Webhook</Button>
-          </div>
-        </CardContent>
-      </Card>
+    <WebhookContext.Provider value={contextValue}>
+      <div className='space-y-6'>
+        <Card>
+          <CardHeader>
+            <CardTitle>Create New Webhook</CardTitle>
+            <CardDescription>
+              Add a new webhook to your notification system.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className='flex flex-col sm:flex-row gap-4'>
+              <Input
+                placeholder='Enter webhook name'
+                value={newWebhookName}
+                onChange={e => setNewWebhookName(e.target.value)}
+                className='flex-1'
+              />
+              <Button
+                onClick={addWebhook}
+                disabled={!newWebhookName || isLoading}
+                className='whitespace-nowrap'
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                    Adding...
+                  </>
+                ) : (
+                  'Add Webhook'
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Manage Webhooks</CardTitle>
-          <CardDescription>
-            View and manage your existing webhooks.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className='overflow-x-auto'>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Notifications</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {webhooks.map(webhook => (
-                  <TableRow key={webhook.id}>
-                    <TableCell>{webhook.name}</TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={webhook.isActive}
-                        onCheckedChange={() =>
-                          toggleWebhook(webhook.id, 'isActive')
-                        }
-                        disabled={isLoading}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className='flex space-x-2'>
-                        <Badge
-                          variant={
-                            webhook.notifyEmail ? 'default' : 'secondary'
-                          }
-                          className={`py-2 px-3 cursor-pointer ${isLoading ? 'opacity-50' : ''}`}
-                          onClick={() =>
-                            !isLoading &&
-                            toggleWebhook(webhook.id, 'notifyEmail')
-                          }
-                        >
-                          <Mail className='w-4 h-4 mr-2' />
-                          Email
-                        </Badge>
-                        <Badge
-                          className={`py-2 px-3 cursor-pointer ${isLoading ? 'opacity-50' : ''}`}
-                          variant={
-                            webhook.notifySlack ? 'default' : 'secondary'
-                          }
-                          onClick={() =>
-                            !isLoading &&
-                            toggleWebhook(webhook.id, 'notifySlack')
-                          }
-                        >
-                          <Slack className='w-4 h-4 mr-2' />
-                          Slack
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className='flex space-x-2'>
-                        <WebhookDetails
-                          webhook={webhook}
-                          onUpdate={updateWebhookConfig}
-                          isLoading={isLoading}
-                        />
-                        <Button
-                          variant='outline'
-                          size='icon'
-                          onClick={() => deleteWebhook(webhook.id)}
-                        >
-                          <Trash2 className='h-4 w-4' />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Manage Webhooks</CardTitle>
+            <CardDescription>
+              View and manage your existing webhooks.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isFetching ? (
+              <div className='flex justify-center items-center py-8'>
+                <Loader2 className='h-8 w-8 animate-spin' />
+              </div>
+            ) : webhooks.length === 0 ? (
+              <div className='text-center py-8 text-muted-foreground'>
+                No webhooks found. Add one to get started.
+              </div>
+            ) : (
+              <div className='overflow-x-auto'>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Notifications</TableHead>
+                      <TableHead className='w-[100px]'>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {webhooks.map(webhook => (
+                      <TableRow key={webhook.id}>
+                        <TableCell className='pr-8'>
+                          <div className='flex items-center flex-start gap-4'>
+                            <span className='font-medium'>{webhook.name}</span>
+                            <Switch
+                              checked={webhook.isActive}
+                              onCheckedChange={() =>
+                                toggleWebhook(webhook.id, 'isActive')
+                              }
+                              disabled={isLoadingId === webhook.id}
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className='flex flex-wrap items-center gap-6'>
+                            <div className='flex items-center gap-2'>
+                              <div className='flex items-center gap-1'>
+                                <Mail className='h-4 w-4' />
+                                <span className='text-sm'>Email</span>
+                              </div>
+                              <Switch
+                                checked={webhook.notifyEmail}
+                                onCheckedChange={() =>
+                                  handleNotificationToggle(
+                                    webhook.id,
+                                    'notifyEmail',
+                                  )
+                                }
+                                disabled={isLoadingId === webhook.id}
+                              />
+                            </div>
+                            <div className='flex items-center gap-2'>
+                              <div className='flex items-center gap-1'>
+                                <Slack className='h-4 w-4' />
+                                <span className='text-sm'>Slack</span>
+                              </div>
+                              <Switch
+                                checked={webhook.notifySlack}
+                                onCheckedChange={() =>
+                                  handleNotificationToggle(
+                                    webhook.id,
+                                    'notifySlack',
+                                  )
+                                }
+                                disabled={isLoadingId === webhook.id}
+                              />
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className='flex items-center gap-2'>
+                            <Button
+                              variant='outline'
+                              size='icon'
+                              onClick={() => setShowDetails(webhook.id)}
+                              disabled={isLoadingId === webhook.id}
+                            >
+                              <Eye className='h-4 w-4' />
+                            </Button>
+                            <Button
+                              variant='outline'
+                              size='icon'
+                              onClick={() => deleteWebhook(webhook.id)}
+                              disabled={isLoadingId === webhook.id}
+                            >
+                              {isLoadingId === webhook.id ? (
+                                <Loader2 className='h-4 w-4 animate-spin' />
+                              ) : (
+                                <Trash2 className='h-4 w-4' />
+                              )}
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <EmailConfigDialog />
+
+        <SlackConfigDialog />
+
+        <WebhookDetailsDialog />
+      </div>
+    </WebhookContext.Provider>
   );
 }
 
@@ -353,109 +484,183 @@ function WebhookDetails({
   onUpdate: (id: string, config: Partial<Webhook>) => void;
   isLoading: boolean;
 }) {
+  const [name, setName] = useState(webhook.name);
   const { toast } = useToast();
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: 'Copied to Clipboard',
-      description: 'The text has been copied to your clipboard.',
-    });
+  const { setShowEmailConfig, setShowSlackConfig } = useWebhook();
+  const { copyToClipboard } = useClipboard();
+
+  const handleNameUpdate = async () => {
+    try {
+      await onUpdate(webhook.id, { name });
+      toast({
+        title: 'Success',
+        description: 'Webhook name updated successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update webhook name',
+        variant: 'destructive',
+      });
+    }
   };
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant='outline' size='icon'>
-          <Eye className='h-4 w-4' />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle>{webhook.name}</DialogTitle>
-        </DialogHeader>
-        <div className='grid gap-4 py-4'>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label htmlFor='url' className='text-right'>
-              URL
-            </Label>
-            <div className='col-span-3 flex'>
-              <Input
-                id='url'
-                value={webhook.url}
-                readOnly
-                className='col-span-3'
-              />
-              <Button
-                variant='secondary'
-                className='rounded-l-none'
-                onClick={() => copyToClipboard(webhook.url)}
-              >
-                <Clipboard className='h-4 w-4' />
-              </Button>
-            </div>
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label htmlFor='secret' className='text-right'>
-              Secret
-            </Label>
-            <div className='col-span-3 flex'>
-              <Input
-                id='secret'
-                value={webhook.secret}
-                readOnly
-                className='rounded-r-none'
-              />
-              <Button
-                variant='secondary'
-                className='rounded-l-none'
-                onClick={() => copyToClipboard(webhook.secret)}
-              >
-                <Clipboard className='h-4 w-4' />
-              </Button>
-            </div>
-          </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label htmlFor='email' className='text-right'>
-              Email
-            </Label>
-            <div className='col-span-3 flex items-center space-x-2'>
+    <div className='grid gap-6 py-4'>
+      <div className='grid gap-2'>
+        <Label>Name</Label>
+        <div className='flex gap-2'>
+          <Input
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder='Webhook name'
+          />
+          <Button
+            onClick={handleNameUpdate}
+            disabled={isLoading || name === webhook.name}
+          >
+            {isLoading ? <Loader2 className='h-4 w-4 animate-spin' /> : 'Save'}
+          </Button>
+        </div>
+      </div>
+
+      <div className='grid gap-2'>
+        <Label>Webhook URL</Label>
+        <div className='flex'>
+          <Input
+            value={`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}`}
+            readOnly
+            className='rounded-r-none font-mono text-sm'
+          />
+          <Button
+            variant='secondary'
+            className='rounded-l-none'
+            onClick={() => copyToClipboard(webhook.url)}
+          >
+            <Clipboard className='h-4 w-4' />
+          </Button>
+        </div>
+      </div>
+
+      <div className='grid gap-2'>
+        <Label>Secret</Label>
+        <div className='flex'>
+          <Input
+            type='text'
+            value={webhook.secret}
+            readOnly
+            className='rounded-r-none font-mono text-sm'
+          />
+          <Button
+            variant='secondary'
+            className='rounded-l-none'
+            onClick={() => copyToClipboard(webhook.secret)}
+          >
+            <Clipboard className='h-4 w-4' />
+          </Button>
+        </div>
+      </div>
+
+      <div className='grid gap-4'>
+        <Label>Notification Settings</Label>
+        <div className='space-y-4 p-4 border rounded-lg'>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-2'>
+                <Mail className='h-4 w-4' />
+                <span>Email Notifications</span>
+              </div>
               <Switch
-                id='email'
                 checked={webhook.notifyEmail}
                 onCheckedChange={() =>
                   onUpdate(webhook.id, { notifyEmail: !webhook.notifyEmail })
                 }
+                disabled={isLoading}
               />
-              {webhook.notifyEmail && (
-                <EmailConfig
-                  webhook={webhook}
-                  onUpdate={config => onUpdate(webhook.id, config)}
-                  isLoading={isLoading}
-                />
+            </div>
+            <div className='flex items-center gap-2'>
+              {webhook.emailConfig && (
+                <Badge variant='outline' className='text-xs'>
+                  {webhook.emailConfig.recipientEmail}
+                </Badge>
               )}
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => setShowEmailConfig(webhook.id)}
+              >
+                {webhook.emailConfig ? 'Edit' : 'Configure'}
+              </Button>
             </div>
           </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
-            <Label htmlFor='slack' className='text-right'>
-              Slack
-            </Label>
-            <div className='col-span-3 flex items-center space-x-2'>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-2'>
+                <Slack className='h-4 w-4' />
+                <span>Slack Notifications</span>
+              </div>
               <Switch
-                id='slack'
                 checked={webhook.notifySlack}
                 onCheckedChange={() =>
                   onUpdate(webhook.id, { notifySlack: !webhook.notifySlack })
                 }
+                disabled={isLoading}
               />
-              {webhook.notifySlack && (
-                <SlackConfig
-                  webhook={webhook}
-                  onUpdate={config => onUpdate(webhook.id, config)}
-                  isLoading={isLoading}
-                />
+            </div>
+            <div className='flex items-center gap-2'>
+              {webhook.slackConfig && (
+                <Badge variant='outline' className='text-xs'>
+                  {webhook.slackConfig.channelName}
+                </Badge>
               )}
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => setShowSlackConfig(webhook.id)}
+              >
+                {webhook.slackConfig ? 'Edit' : 'Configure'}
+              </Button>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function EmailConfigDialog() {
+  const {
+    webhooks,
+    showEmailConfig,
+    setShowEmailConfig,
+    toggleWebhook,
+    updateWebhookConfig,
+    isLoading,
+  } = useWebhook();
+
+  return (
+    <Dialog
+      open={showEmailConfig !== null}
+      onOpenChange={open => !open && setShowEmailConfig(null)}
+    >
+      <DialogContent className='max-w-md max-h-[90vh] overflow-y-auto'>
+        <DialogHeader>
+          <DialogTitle>Email Configuration</DialogTitle>
+        </DialogHeader>
+        {showEmailConfig && (
+          <EmailConfig
+            webhook={webhooks.find(w => w.id === showEmailConfig)!}
+            onUpdate={async config => {
+              await updateWebhookConfig(showEmailConfig, {
+                notifyEmail: true,
+                emailConfig: config.emailConfig,
+              });
+              setShowEmailConfig(null);
+            }}
+            onCancel={() => setShowEmailConfig(null)}
+            isLoading={isLoading}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -464,10 +669,12 @@ function WebhookDetails({
 function EmailConfig({
   webhook,
   onUpdate,
+  onCancel,
   isLoading,
 }: {
   webhook: Webhook;
-  onUpdate: (config: Partial<Webhook>) => void;
+  onUpdate: (config: Partial<Webhook>) => Promise<void>;
+  onCancel: () => void;
   isLoading: boolean;
 }) {
   const [emailConfig, setEmailConfig] = useState(
@@ -476,81 +683,135 @@ function EmailConfig({
       templateId: '',
     },
   );
-  const [open, setOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onUpdate({
-      emailConfig: emailConfig,
-    });
-    setOpen(false);
+    if (!emailConfig.recipientEmail) {
+      // toast({
+      //   title: 'Error',
+      //   description: 'Recipient email is required',
+      //   variant: 'destructive',
+      // });
+      return;
+    }
+    await onUpdate({ emailConfig });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant='outline' size='sm' disabled={isLoading}>
-          Configure
+    <form onSubmit={handleSubmit} className='space-y-4'>
+      <div className='space-y-2'>
+        <Label htmlFor='recipientEmail'>Recipient Email *</Label>
+        <Input
+          id='recipientEmail'
+          type='email'
+          required
+          placeholder='Enter recipient email'
+          value={emailConfig.recipientEmail}
+          onChange={e =>
+            setEmailConfig({
+              ...emailConfig,
+              recipientEmail: e.target.value,
+            })
+          }
+          disabled={isLoading}
+        />
+      </div>
+      <div className='space-y-2'>
+        <Label htmlFor='emailTemplate'>Template</Label>
+        <Select
+          disabled={isLoading}
+          value={emailConfig.templateId}
+          onValueChange={value =>
+            setEmailConfig({
+              ...emailConfig,
+              templateId: value,
+            })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder='Select a template' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='template1'>Template 1</SelectItem>
+            <SelectItem value='template2'>Template 2</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <DialogFooter className='flex justify-between'>
+        <Button
+          type='button'
+          variant='outline'
+          onClick={onCancel}
+          disabled={isLoading}
+        >
+          Cancel
         </Button>
-      </DialogTrigger>
+        <Button
+          type='submit'
+          disabled={isLoading || !emailConfig.recipientEmail}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+              Saving...
+            </>
+          ) : (
+            'Save Configuration'
+          )}
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}
+
+function SlackConfigDialog() {
+  const {
+    webhooks,
+    showSlackConfig,
+    setShowSlackConfig,
+    toggleWebhook,
+    updateWebhookConfig,
+    isLoading,
+  } = useWebhook();
+
+  if (!showSlackConfig) return null;
+
+  const webhook = webhooks.find(w => w.id === showSlackConfig);
+  if (!webhook) return null;
+
+  return (
+    <Dialog
+      open={showSlackConfig !== null}
+      onOpenChange={open => {
+        if (!open) {
+          if (!webhook.slackConfig) {
+            toggleWebhook(webhook.id, 'notifySlack');
+          }
+          setShowSlackConfig(null);
+        }
+      }}
+    >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Email Configuration</DialogTitle>
+          <DialogTitle>Slack Configuration</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className='grid gap-4 py-4'>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='recipientEmail' className='text-right'>
-                Recipient
-              </Label>
-              <Input
-                id='recipientEmail'
-                value={emailConfig.recipientEmail}
-                onChange={e =>
-                  setEmailConfig({
-                    ...emailConfig,
-                    recipientEmail: e.target.value,
-                  })
-                }
-                className='col-span-3'
-              />
-            </div>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='emailTemplate' className='text-right'>
-                Template
-              </Label>
-              <Select
-                onValueChange={value =>
-                  setEmailConfig({
-                    ...emailConfig,
-                    templateId: value,
-                  })
-                }
-                value={emailConfig.templateId}
-              >
-                <SelectTrigger id='emailTemplate' className='col-span-3'>
-                  <SelectValue placeholder='Select a template' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='template1'>Template 1</SelectItem>
-                  <SelectItem value='template2'>Template 2</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type='submit' disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  Saving...
-                </>
-              ) : (
-                'Save changes'
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
+        <SlackConfig
+          webhook={webhook}
+          onUpdate={async config => {
+            await updateWebhookConfig(showSlackConfig, {
+              notifySlack: true,
+              slackConfig: config.slackConfig,
+            });
+            setShowSlackConfig(null);
+          }}
+          onCancel={() => {
+            if (!webhook.slackConfig) {
+              toggleWebhook(webhook.id, 'notifySlack');
+            }
+            setShowSlackConfig(null);
+          }}
+          isLoading={isLoading}
+        />
       </DialogContent>
     </Dialog>
   );
@@ -559,12 +820,15 @@ function EmailConfig({
 function SlackConfig({
   webhook,
   onUpdate,
+  onCancel,
   isLoading,
 }: {
   webhook: Webhook;
-  onUpdate: (config: Partial<Webhook>) => void;
+  onUpdate: (config: Partial<Webhook>) => Promise<void>;
+  onCancel: () => void;
   isLoading: boolean;
 }) {
+  const { toast } = useToast();
   const [slackConfig, setSlackConfig] = useState(
     webhook.slackConfig || {
       webhookUrl: '',
@@ -572,97 +836,128 @@ function SlackConfig({
       templateId: '',
     },
   );
-  const [open, setOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onUpdate({
-      slackConfig: slackConfig,
-    });
-    setOpen(false);
+    if (!slackConfig.webhookUrl) {
+      toast({
+        title: 'Error',
+        description: 'Webhook URL is required',
+        variant: 'destructive',
+      });
+      return;
+    }
+    await onUpdate({ slackConfig });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant='outline' size='sm' disabled={isLoading}>
-          Configure
+    <form onSubmit={handleSubmit} className='space-y-4'>
+      <div className='space-y-4'>
+        <div className='grid w-full gap-2'>
+          <Label htmlFor='slackWebhookUrl'>Webhook URL *</Label>
+          <Input
+            id='slackWebhookUrl'
+            required
+            placeholder='Enter Slack webhook URL'
+            value={slackConfig.webhookUrl}
+            onChange={e =>
+              setSlackConfig({
+                ...slackConfig,
+                webhookUrl: e.target.value,
+              })
+            }
+            disabled={isLoading}
+          />
+        </div>
+        <div className='grid w-full gap-2'>
+          <Label htmlFor='slackChannel'>Channel</Label>
+          <Input
+            id='slackChannel'
+            placeholder='Enter channel name'
+            value={slackConfig.channelName}
+            onChange={e =>
+              setSlackConfig({
+                ...slackConfig,
+                channelName: e.target.value,
+              })
+            }
+            disabled={isLoading}
+          />
+        </div>
+        <div className='grid w-full gap-2'>
+          <Label htmlFor='slackTemplate'>Template</Label>
+          <Select
+            disabled={isLoading}
+            value={slackConfig.templateId}
+            onValueChange={value =>
+              setSlackConfig({
+                ...slackConfig,
+                templateId: value,
+              })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder='Select a template' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='template1'>Template 1</SelectItem>
+              <SelectItem value='template2'>Template 2</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <DialogFooter className='flex justify-between'>
+        <Button
+          type='button'
+          variant='outline'
+          onClick={onCancel}
+          disabled={isLoading}
+        >
+          Cancel
         </Button>
-      </DialogTrigger>
-      <DialogContent>
+        <Button type='submit' disabled={isLoading || !slackConfig.webhookUrl}>
+          {isLoading ? (
+            <>
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+              Saving...
+            </>
+          ) : (
+            'Save Configuration'
+          )}
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}
+
+function WebhookDetailsDialog() {
+  const {
+    webhooks,
+    showDetails,
+    setShowDetails,
+    updateWebhookConfig,
+    isLoading,
+  } = useWebhook();
+
+  if (!showDetails) return null;
+
+  const webhook = webhooks.find(w => w.id === showDetails);
+  if (!webhook) return null;
+
+  return (
+    <Dialog
+      open={showDetails !== null}
+      onOpenChange={open => !open && setShowDetails(null)}
+    >
+      <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle>Slack Configuration</DialogTitle>
+          <DialogTitle>Webhook Details</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className='grid gap-4 py-4'>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='slackWebhookUrl' className='text-right'>
-                Webhook URL
-              </Label>
-              <Input
-                id='slackWebhookUrl'
-                value={slackConfig?.webhookUrl}
-                onChange={e =>
-                  setSlackConfig({
-                    ...slackConfig,
-                    webhookUrl: e.target.value,
-                  })
-                }
-                className='col-span-3'
-              />
-            </div>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='slackChannel' className='text-right'>
-                Channel
-              </Label>
-              <Input
-                id='slackChannel'
-                value={slackConfig.channelName}
-                onChange={e =>
-                  setSlackConfig({
-                    ...slackConfig,
-                    channelName: e.target.value,
-                  })
-                }
-                className='col-span-3'
-              />
-            </div>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='slackTemplate' className='text-right'>
-                Template
-              </Label>
-              <Select
-                onValueChange={value =>
-                  setSlackConfig({
-                    ...slackConfig,
-                    templateId: value,
-                  })
-                }
-                value={slackConfig.templateId}
-              >
-                <SelectTrigger id='slackTemplate' className='col-span-3'>
-                  <SelectValue placeholder='Select a template' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='template1'>Template 1</SelectItem>
-                  <SelectItem value='template2'>Template 2</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type='submit' disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  Saving...
-                </>
-              ) : (
-                'Save changes'
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
+        <WebhookDetails
+          webhook={webhook}
+          onUpdate={updateWebhookConfig}
+          isLoading={isLoading}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -3,8 +3,9 @@ import { Encryption } from '@/utils/encryption';
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const id = (await params).id;
   try {
     const supabase = createClient();
     const payload = await req.json();
@@ -13,7 +14,7 @@ export async function POST(
     const { data: webhook, error } = await (await supabase)
       .from('webhooks')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error || !webhook) {

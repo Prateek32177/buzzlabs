@@ -5,8 +5,9 @@ import { SecureWebhookService } from '@/utils/encryption';
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const id = (await params).id;
   try {
     const authToken = req.headers.get('x-webhook-token');
     const supabase = createClient();
@@ -15,7 +16,7 @@ export async function POST(
     const { data: webhook, error } = await (await supabase)
       .from('webhooks')
       .select('*')
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error || !webhook) {
       return Response.json(
@@ -25,9 +26,7 @@ export async function POST(
     }
 
     // Verify webhook token
-    const decryptedToken = await SecureWebhookService.getWebhookSecret(
-      params.id,
-    );
+    const decryptedToken = await SecureWebhookService.getWebhookSecret(id);
 
     if (authToken !== decryptedToken) {
       return Response.json({ error: 'Invalid token' }, { status: 401 });
@@ -52,7 +51,7 @@ export async function POST(
         channelName: webhook[0].slack_config.channel_name,
         templateId: webhook[0].slack_config.template_id,
         data: {
-          webhookId: params.id,
+          webhookId: id,
           payload,
           timestamp: new Date().toISOString(),
         },

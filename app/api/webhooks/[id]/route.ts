@@ -1,12 +1,13 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { SecureWebhookService } from '@/utils/encryption';
+
 // GET single webhook
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = await params;
+  const id = (await params).id;
 
   try {
     const supabase = await createClient();
@@ -49,10 +50,10 @@ export async function GET(
 
 // PATCH update webhook
 export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = await params;
+  const id = (await params).id;
 
   try {
     const supabase = await createClient();
@@ -65,7 +66,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const json = await req.json();
+    const json = await request.json();
 
     const { data: webhook, error } = await supabase
       .from('webhooks')
@@ -98,10 +99,10 @@ export async function PATCH(
 
 // DELETE webhook
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = await params;
+  const id = (await params).id;
 
   try {
     const supabase = await createClient();

@@ -177,7 +177,7 @@ export function WebhookManagement() {
       setWebhooks(webhooks.filter(webhook => webhook.id !== id));
 
       toast.success('Webhook Deleted', {
-        description: 'he webhook has been deleted.',
+        description: 'The webhook has been deleted.',
       });
     } catch (error) {
       toast.error('Error', {
@@ -529,11 +529,11 @@ function WebhookDetails({
           </Button>
         </div>
       </div>
-      <PlatformConfig
+      {/* <PlatformConfig
         webhook={webhook}
         onUpdate={onUpdate}
         isLoading={isLoading}
-      />
+      /> */}
       <div className='grid gap-4'>
         <Label>Notification Settings</Label>
         <div className='space-y-4 p-4 border rounded-lg'>

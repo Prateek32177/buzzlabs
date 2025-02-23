@@ -1,6 +1,5 @@
 import HeaderAuth from '@/components/header-auth';
 import { ThemeProvider } from 'next-themes';
-import Link from 'next/link';
 import './globals.css';
 import { Mona_Sans as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
@@ -12,8 +11,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: 'Next.js and Supabase Starter Kit',
-  description: 'The fastest way to build apps with Next.js and Supabase',
+  title: 'SuperHook',
+  description: 'No Code Notification Webhook Infrastructure',
 };
 
 const fontSans = FontSans({

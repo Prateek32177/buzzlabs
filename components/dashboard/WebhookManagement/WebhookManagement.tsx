@@ -195,7 +195,7 @@ export function WebhookManagement() {
     if (notifySlack !== undefined) updates.notify_slack = notifySlack;
     if (emailConfig !== undefined) updates.email_config = emailConfig;
     if (slackConfig !== undefined) updates.slack_config = slackConfig;
-    console.log(updates, config);
+
 
     setIsLoadingId(id);
     try {

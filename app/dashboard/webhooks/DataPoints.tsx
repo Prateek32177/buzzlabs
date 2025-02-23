@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Users, Bell, BarChart } from 'lucide-react';
+import { CalendarDays, Users, Bell, BarChart, Webhook } from 'lucide-react';
 
 export function DataPoints() {
   return (
@@ -24,7 +24,7 @@ export function DataPoints() {
             <CardTitle className='text-sm font-medium'>
               Total Webhooks
             </CardTitle>
-            <CalendarDays className='w-4 h-4 text-emerald-500' />
+            <Webhook className='w-4 h-4 text-emerald-500' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>2,543</div>

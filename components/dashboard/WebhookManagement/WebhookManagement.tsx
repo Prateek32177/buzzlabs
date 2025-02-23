@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Table,
   TableBody,
@@ -49,42 +50,9 @@ import {
 } from 'lucide-react';
 import { WebhookContext, useWebhook } from './WebhookContext';
 import { useClipboard } from './useClipboard';
+import { PlatformConfig } from './PlatformConfig';
 
-type Webhook = {
-  id: string;
-  name: string;
-  url: string;
-  secret: string;
-  isActive: boolean;
-  notifyEmail: boolean;
-  notifySlack: boolean;
-  emailConfig: {
-    recipientEmail: string;
-    templateId: string;
-  } | null;
-  slackConfig: {
-    webhookUrl: string;
-    channelName: string;
-    templateId: string;
-  } | null;
-};
-
-type WebhookContextType = {
-  webhooks: Webhook[];
-  isLoading: boolean;
-  isLoadingId: string | null;
-  showEmailConfig: string | null;
-  showSlackConfig: string | null;
-  showDetails: string | null;
-  setShowEmailConfig: (id: string | null) => void;
-  setShowSlackConfig: (id: string | null) => void;
-  setShowDetails: (id: string | null) => void;
-  toggleWebhook: (
-    id: string,
-    field: 'isActive' | 'notifyEmail' | 'notifySlack',
-  ) => Promise<void>;
-  updateWebhookConfig: (id: string, config: Partial<Webhook>) => Promise<void>;
-};
+import { Webhook, WebhookContextType } from './types';
 
 export function WebhookManagement() {
   const [webhooks, setWebhooks] = useState<Webhook[]>([]);
@@ -219,39 +187,44 @@ export function WebhookManagement() {
   };
 
   const updateWebhookConfig = async (id: string, config: Partial<Webhook>) => {
-    try {
-      setIsLoading(true);
-      // Convert frontend field names to match backend
-      const updates = {
-        name: config.name,
-        is_active: config.isActive,
-        notify_email: config.notifyEmail,
-        notify_slack: config.notifySlack,
-        email_config: config.emailConfig,
-        slack_config: config.slackConfig,
-      };
+    const updates: any = {};
+    const { isActive, notifyEmail, notifySlack, emailConfig, slackConfig } =
+      config;
+    if (isActive !== undefined) updates.is_active = isActive;
+    if (notifyEmail !== undefined) updates.notify_email = notifyEmail;
+    if (notifySlack !== undefined) updates.notify_slack = notifySlack;
+    if (emailConfig !== undefined) updates.email_config = emailConfig;
+    if (slackConfig !== undefined) updates.slack_config = slackConfig;
+    console.log(updates, config);
 
+    setIsLoadingId(id);
+    try {
       const response = await fetch(`/api/webhooks/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
       });
 
-      if (!response.ok) throw new Error('Failed to update webhook');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update webhook');
+      }
 
       const updatedWebhook = await response.json();
       setWebhooks(
-        webhooks.map(webhook => (webhook.id === id ? updatedWebhook : webhook)),
+        webhooks.map(w => (w.id === id ? { ...w, ...updatedWebhook } : w)),
       );
 
-      toast.success('Configuration updated successfully');
+      toast.success('Success', {
+        description: 'Webhook configuration updated',
+      });
     } catch (error) {
       toast.error('Error', {
         description:
           error instanceof Error ? error.message : 'Failed to update webhook',
       });
     } finally {
-      setIsLoading(false);
+      setIsLoadingId(null);
     }
   };
 
@@ -347,6 +320,7 @@ export function WebhookManagement() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Name</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Notifications</TableHead>
                       <TableHead className='w-[100px]'>Actions</TableHead>
                     </TableRow>
@@ -357,6 +331,10 @@ export function WebhookManagement() {
                         <TableCell className='pr-8'>
                           <div className='flex items-center flex-start gap-4'>
                             <span className='font-medium'>{webhook.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className='pr-8'>
+                          <div className='flex items-center flex-start gap-4'>
                             <Switch
                               checked={webhook.isActive}
                               onCheckedChange={() =>
@@ -435,11 +413,29 @@ export function WebhookManagement() {
           </CardContent>
         </Card>
 
+        {showDetails && (
+          <Dialog
+            open={showDetails !== null}
+            onOpenChange={open => !open && setShowDetails(null)}
+          >
+            <DialogContent className='max-w-2xl'>
+              <DialogHeader>
+                <DialogTitle>Webhook Configuration</DialogTitle>
+              </DialogHeader>
+              <ScrollArea className='h-[70vh] w-full '>
+                <WebhookDetails
+                  webhook={webhooks.find(w => w.id === showDetails)!}
+                  onUpdate={(id, config) => updateWebhookConfig(id, config)}
+                  isLoading={isLoadingId === showDetails}
+                />
+              </ScrollArea>
+            </DialogContent>
+          </Dialog>
+        )}
+
         <EmailConfigDialog />
 
         <SlackConfigDialog />
-
-        <WebhookDetailsDialog />
       </div>
     </WebhookContext.Provider>
   );
@@ -511,7 +507,12 @@ function WebhookDetails({
       </div>
 
       <div className='grid gap-2'>
-        <Label>Secret</Label>
+        <Label>
+          Secret{' '}
+          <code className='ml-2 text-sm text-muted-foreground font-mono whitespace-nowrap bg-muted px-2 py-1 rounded-sm'>
+            set in x-webhook-token header value
+          </code>
+        </Label>
         <div className='flex'>
           <Input
             type='text'
@@ -528,7 +529,11 @@ function WebhookDetails({
           </Button>
         </div>
       </div>
-
+      <PlatformConfig
+        webhook={webhook}
+        onUpdate={onUpdate}
+        isLoading={isLoading}
+      />
       <div className='grid gap-4'>
         <Label>Notification Settings</Label>
         <div className='space-y-4 p-4 border rounded-lg'>
@@ -886,38 +891,5 @@ function SlackConfig({
         </Button>
       </DialogFooter>
     </form>
-  );
-}
-
-function WebhookDetailsDialog() {
-  const {
-    webhooks,
-    showDetails,
-    setShowDetails,
-    updateWebhookConfig,
-    isLoading,
-  } = useWebhook();
-
-  if (!showDetails) return null;
-
-  const webhook = webhooks.find(w => w.id === showDetails);
-  if (!webhook) return null;
-
-  return (
-    <Dialog
-      open={showDetails !== null}
-      onOpenChange={open => !open && setShowDetails(null)}
-    >
-      <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
-        <DialogHeader>
-          <DialogTitle>Webhook Details</DialogTitle>
-        </DialogHeader>
-        <WebhookDetails
-          webhook={webhook}
-          onUpdate={updateWebhookConfig}
-          isLoading={isLoading}
-        />
-      </DialogContent>
-    </Dialog>
   );
 }

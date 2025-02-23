@@ -1,7 +1,7 @@
+import { WebhookVerificationService } from '@/lib/webhooks';
 import { createClient } from '@/utils/supabase/server';
 import { sendEmail } from '@/lib/email';
 import { sendSlackNotification } from '@/lib/slack';
-import { SecureWebhookService } from '@/utils/encryption';
 
 export async function POST(
   req: Request,
@@ -9,7 +9,6 @@ export async function POST(
 ) {
   const id = (await params).id;
   try {
-    const authToken = req.headers.get('x-webhook-token');
     const supabase = createClient();
 
     // Get webhook config from database including notification settings
@@ -25,49 +24,61 @@ export async function POST(
       );
     }
 
-    // Verify webhook token
-    const decryptedToken = await SecureWebhookService.getWebhookSecret(id);
+    // Verify webhook based on platform
+    const verificationResult = await WebhookVerificationService.verify(req, {
+      platform: webhook[0].platform || 'custom',
+      secret:
+        webhook[0].platform === 'clerk'
+          ? webhook[0].clerk_secret
+          : webhook[0].secret,
+      toleranceInSeconds: 300,
+    });
 
-    if (authToken !== decryptedToken) {
-      return Response.json({ error: 'Invalid token' }, { status: 401 });
+    if (!verificationResult.isValid) {
+      return Response.json(
+        { error: verificationResult.error },
+        { status: 401 },
+      );
     }
 
-    // Get webhook payload
-    const payload = await req.json();
+    // Process verified webhook
+    if (webhook[0].is_active) {
+      if (webhook[0].notify_email) {
+        await sendEmail({
+          from: 'alerts@brokersify.in',
+          to: webhook[0].email_config.recipient_email,
+          templateId: webhook[0].email_config.template_id,
+          data: {
+            type: 'webhook',
+            payload: verificationResult.payload,
+          },
+        });
+      }
 
-    if (webhook[0].is_active && webhook[0].notify_email) {
-      await sendEmail({
-        from: 'alerts@brokersify.in',
-        to: 'prateek56489@gmail.com',
-        templateId: 'template1',
-        data: {
-          type: 'webhook',
-          payload,
-        },
-      });
-    } else if (webhook[0].is_active && webhook[0].notify_slack) {
-      sendSlackNotification({
-        webhookUrl: webhook[0].slack_config.webhook_url,
-        channelName: webhook[0].slack_config.channel_name,
-        templateId: webhook[0].slack_config.template_id,
-        data: {
-          webhookId: id,
-          payload,
-          timestamp: new Date().toISOString(),
-        },
-      });
+      if (webhook[0].notify_slack) {
+        await sendSlackNotification({
+          webhookUrl: webhook[0].slack_config.webhook_url,
+          channelName: webhook[0].slack_config.channel_name,
+          templateId: webhook[0].slack_config.template_id,
+          data: {
+            webhookId: id,
+            platform: verificationResult.platform,
+            payload: verificationResult.payload,
+            metadata: verificationResult.metadata,
+            timestamp: new Date().toISOString(),
+          },
+        });
+      }
     }
 
     return Response.json({
       success: true,
-      message: 'Notification sent successfully',
+      message: 'Webhook processed successfully',
     });
   } catch (error) {
     console.error('Webhook processing error:', error);
     return Response.json(
-      {
-        error: `Notification failed ${error}`,
-      },
+      { error: 'Failed to process webhook' },
       { status: 500 },
     );
   }

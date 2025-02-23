@@ -1,17 +1,4 @@
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
-
 export default async function Page() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect('/sign-in');
-  }
-
   return (
     <main>
       <div className='fixed inset-0 overflow-hidden' aria-hidden='true'>
@@ -51,7 +38,6 @@ export default async function Page() {
         <div className='absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/60 to-transparent' />
         <div className='absolute inset-0 bg-gradient-to-b from-zinc-900/0 via-zinc-900/10 to-zinc-900/30' />
       </div>
-      <h1>Hello world!</h1>
     </main>
   );
 }

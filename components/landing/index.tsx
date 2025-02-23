@@ -1,111 +1,304 @@
-'use client';
-
-import { SiteHeader } from './site-header';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
-import { Footer } from './footer';
-import Hero from './Hero';
-import Features from './Features';
-import Integrations from './Integrations';
-import Waitlist from './Waitlist';
-import { ArrowRight } from 'lucide-react';
+import { Navbar } from '@/components/landing/navbar';
+import { Badge } from '../ui/badge';
+import {
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  Code2,
+  Globe2,
+  Zap,
+  Bell,
+  Shield,
+  Puzzle,
+  Cpu,
+  Scale,
+  GitBranch,
+  MessageSquare,
+  Mail,
+  BellRing,
+  Database,
+  CreditCard,
+} from 'lucide-react';
+import Introduction from './Introduction';
+import WaitlistSection from './Waitlist';
+import IntegrationSection from './inetgration';
 
-export default function Home() {
+const Index = () => {
   return (
-    <div className='relative flex min-h-screen flex-col items-center'>
-      <SiteHeader />
-      <main className='flex-1'>
-        <Hero />
+    <div className='min-h-screen gradient-background  text-white w-full'>
+      <Navbar />
 
-        <Features />
+      {/* Hero Section */}
+      <section className='pt-48 md:pt-64 pb-16 md:pb-8 px-4 overflow-hidden  relative z-2 '>
+        <div className='container   max-w-6xl relative'>
+          <div className='text-center max-w-4xl mx-auto'>
+            <Badge variant={'outline'} className='mb-4 '>
+              <Sparkles className='w-4 h-4 text-purple-400 mr-2' />
+              <span className='text-purple-400 mr-1'>
+                Simplifying Alerts:
+              </span>{' '}
+              No Code, Just Hook it
+              <ArrowRight className='ml-1 h-3 w-3' />
+            </Badge>
+            <h1 className='text-5xl  tracking-tight sm:text-5xl md:text-6xl lg:text-7xl'>
+              Capture Events,{' '}
+              <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200'>
+                Send Notifications
+              </span>
+            </h1>
+            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500  max-w-2xl mx-auto'>
+              SuperHook provides a robust webhook infrastructure to capture
+              change events and send instant notifications across multiple
+              channels.
+            </p>
+            <div className='mt-10 flex justify-center gap-x-6'>
+              <Button
+                size='lg'
+                className='bg-gradient-to-tr from-purple-400 to-purple-700 text-white'
+              >
+                Get Started
+                <ArrowRight className='ml-2 h-5 w-5' />
+              </Button>
+              <Button size='lg' variant='outline'>
+                View Demo
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <Introduction />
 
-        <Integrations />
+      {/* Features Section */}
+      <section className='py-16 md:py-20 px-4'>
+        <div className='container mx-auto max-w-6xl'>
+          <div className='text-center mb-12 md:mb-16'>
+            <h2 className='text-3xl md:text-5xl font-bold mb-4 glow-text'>
+              Powerful Features
+            </h2>
+            <p className='text-white/70 max-w-2xl mx-auto'>
+              Discover how SuperHook can transform your event-driven
+              architecture
+            </p>
+          </div>
 
-        <section id='how-it-works' className='py-20'>
-          <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className='max-w-3xl mx-auto text-center'
-            >
-              <h2 className='text-3xl font-bold sm:text-4xl mb-4'>
-                How It Works
-              </h2>
-              <p className='text-xl text-gray-600 dark:text-gray-400 mb-8'>
-                Capture events and send notifications in three simple steps
-              </p>
-            </motion.div>
-            <div className='grid md:grid-cols-3 gap-8 mt-12'>
-              {[
-                {
-                  title: 'Connect',
-                  description:
-                    'Integrate WebhookPro with your existing systems',
-                },
-                {
-                  title: 'Configure',
-                  description:
-                    'Set up event triggers and notification channels',
-                },
-                {
-                  title: 'Capture & Notify',
-                  description:
-                    'Automatically send notifications when events occur',
-                },
-              ].map((step, index) => (
-                <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className='text-center'
-                >
-                  <div className='w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4'>
-                    {index + 1}
-                  </div>
-                  <h3 className='text-xl font-semibold mb-2'>{step.title}</h3>
-                  <p className='text-gray-600 dark:text-gray-400'>
-                    {step.description}
-                  </p>
-                </motion.div>
+          <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>
+            {[
+              {
+                icon: Bell,
+                title: 'Instant Notifications',
+                description: 'Send real-time alerts across multiple channels',
+              },
+              {
+                icon: Shield,
+                title: 'Secure & Reliable',
+                description:
+                  'Enterprise-grade security for your webhook infrastructure',
+              },
+              {
+                icon: Puzzle,
+                title: 'Easy Integration',
+                description: 'Seamlessly connect with your existing tech stack',
+              },
+              {
+                icon: Cpu,
+                title: 'Powerful Processing',
+                description: 'Handle millions of events with ease',
+              },
+              {
+                icon: Globe2,
+                title: 'Global Scale',
+                description:
+                  'Distributed infrastructure for low-latency worldwide',
+              },
+              {
+                icon: GitBranch,
+                title: 'Flexible Routing',
+                description:
+                  'Route events to different endpoints based on rules',
+              },
+            ].map((feature, i) => (
+              <div key={i} className='feature-card'>
+                <feature.icon className='w-6 h-6 md:w-8 md:h-8 text-purple-400 mb-4' />
+                <h3 className='text-lg md:text-xl font-medium mb-2 text-white'>
+                  {feature.title}
+                </h3>
+                <p className='text-white/70 text-sm md:text-base'>
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Integrations */}
+      <section className='py-16 md:py-20 px-4 relative overflow-hidden'>
+        <div className='grid-pattern' />
+        <div className='container mx-auto max-w-6xl relative'>
+          <div className='text-center '>
+            <h2 className='text-3xl md:text-5xl font-bold mb-4 glow-text'>
+              Powerful Integrations
+            </h2>
+            <p className='text-white/70 max-w-2xl mx-auto'>
+              Connect SuperHook with your favorite tools and services
+            </p>
+          </div>
+          <IntegrationSection />
+          <div className='overflow-hidden  relative'>
+            <div className='logo-scroll py-8'>
+              {[...Array(2)].map((_, setIndex) => (
+                <div key={setIndex} className='flex gap-8'>
+                  {[
+                    { name: 'Slack', icon: MessageSquare },
+                    { name: 'Discord', icon: MessageSquare },
+                    { name: 'Gmail', icon: Mail },
+                    { name: 'Notifications', icon: BellRing },
+                    { name: 'Database', icon: Database },
+                    { name: 'Payments', icon: CreditCard },
+                    { name: 'Cloud', icon: Globe2 },
+                  ].map((brand, i) => (
+                    <div
+                      key={`${setIndex}-${i}`}
+                      className='flex items-center justify-center bg-[#141418]/80 backdrop-blur-md rounded-xl w-[250px] h-20 flex-shrink-0 border border-white/5'
+                    >
+                      <brand.icon className='w-8 h-8 text-purple-400' />
+                      <span className='ml-3 font-medium text-white/90'>
+                        {brand.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               ))}
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <Waitlist />
-
-        <section className='py-20'>
-          <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className='mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center'
-            >
-              <h2 className='text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl'>
-                Ready to get started?
-              </h2>
-              <p className='max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7'>
-                Start capturing events and sending notifications in minutes. No
-                credit card required.
-              </p>
-              <Button
-                size='lg'
-                className='mt-4 bg-gradient-to-r from-blue-500 to-teal-400 text-white'
-              >
-                Get Started Now
-                <ArrowRight className='ml-2 h-5 w-5' />
-              </Button>
-            </motion.div>
+      {/* How it Works */}
+      <section className='py-20 px-4 relative bg-[#080809]'>
+        <div className='container mx-auto max-w-6xl'>
+          <div className='text-center mb-16'>
+            <h2 className='text-4xl md:text-6xl font-bold mb-4 hero-text-gradient'>
+              How It Works
+            </h2>
+            <p className='text-white/70 max-w-2xl mx-auto text-lg'>
+              Capture events and send notifications in three simple steps
+            </p>
           </div>
-        </section>
-      </main>
-      <Footer />
+
+          <div className='steps-container'>
+            <div className='connecting-line'></div>
+            <div className='grid md:grid-cols-3 gap-8'>
+              {[
+                {
+                  step: 1,
+                  title: 'Set up and get organized',
+                  description:
+                    'Connect SuperHook with your existing systems in minutes',
+                },
+                {
+                  step: 2,
+                  title: 'Monitor progress',
+                  description:
+                    'Set up event triggers and notification channels effortlessly',
+                },
+                {
+                  step: 3,
+                  title: 'Stay on track',
+                  description:
+                    'Automatically receive notifications when events occur',
+                },
+              ].map(item => (
+                <div key={item.step} className='step-card group'>
+                  <div className='step-number'>{item.step}</div>
+                  <h3 className='step-heading text-lg md:text-xl font-medium mb-2 text-white'>
+                    {item.title}
+                  </h3>
+                  <p className='step-description text-white/70 text-sm md:text-base'>
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <WaitlistSection />
+
+      {/* Footer */}
+      <footer className='bg-[#0A0A0B] py-20 px-4 border-t border-white/5'>
+        <div className='container mx-auto max-w-6xl'>
+          <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8'>
+            <div>
+              <div className='flex items-center gap-2 mb-6'>
+                <span className='text-xl font-medium text-white'>
+                  SuperHook
+                </span>
+              </div>
+              <p className='text-white/70'>
+                Building the future of webhook infrastructure
+              </p>
+            </div>
+
+            {[
+              {
+                title: 'Product',
+                links: ['Features', 'Pricing', 'Changelog', 'Documentation'],
+              },
+              {
+                title: 'Company',
+                links: ['About', 'Blog', 'Careers', 'Contact'],
+              },
+              {
+                title: 'Legal',
+                links: ['Privacy', 'Terms', 'Cookie Policy', 'Licenses'],
+              },
+            ].map(section => (
+              <div key={section.title}>
+                <h3 className='font-medium mb-4 text-white'>{section.title}</h3>
+                <ul className='space-y-2'>
+                  {section.links.map(link => (
+                    <li key={link}>
+                      <a
+                        href='#'
+                        className='text-white/70 hover:text-white transition-colors'
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className='border-t border-white/5 pt-8'>
+            <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
+              <p className='text-white/70'>
+                © 2025 Quinx. All rights reserved.
+              </p>
+              <div className='flex gap-6'>
+                <a
+                  href='#'
+                  className='text-white/70 hover:text-white transition-colors'
+                >
+                  Privacy Policy
+                </a>
+                <a
+                  href='#'
+                  className='text-white/70 hover:text-white transition-colors'
+                >
+                  Terms of Service
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
-}
+};
+
+export default Index;

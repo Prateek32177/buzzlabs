@@ -31,7 +31,7 @@ export default function IntegrationsGuide() {
   };
 
   return (
-    <div className='container mx-auto py-8 space-y-8'>
+    <div className=' mx-10  space-y-8'>
       <div>
         <h1 className='text-3xl font-bold'>Integrations Guide</h1>
         <p className='text-muted-foreground mt-2'>

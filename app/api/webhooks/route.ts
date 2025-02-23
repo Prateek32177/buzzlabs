@@ -2,7 +2,6 @@ import { WebhookSecurity } from '@/utils/webhook-security';
 import { Encryption } from '@/utils/encryption';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
-import { SecureWebhookService } from '@/utils/encryption';
 
 export async function GET(req: Request) {
   try {
@@ -60,9 +59,8 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { name } = await req.json();
+    const { name, platform = 'custom' } = await req.json();
     const supabase = await createClient();
-
     const {
       data: { user },
       error: authError,
@@ -71,17 +69,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Generate and encrypt webhook secret
-    const rawSecret = WebhookSecurity.generateSecret();
+    const webhookSecret = WebhookSecurity.generateSecret();
     const webhookId = crypto.randomUUID();
-    const encryptedData = await Encryption.encrypt(rawSecret);
+    const encryptedSecret = await Encryption.encrypt(webhookSecret);
+
+    // Create webhook
     const { data: webhook, error } = await supabase
       .from('webhooks')
       .insert({
         id: webhookId,
         user_id: user.id,
-        secret: encryptedData,
         name,
+        platform,
+        secret: encryptedSecret,
+        platformConfig:
+          platform === 'custom'
+            ? {
+                webhook_id: webhookId,
+                webhook_token: webhookSecret,
+              }
+            : {},
         url: `/api/webhooks/${webhookId}/verify`,
         is_active: true,
         notify_email: false,
@@ -95,12 +102,11 @@ export async function POST(req: Request) {
 
     if (error) throw error;
 
-    // Return decrypted secret to client
     return NextResponse.json({
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: rawSecret,
+      secret: webhookSecret,
       isActive: webhook.is_active,
       notifyEmail: webhook.notify_email,
       notifySlack: webhook.notify_slack,
@@ -108,8 +114,9 @@ export async function POST(req: Request) {
       slackConfig: webhook.slack_config,
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: `Failed to create webhook ${JSON.stringify(error)}` },
+    console.error('Create webhook error:', error);
+    return Response.json(
+      { error: 'Failed to create webhook' },
       { status: 500 },
     );
   }

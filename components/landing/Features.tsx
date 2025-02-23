@@ -49,7 +49,7 @@ export default function Features() {
             Powerful Features
           </h2>
           <p className='text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
-            Discover how WebhookPro can transform your event-driven architecture
+            Discover how SuperHook can transform your event-driven architecture
           </p>
         </motion.div>
 

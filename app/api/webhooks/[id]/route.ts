@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { SecureWebhookService } from '@/utils/encryption';
 
 // GET single webhook
@@ -7,9 +7,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = (await params).id;
-
   try {
+    const id = (await params).id;
     const supabase = await createClient();
 
     const {
@@ -28,12 +27,13 @@ export async function GET(
       .single();
 
     if (error) throw error;
-    const decryptedToken = await SecureWebhookService.getWebhookSecret(id);
+
+    // Format response to match frontend expectations
     return NextResponse.json({
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: decryptedToken,
+      secret: webhook.secret,
       isActive: webhook.is_active,
       notifyEmail: webhook.notify_email,
       notifySlack: webhook.notify_slack,
@@ -53,36 +53,47 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = (await params).id;
-
   try {
-    const supabase = await createClient();
+    const id = (await params).id;
+    const updates = await request.json();
+    const supabase = createClient();
+
+    // If updating platform config for custom platform, ensure secret is encrypted
+    if (updates.platformConfig && updates.platform === 'custom') {
+      const webhookSecret = updates.platformConfig.webhook_token;
+      if (webhookSecret) {
+        const encryptedSecret = await SecureWebhookService.storeWebhookSecret(
+          id,
+          webhookSecret,
+        );
+        updates.secret = encryptedSecret;
+      }
+    }
 
     const {
       data: { user },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await (await supabase).auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const json = await request.json();
-
-    const { data: webhook, error } = await supabase
+    const { data: webhook, error } = await (await supabase)
       .from('webhooks')
-      .update(json)
+      .update(updates)
       .eq('id', id)
       .eq('user_id', user.id)
       .select()
       .single();
 
     if (error) throw error;
-    const decryptedToken = await SecureWebhookService.getWebhookSecret(id);
+
+    // Format response to match frontend expectations
     return NextResponse.json({
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: decryptedToken,
+      secret: webhook.secret,
       isActive: webhook.is_active,
       notifyEmail: webhook.notify_email,
       notifySlack: webhook.notify_slack,
@@ -90,8 +101,9 @@ export async function PATCH(
       slackConfig: webhook.slack_config,
     });
   } catch (error) {
+    console.error('Update webhook error:', error);
     return NextResponse.json(
-      { error: 'Error updating webhook' },
+      { error: 'Failed to update webhook' },
       { status: 500 },
     );
   }
@@ -99,12 +111,11 @@ export async function PATCH(
 
 // DELETE webhook
 export async function DELETE(
-  request: NextRequest,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = (await params).id;
-
   try {
+    const id = (await params).id;
     const supabase = await createClient();
 
     const {

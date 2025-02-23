@@ -19,7 +19,7 @@ import { Webhook } from './types';
 
 interface PlatformConfigProps {
   webhook: Webhook;
-  onUpdate: (id: string, config: Partial<Webhook>) => Promise<void>;
+  onUpdate: (config: Partial<Webhook>) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -44,7 +44,7 @@ export function PlatformConfig({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onUpdate(id, {
+    await onUpdate({
       platform,
       platformConfig: configValues,
     });

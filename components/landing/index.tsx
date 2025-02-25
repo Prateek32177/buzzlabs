@@ -23,17 +23,80 @@ import {
 import Introduction from './Introduction';
 import WaitlistSection from './Waitlist';
 import IntegrationSection from './inetgration';
+import { Logo } from '../Logo';
 
 const Index = () => {
   return (
-    <div className='min-h-screen gradient-background  text-white w-full'>
+    <div className='min-h-screen   text-white w-full'>
+      <div className='fixed inset-0 overflow-hidden ' aria-hidden='true'>
+        <div
+          className='absolute inset-0 opacity-60 mix-blend-overlay'
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.975' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '256px 256px',
+          }}
+        />
+        <div
+          className='absolute inset-0 opacity-40 mix-blend-soft-light'
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='microNoiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23microNoiseFilter)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '128px 128px',
+          }}
+        />
+
+        <div className='absolute top-0 left-0 w-full to-transparent h-full'>
+          <div
+            className={`absolute inset-0 bg-gradient-to-b from-purple-300/20 via-purple-500/15 to-transparent`}
+            style={{
+              filter: 'blur(80px)',
+            }}
+          />
+
+          <div
+            className={`absolute inset-0 bg-gradient-to-b from-purple-400/15 via-purple-500/10 to-transparent`}
+            style={{
+              filter: 'blur(60px)',
+            }}
+          />
+
+          <div
+            className={`absolute inset-0 bg-gradient-to-b from-purple-500/10 via-purple-500/5 to-transparent`}
+            style={{
+              filter: 'blur(40px)',
+            }}
+          />
+
+          <div
+            className='absolute inset-0'
+            style={{
+              background: `
+                radial-gradient(
+                  80% 100% at 50% 0%,
+                  transparent 10%,
+                  rgba(0, 0, 0, 0.4) 40%,
+                  rgba(1, 1, 2, 0.8) 60%
+                )
+              `,
+            }}
+          />
+        </div>
+
+        <div className='absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/60 to-transparent' />
+        <div className='absolute inset-0 bg-gradient-to-b from-zinc-900/0 via-zinc-900/10 to-zinc-900/30' />
+      </div>
+
       <Navbar />
 
       {/* Hero Section */}
-      <section className='pt-48 md:pt-64 pb-16 md:pb-8 px-4 overflow-hidden  relative z-2 '>
+      <section className='pt-48 md:pt-48 pb-16 md:pb-8 px-4 overflow-hidden  relative z-2 '>
         <div className='container   max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
-            <Badge variant={'outline'} className='mb-4 '>
+            <Badge
+              variant={'default'}
+              className='mb-4 bg-white/10 text-white/80 shadow-md'
+            >
               <Sparkles className='w-4 h-4 text-purple-400 mr-2' />
               <span className='text-purple-400 mr-1'>
                 Simplifying Alerts:
@@ -70,10 +133,10 @@ const Index = () => {
       <Introduction />
 
       {/* Features Section */}
-      <section className='py-16 md:py-20 px-4'>
+      <section className='py-16 md:py-20 px-4 gradient-background'>
         <div className='container mx-auto max-w-6xl'>
           <div className='text-center mb-12 md:mb-16'>
-            <h2 className='text-3xl md:text-5xl font-bold mb-4 glow-text'>
+            <h2 className='text-3xl md:text-5xl font-bold mb-4 '>
               Powerful Features
             </h2>
             <p className='text-white/70 max-w-2xl mx-auto'>
@@ -228,29 +291,19 @@ const Index = () => {
       <WaitlistSection />
 
       {/* Footer */}
-      <footer className='bg-[#0A0A0B] py-20 px-4 border-t border-white/5'>
+      <footer className='bg-[#0A0A0B] py-20 px-4 border-t border-white/5 gradient-background'>
         <div className='container mx-auto max-w-6xl'>
           <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8'>
             <div>
-              <div className='flex items-center gap-2 mb-6'>
-                <span className='text-xl font-medium text-white'>
-                  SuperHook
-                </span>
+              <div className='mb-4'>
+                <Logo size='text-2xl'/>
               </div>
               <p className='text-white/70'>
-                Building the future of webhook infrastructure
+                Building the future of notification webhook infrastructure
               </p>
             </div>
 
-            {[
-              {
-                title: 'Product',
-                links: ['Features', 'Pricing', 'Changelog', 'Documentation'],
-              },
-              {
-                title: 'Company',
-                links: ['About', 'Blog', 'Careers', 'Contact'],
-              },
+            {/* {[
               {
                 title: 'Legal',
                 links: ['Privacy', 'Terms', 'Cookie Policy', 'Licenses'],
@@ -271,13 +324,13 @@ const Index = () => {
                   ))}
                 </ul>
               </div>
-            ))}
+            ))} */}
           </div>
 
           <div className='border-t border-white/5 pt-8'>
             <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
               <p className='text-white/70'>
-                © 2025 Quinx. All rights reserved.
+                © 2025 Superhook. All rights reserved.
               </p>
               <div className='flex gap-6'>
                 <a

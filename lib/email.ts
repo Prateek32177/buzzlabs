@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendEmail({
   from,
-  to,
+  to = 'prateek56489@gmail.com',
   templateId = 'template1',
   data,
 }: {

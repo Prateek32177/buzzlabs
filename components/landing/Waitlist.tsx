@@ -28,7 +28,7 @@ export default function WaitlistSection() {
     <section className='py-16 md:py-20 px-4 waitlist-gradient'>
       <div className='container mx-auto max-w-4xl text-center'>
         <div className='relative p-8 md:p-12 bg-[#141418]/80 backdrop-blur-xl rounded-xl border border-white/5 overflow-hidden'>
-          <div className='absolute  -left-16 transform -rotate-45 bg-yellow-500 text-yellow-900 py-1 px-14 text-sm font-semibold shadow-lg z-10'>
+          <div className='absolute  -left-16 transform -rotate-45 bg-yellow-500 text-yellow-900 py-1 px-14 pr-20 text-sm font-semibold shadow-lg z-10'>
             20% off for waitlist
           </div>
 

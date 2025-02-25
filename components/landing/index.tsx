@@ -296,7 +296,7 @@ const Index = () => {
           <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8'>
             <div>
               <div className='mb-4'>
-                <Logo size='text-2xl'/>
+                <Logo size='text-2xl' />
               </div>
               <p className='text-white/70'>
                 Building the future of notification webhook infrastructure

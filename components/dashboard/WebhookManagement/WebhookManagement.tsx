@@ -193,9 +193,27 @@ export function WebhookManagement() {
     if (isActive !== undefined) updates.is_active = isActive;
     if (notifyEmail !== undefined) updates.notify_email = notifyEmail;
     if (notifySlack !== undefined) updates.notify_slack = notifySlack;
-    if (emailConfig !== undefined) updates.email_config = emailConfig;
-    if (slackConfig !== undefined) updates.slack_config = slackConfig;
-
+    if (emailConfig !== undefined) {
+      updates.email_config = {};
+      if (emailConfig?.recipientEmail !== undefined) {
+        updates.email_config.recipient_email = emailConfig.recipientEmail;
+      }
+      if (emailConfig?.templateId !== undefined) {
+        updates.email_config.template_id = emailConfig.templateId;
+      }
+    }
+    if (slackConfig !== undefined) {
+      updates.slack_config = {};
+      if (slackConfig?.webhookUrl !== undefined) {
+        updates.slack_config.webhook_url = slackConfig.webhookUrl;
+      }
+      if (slackConfig?.channelName !== undefined) {
+        updates.slack_config.channel_name = slackConfig.channelName;
+      }
+      if (slackConfig?.templateId !== undefined) {
+        updates.slack_config.template_id = slackConfig.templateId;
+      }
+    }
 
     setIsLoadingId(id);
     try {

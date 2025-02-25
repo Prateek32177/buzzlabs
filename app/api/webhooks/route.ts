@@ -93,8 +93,8 @@ export async function POST(req: Request) {
         is_active: true,
         notify_email: false,
         notify_slack: false,
-        email_config: null,
-        slack_config: null,
+        email_config: {},
+        slack_config: {},
         updated_at: new Date().toISOString(),
       })
       .select()

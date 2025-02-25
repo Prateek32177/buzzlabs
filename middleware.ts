@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
   } = await (await supbase).auth.getUser();
 
   const isAuthenticated = user?.role === 'authenticated';
-  const pathToAuthorize = ['/api', '/forgot-password'];
+  const pathToAuthorize = ['/api'];
   const requestPathName = request.nextUrl.pathname;
 
   const isProtectedPath = pathToAuthorize.some(path =>

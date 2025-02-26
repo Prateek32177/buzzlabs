@@ -4,44 +4,20 @@ import { Badge } from '../ui/badge';
 import {
   ArrowRight,
   Sparkles,
-  CheckCircle2,
-  Code2,
-  Globe2,
-  Zap,
   Bell,
   Shield,
   Puzzle,
-  Cpu,
-  Scale,
-  GitBranch,
-  MessageSquare,
-  Mail,
-  BellRing,
-  Database,
-  CreditCard,
+  Cpu
 } from 'lucide-react';
 import Introduction from './Introduction';
 import WaitlistSection from './Waitlist';
 import IntegrationSection from './inetgration';
 import { Logo } from '../Logo';
-import { cn } from '@/lib/utils';
-import { DotPattern } from '@/components/magicui/dot-pattern';
 import { PolarLogo } from '../Logos/Polar';
 import { SupabaseLogo } from '../Logos/Supabase';
 import { ResendLogo } from '../Logos/Resend';
 import { ClerkLogo } from '../Logos/Clerk';
 import { LoopsLogo } from '../Logos/Loops';
-
-export function DotPatternWithGlowEffectDemo() {
-  return (
-    <DotPattern
-      glow={true}
-      className={cn(
-        '[mask-image:radial-gradient(300px_circle_at_center,white,transparent)] ',
-      )}
-    />
-  );
-}
 
 const Index = () => {
   return (
@@ -106,7 +82,6 @@ const Index = () => {
       </div>
 
       <Navbar />
-      <DotPatternWithGlowEffectDemo />
       {/* Hero Section */}
       <section className='pt-48 md:pt-48 pb-16 md:pb-8 px-4 overflow-hidden  relative z-2 '>
         <div className='container   max-w-6xl relative'>

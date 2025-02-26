@@ -62,7 +62,7 @@ export default function WaitlistSection() {
                   <InteractiveHoverButton
                     type='submit'
                     disabled={isLoading}
-                    className='absolute right-1 h-10 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 border-none px-6 text-sm'
+                    className='absolute right-1 h-10 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 border-none px-6 text-xs md:text-sm'
                   >
                     {isLoading ? (
                       <Loader2 className='h-5 w-5 animate-spin' />

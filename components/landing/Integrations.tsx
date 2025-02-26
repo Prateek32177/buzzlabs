@@ -46,7 +46,7 @@ export default function Integrations() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className='text-center mb-16'
+          className='text-center '
         >
           <h2 className='text-3xl font-bold sm:text-4xl mb-4'>
             Powerful Integrations

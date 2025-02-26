@@ -26,28 +26,30 @@ export default function Introduction() {
         >
           <GlowingAsterisk />
           <span className='text-purple-400 uppercase text-sm font-bold tracking-[0.2em] ml-3'>
-            Introducing Bolt
+            Introducing Superhook
           </span>
         </motion.div>
         <motion.h1
-          className='text-3xl md:text-4xl leading-none tracking-tight mb-8'
+          className='text-xl md:text-4xl leading-none tracking-tight mb-8'
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <span className='text-white'>
-            Supercharge your database monitoring with Buzz.
+            Supercharge your database, payment subscriptions, user signups event
+            monitoring with Superhook.
           </span>{' '}
           <span className='text-gray-500 font-light'>
-            the seamless way to stay in sync with your data's pulse.
+            the seamless way to stay in sync with your data's pulse.{' '}
           </span>
           <span className='text-gray-400'>
-            Get instant Slack and email notifications for any database changes
-            with just a few clicks.
+            Get instant Slack and email notifications for any event trigger with
+            just a few clicks.{' '}
           </span>
           <span className='text-white'>
-            Zero complexity, lightning-fast setup, and Instant alerts make
-            tracking database activity effortless.
+            Zero complexity, lightning-fast setup, No code library installation
+            and Instant alerts make tracking any change event activity
+            effortless.
           </span>
         </motion.h1>
       </div>

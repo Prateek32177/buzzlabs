@@ -11,7 +11,7 @@ export function Navbar() {
   const isAuthPage = pathname === '/signin' || pathname === '/register';
 
   return (
-    <div className='fixed w-full z-50 px-8 md:px-16 pt-4'>
+    <div className='fixed w-full z-50 px-6 md:px-16 pt-4'>
       <nav className='floating-nav'>
         <div className='container mx-auto h-16 flex items-center justify-between px-4 md:px-6'>
           <Logo />

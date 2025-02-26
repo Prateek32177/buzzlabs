@@ -24,6 +24,24 @@ import Introduction from './Introduction';
 import WaitlistSection from './Waitlist';
 import IntegrationSection from './inetgration';
 import { Logo } from '../Logo';
+import { cn } from '@/lib/utils';
+import { DotPattern } from '@/components/magicui/dot-pattern';
+import { PolarLogo } from '../Logos/Polar';
+import { SupabaseLogo } from '../Logos/Supabase';
+import { ResendLogo } from '../Logos/Resend';
+import { ClerkLogo } from '../Logos/Clerk';
+import { LoopsLogo } from '../Logos/Loops';
+
+export function DotPatternWithGlowEffectDemo() {
+  return (
+    <DotPattern
+      glow={true}
+      className={cn(
+        '[mask-image:radial-gradient(300px_circle_at_center,white,transparent)] ',
+      )}
+    />
+  );
+}
 
 const Index = () => {
   return (
@@ -88,20 +106,20 @@ const Index = () => {
       </div>
 
       <Navbar />
-
+      <DotPatternWithGlowEffectDemo />
       {/* Hero Section */}
       <section className='pt-48 md:pt-48 pb-16 md:pb-8 px-4 overflow-hidden  relative z-2 '>
         <div className='container   max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
             <Badge
               variant={'default'}
-              className='mb-4 bg-white/10 text-white/80 shadow-md'
+              className='mb-4 bg-white/10 text-white/80 shadow-md hover:bg-white/10'
             >
               <Sparkles className='w-4 h-4 text-purple-400 mr-2' />
               <span className='text-purple-400 mr-1'>
                 Simplifying Alerts:
               </span>{' '}
-              No Code, Just Hook it
+              No Code, Just Connect it
               <ArrowRight className='ml-1 h-3 w-3' />
             </Badge>
             <h1 className='text-5xl  tracking-tight sm:text-5xl md:text-6xl lg:text-7xl'>
@@ -145,7 +163,7 @@ const Index = () => {
             </p>
           </div>
 
-          <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>
+          <div className='grid md:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8'>
             {[
               {
                 icon: Bell,
@@ -165,20 +183,8 @@ const Index = () => {
               },
               {
                 icon: Cpu,
-                title: 'Powerful Processing',
-                description: 'Handle millions of events with ease',
-              },
-              {
-                icon: Globe2,
-                title: 'Global Scale',
-                description:
-                  'Distributed infrastructure for low-latency worldwide',
-              },
-              {
-                icon: GitBranch,
-                title: 'Flexible Routing',
-                description:
-                  'Route events to different endpoints based on rules',
+                title: 'Logging & Monitoring',
+                description: 'Monitor all notifications from one place',
               },
             ].map((feature, i) => (
               <div key={i} className='feature-card'>
@@ -196,9 +202,9 @@ const Index = () => {
       </section>
 
       {/* Integrations */}
-      <section className='py-16 md:py-20 px-4 relative overflow-hidden'>
+      <section className='py-16 md:py-20 relative overflow-hidden'>
         <div className='grid-pattern' />
-        <div className='container mx-auto max-w-6xl relative'>
+        <div>
           <div className='text-center '>
             <h2 className='text-3xl md:text-5xl font-bold mb-4 glow-text'>
               Powerful Integrations
@@ -213,22 +219,25 @@ const Index = () => {
               {[...Array(2)].map((_, setIndex) => (
                 <div key={setIndex} className='flex gap-8'>
                   {[
-                    { name: 'Slack', icon: MessageSquare },
-                    { name: 'Discord', icon: MessageSquare },
-                    { name: 'Gmail', icon: Mail },
-                    { name: 'Notifications', icon: BellRing },
-                    { name: 'Database', icon: Database },
-                    { name: 'Payments', icon: CreditCard },
-                    { name: 'Cloud', icon: Globe2 },
+                    { name: 'Polar', icon: PolarLogo, comingSoon: true },
+                    { name: 'Supabase', icon: SupabaseLogo, comingSoon: false },
+                    { name: 'Clerk', icon: ClerkLogo, comingSoon: true },
+                    { name: 'Resend', icon: ResendLogo, comingSoon: false },
+                    { name: 'Loops', icon: LoopsLogo, comingSoon: true },
                   ].map((brand, i) => (
                     <div
                       key={`${setIndex}-${i}`}
-                      className='flex items-center justify-center bg-[#141418]/80 backdrop-blur-md rounded-xl w-[250px] h-20 flex-shrink-0 border border-white/5'
+                      className='flex items-center justify-center w-[250px] h-20 flex-shrink-0 bg-white/10 rounded-lg p-4 shadow-md'
                     >
-                      <brand.icon className='w-8 h-8 text-purple-400' />
+                      <brand.icon className='w-8 h-8 stroke-current' />
                       <span className='ml-3 font-medium text-white/90'>
                         {brand.name}
                       </span>
+                      {brand.comingSoon && (
+                        <span className='ml-2 text-xs font-semibold text-yellow-400 bg-yellow-100/5 px-2 py-1 rounded'>
+                          Coming Soon
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>

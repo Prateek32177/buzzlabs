@@ -19,7 +19,10 @@ export const InteractiveHoverButton = React.forwardRef<
       {...props}
     >
       <div className='flex items-center gap-2'>
-        <div className='h-2 w-2 rounded-full bg-primary transition-all duration-300 group-hover:scale-[100.8]'></div>
+        <span className='relative flex size-[10px] transition-all duration-300 group-hover:scale-[100.8]'>
+          <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75'></span>
+          <span className='relative inline-flex size-[10px] rounded-full bg-white'></span>
+        </span>
         <span className='inline-block transition-all duration-300 group-hover:translate-x-12 group-hover:opacity-0'>
           {children}
         </span>

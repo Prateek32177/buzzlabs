@@ -1,23 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Navbar } from '@/components/landing/navbar';
 import { Badge } from '../ui/badge';
-import {
-  ArrowRight,
-  Sparkles,
-  Bell,
-  Shield,
-  Puzzle,
-  Cpu
-} from 'lucide-react';
+import { ArrowRight, Sparkles, Bell, Shield, Puzzle, Cpu } from 'lucide-react';
 import Introduction from './Introduction';
 import WaitlistSection from './Waitlist';
 import IntegrationSection from './inetgration';
 import { Logo } from '../Logo';
-import { PolarLogo } from '../Logos/Polar';
-import { SupabaseLogo } from '../Logos/Supabase';
-import { ResendLogo } from '../Logos/Resend';
-import { ClerkLogo } from '../Logos/Clerk';
-import { LoopsLogo } from '../Logos/Loops';
+import { WaitlistForm } from './Waitlist';
 
 const Index = () => {
   return (
@@ -108,7 +97,8 @@ const Index = () => {
               change events and send instant notifications across multiple
               channels.
             </p>
-            <div className='mt-10 flex justify-center gap-x-6'>
+            <WaitlistForm />
+            {/* <div className='mt-10 flex justify-center gap-x-6'>
               <Button
                 size='lg'
                 className='bg-gradient-to-tr from-purple-400 to-purple-700 text-white'
@@ -116,10 +106,11 @@ const Index = () => {
                 Get Started
                 <ArrowRight className='ml-2 h-5 w-5' />
               </Button>
+              <WaitlistForm/>
               <Button size='lg' variant='outline'>
                 View Demo
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -175,13 +166,31 @@ const Index = () => {
           </div>
         </div>
       </section>
+      <div className='relative'>
+        <div className='aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-purple-900/20 to-black/40 border border-white/10 shadow-xl'>
+          <div className='absolute inset-0 flex items-center justify-center'>
+            <div className='text-center'>
+              <div className='w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 flex items-center justify-center'>
+                <ArrowRight className='h-8 w-8 text-white' />
+              </div>
+              <p className='text-white/80'>Interactive Demo</p>
+              <span className='ml-2 text-xs font-semibold text-yellow-400 bg-yellow-100/5 px-2 py-1 rounded'>
+                Coming Soon
+              </span>
+            </div>
+          </div>
+        </div>
 
+        {/* Decorative elements */}
+        <div className='absolute -top-4 -right-4 w-24 h-24 bg-purple-500/10 rounded-full blur-xl'></div>
+        <div className='absolute -bottom-8 -left-8 w-40 h-40 bg-purple-700/10 rounded-full blur-xl'></div>
+      </div>
       {/* Integrations */}
-      <section className='py-16 md:py-20 relative overflow-hidden'>
+      <section className='py-16 md:py-20 relative overflow-hidden bg-gradient-to-br from-black to-gray-900'>
         <div className='grid-pattern' />
         <div>
           <div className='text-center '>
-            <h2 className='text-3xl md:text-5xl font-bold mb-4 glow-text'>
+            <h2 className='text-3xl md:text-5xl font-bold mb-4 '>
               Powerful Integrations
             </h2>
             <p className='text-white/70 max-w-2xl mx-auto'>
@@ -189,36 +198,6 @@ const Index = () => {
             </p>
           </div>
           <IntegrationSection />
-          <div className='overflow-hidden  relative'>
-            <div className='logo-scroll py-8'>
-              {[...Array(2)].map((_, setIndex) => (
-                <div key={setIndex} className='flex gap-8'>
-                  {[
-                    { name: 'Polar', icon: PolarLogo, comingSoon: true },
-                    { name: 'Supabase', icon: SupabaseLogo, comingSoon: false },
-                    { name: 'Clerk', icon: ClerkLogo, comingSoon: true },
-                    { name: 'Resend', icon: ResendLogo, comingSoon: false },
-                    { name: 'Loops', icon: LoopsLogo, comingSoon: true },
-                  ].map((brand, i) => (
-                    <div
-                      key={`${setIndex}-${i}`}
-                      className='flex items-center justify-center w-[250px] h-20 flex-shrink-0 bg-white/10 rounded-lg p-4 shadow-md'
-                    >
-                      <brand.icon className='w-8 h-8 stroke-current' />
-                      <span className='ml-3 font-medium text-white/90'>
-                        {brand.name}
-                      </span>
-                      {brand.comingSoon && (
-                        <span className='ml-2 text-xs font-semibold text-yellow-400 bg-yellow-100/5 px-2 py-1 rounded'>
-                          Coming Soon
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -258,7 +237,7 @@ const Index = () => {
                 },
               ].map(item => (
                 <div key={item.step} className='step-card group'>
-                  <div className='step-number'>{item.step}</div>
+                  <div className='step-number border'>{item.step}</div>
                   <h3 className='step-heading text-lg md:text-xl font-medium mb-2 text-white'>
                     {item.title}
                   </h3>

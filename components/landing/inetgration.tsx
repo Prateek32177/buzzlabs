@@ -6,6 +6,7 @@ import { SupabaseLogo } from '../Logos/Supabase';
 import { ResendLogo } from '../Logos/Resend';
 import { ClerkLogo } from '../Logos/Clerk';
 import { LoopsLogo } from '../Logos/Loops';
+import { Plug } from 'lucide-react';
 
 export default function Integration() {
   return (
@@ -14,12 +15,27 @@ export default function Integration() {
         <div className='grid-pattern' />
         <div>
           <div className='text-center '>
-            <h2 className='text-3xl md:text-5xl font-bold mb-4 '>
-              Powerful Integrations
-            </h2>
-            <p className='text-white/70 max-w-2xl mx-auto'>
-              Connect SuperHook with your favorite tools and services
-            </p>
+            <div className='flex justify-center mb-6'>
+              <div
+                className={`inline-flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full border border-purple-400/20 transition-all duration-700 opacity-100 translate-y-0`}
+              >
+                <Plug className='w-4 h-4 text-purple-400 animate-pulse' />
+                <span className='text-purple-400 text-sm font-medium'>
+                  Powerful Integrations
+                </span>
+              </div>
+            </div>
+
+            {/* Main Heading */}
+            <div className='text-center mb-8 px-4'>
+              <h2
+                className={`text-3xl md:text-5xl font-medium text-white max-w-4xl mx-auto leading-tight transition-all duration-1000 opacity-100 translate-y-0`}
+              >
+                Connect SuperHook with your
+                <br />
+                favorite tools and services.
+              </h2>
+            </div>
           </div>
           <IntegrationSection />
         </div>

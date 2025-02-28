@@ -1,10 +1,8 @@
-import { ThemeSwitcher } from '../theme-switcher';
 import { Logo } from '../Logo';
 
 export function Footer() {
   return (
-    <footer className='bg-[#0A0A0B] py-20 px-4 border-t border-white/5 gradient-background'>
-      <ThemeSwitcher />
+    <footer className='bg-[#0A0A0B] py-10 px-4 border-t border-white/5 gradient-background'>
       <div className='container mx-auto max-w-6xl'>
         <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8'>
           <div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { CircleAlert } from 'lucide-react';
+import { Blocks, WandSparkles } from 'lucide-react';
 import {
   SlackLogo,
   SupabaseLogo,
@@ -70,7 +70,7 @@ export default function Features() {
   return (
     <div
       ref={sectionRef}
-      className='bg-black text-white py-16 px-4 overflow-hidden'
+      className='bg-black text-white pb-16 pt-8 px-4 overflow-hidden'
     >
       <div className='max-w-6xl mx-auto'>
         {/* Header */}
@@ -78,7 +78,7 @@ export default function Features() {
           <div
             className={`inline-flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full border border-purple-400/20 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
           >
-            <CircleAlert className='w-4 h-4 text-purple-400 animate-pulse' />
+            <Blocks className='w-4 h-4 text-purple-400 animate-pulse' />
             <span className='text-purple-400 text-sm font-medium'>
               What you&apos;ll get
             </span>
@@ -88,10 +88,10 @@ export default function Features() {
         {/* Main Heading */}
         <div className='text-center mb-16'>
           <h2
-            className={`text-4xl md:text-5xl font-medium text-white max-w-4xl mx-auto leading-tight transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`text-3xl md:text-5xl font-medium text-white max-w-4xl mx-auto leading-tight transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
-            We deliver Real-time notifications on
-            <br /> your database activities.
+            We deliver Real-time notifications
+            <br /> for Any Event trigger from Your Favorite Apps.
           </h2>
         </div>
 
@@ -368,7 +368,7 @@ export default function Features() {
                 className={`inline-flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800 transition-all duration-500 hover:border-purple-400/50 hover:bg-zinc-800 cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                 style={{ transitionDelay: `${1200 + index * 100}ms` }}
               >
-                <CircleAlert className='w-4 h-4 text-purple-400' />
+                <WandSparkles className='w-4 h-4 text-purple-400' />
                 <span className='text-white text-sm'>{text}</span>
               </div>
             ),
@@ -387,7 +387,7 @@ export default function Features() {
               className={`inline-flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800 transition-all duration-500 hover:border-purple-400/50 hover:bg-zinc-800 cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
               style={{ transitionDelay: `${1600 + index * 100}ms` }}
             >
-              <CircleAlert className='w-4 h-4 text-purple-400' />
+              <WandSparkles className='w-4 h-4 text-purple-400' />
               <span className='text-white text-sm'>{text}</span>
             </div>
           ))}

@@ -16,7 +16,7 @@ const GlowingAsterisk = () => (
 
 export default function Introduction() {
   return (
-    <div className='bg-gradient-to-br from-black to-gray-900 text-gray-100 py-24 px-6 lg:px-8 flex items-center justify-center overflow-hidden'>
+    <div className='bg-gradient-to-br from-black to-gray-900 text-gray-100 py-24 px-8 lg:px-8 flex items-center justify-center overflow-hidden'>
       <div className='max-w-3xl mx-auto text-center relative z-10'>
         <motion.div
           className='flex items-center justify-center mb-12'
@@ -30,19 +30,19 @@ export default function Introduction() {
           </span>
         </motion.div>
         <motion.h1
-          className='text-xl md:text-4xl leading-none tracking-tight mb-8'
+          className='text-2xl md:text-4xl leading-none tracking-tight mb-8'
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <span className='text-white font-medium'>
-            Supercharge your database, payment subscriptions, user signups event
+            Supercharge your database, payment subscriptions, auth event
             monitoring with Superhook.
           </span>{' '}
-          <span className='text-gray-200 font-light'>
+          <span className='text-gray-400 font-light'>
             The seamless way to stay in sync with your data's pulse.{' '}
           </span>
-          <span className='text-gray-300'>
+          <span className='text-gray-500'>
             Get instant Slack and email notifications for any event trigger with
             just a few clicks.{' '}
           </span>

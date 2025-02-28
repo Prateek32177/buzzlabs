@@ -11,7 +11,7 @@ export async function sendSlackNotification({
   templateId?: string;
   data: any;
 }) {
-  const template = getTemplate(templateId);
+  const template = getTemplate(templateId, 'slack');
   const message = template.render(data);
 
   const response = await fetch(webhookUrl, {

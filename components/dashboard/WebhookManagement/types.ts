@@ -16,17 +16,17 @@ export interface Webhook {
   platform: WebhookPlatform;
   platformConfig: Record<string, string>;
   secret: string;
-  isActive: boolean;
-  notifyEmail: boolean;
-  notifySlack: boolean;
-  emailConfig: {
-    recipientEmail: string;
-    templateId: string;
+  is_active: boolean;
+  notify_email: boolean;
+  notify_slack: boolean;
+  email_config: {
+    recipient_email: string;
+    template_id: string;
   } | null;
-  slackConfig: {
-    webhookUrl: string;
-    channelName: string;
-    templateId: string;
+  slack_config: {
+    webhook_url: string;
+    channel_name: string;
+    template_id: string;
   } | null;
   createdAt: string;
   updatedAt: string;

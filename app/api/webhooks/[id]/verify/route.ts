@@ -10,7 +10,7 @@ export async function POST(
   const id = (await params).id;
   try {
     const supabase = createClient();
-
+    const data = await req.json();
     // Get webhook config from database including notification settings
     const { data: webhook, error } = await (await supabase)
       .from('webhooks')
@@ -26,7 +26,7 @@ export async function POST(
 
     // Verify webhook based on platform
     const verificationResult = await WebhookVerificationService.verify(req, {
-      platform: webhook[0].platform || 'custom',
+      platform: webhook[0].platform || '',
       secret:
         webhook[0].platform === 'clerk'
           ? webhook[0].clerk_secret
@@ -50,25 +50,25 @@ export async function POST(
           templateId: webhook[0].email_config.template_id,
           data: {
             type: 'webhook',
-            payload: verificationResult.payload,
+            payload: data,
           },
         });
       }
 
-      if (webhook[0].notify_slack) {
-        await sendSlackNotification({
-          webhookUrl: webhook[0].slack_config.webhook_url,
-          channelName: webhook[0].slack_config.channel_name,
-          templateId: webhook[0].slack_config.template_id,
-          data: {
-            webhookId: id,
-            platform: verificationResult.platform,
-            payload: verificationResult.payload,
-            metadata: verificationResult.metadata,
-            timestamp: new Date().toISOString(),
-          },
-        });
-      }
+      // if (webhook[0].notify_slack) {
+      //   await sendSlackNotification({
+      //     webhookUrl: webhook[0].slack_config.webhook_url,
+      //     channelName: webhook[0].slack_config.channel_name,
+      //     templateId: webhook[0].slack_config.template_id,
+      //     data: {
+      //       webhookId: id,
+      //       platform: verificationResult.platform,
+      //       payload: verificationResult.payload,
+      //       metadata: verificationResult.metadata,
+      //       timestamp: new Date().toISOString(),
+      //     },
+      //   });
+      // }
     }
 
     return Response.json({
@@ -78,7 +78,7 @@ export async function POST(
   } catch (error) {
     console.error('Webhook processing error:', error);
     return Response.json(
-      { error: 'Failed to process webhook' },
+      { error: `Failed to process webhook ${JSON.stringify(error)}` },
       { status: 500 },
     );
   }

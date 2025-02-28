@@ -24,7 +24,11 @@ export class WebhookVerificationService {
           config.toleranceInSeconds,
         );
       default:
-        throw new Error(`Unsupported webhook platform: ${config.platform}`);
+        return {
+          verify: async () => ({
+            isValid: true,
+          }),
+        };
     }
   }
 }

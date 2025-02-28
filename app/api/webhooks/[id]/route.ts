@@ -34,11 +34,11 @@ export async function GET(
       name: webhook.name,
       url: webhook.url,
       secret: webhook.secret,
-      isActive: webhook.is_active,
-      notifyEmail: webhook.notify_email,
-      notifySlack: webhook.notify_slack,
-      emailConfig: webhook.email_config,
-      slackConfig: webhook.slack_config,
+      is_active: webhook.is_active,
+      notify_email: webhook.notify_email,
+      notify_slack: webhook.notify_slack,
+      email_config: webhook.email_config,
+      slack_config: webhook.slack_config,
     });
   } catch (error) {
     return NextResponse.json(
@@ -94,11 +94,11 @@ export async function PATCH(
       name: webhook.name,
       url: webhook.url,
       secret: webhook.secret,
-      isActive: webhook.is_active,
-      notifyEmail: webhook.notify_email,
-      notifySlack: webhook.notify_slack,
-      emailConfig: webhook.email_config,
-      slackConfig: webhook.slack_config,
+      is_active: webhook.is_active,
+      notify_email: webhook.notify_email,
+      notify_slack: webhook.notify_slack,
+      email_config: webhook.email_config,
+      slack_config: webhook.slack_config,
     });
   } catch (error) {
     console.error('Update webhook error:', error);

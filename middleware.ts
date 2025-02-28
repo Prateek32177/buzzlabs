@@ -27,8 +27,12 @@ export async function middleware(request: NextRequest) {
   const pathToAuthorize = ['/api'];
   const requestPathName = request.nextUrl.pathname;
 
-  const isProtectedPath = pathToAuthorize.some(path =>
-    requestPathName.startsWith(path),
+  const isProtectedPath = pathToAuthorize.some(
+    path =>
+      requestPathName.startsWith(path) &&
+      !(
+        requestPathName.startsWith('/api/webhooks') && request.method === 'POST'
+      ),
   );
 
   if (isProtectedPath) {

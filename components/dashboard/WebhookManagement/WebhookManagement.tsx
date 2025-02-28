@@ -51,7 +51,7 @@ import {
 import { WebhookContext, useWebhook } from './WebhookContext';
 import { useClipboard } from './useClipboard';
 import { PlatformConfig } from './PlatformConfig';
-
+import { SlackTemplateOptions, EmailTemplateOptions } from '@/const';
 import { Webhook, WebhookContextType } from './types';
 
 export function WebhookManagement() {
@@ -126,11 +126,16 @@ export function WebhookManagement() {
       if (!webhook) return;
 
       const updates = {
-        is_active: field === 'isActive' ? !webhook.isActive : webhook.isActive,
+        is_active:
+          field === 'isActive' ? !webhook.is_active : webhook.is_active,
         notify_email:
-          field === 'notifyEmail' ? !webhook.notifyEmail : webhook.notifyEmail,
+          field === 'notifyEmail'
+            ? !webhook.notify_email
+            : webhook.notify_email,
         notify_slack:
-          field === 'notifySlack' ? !webhook.notifySlack : webhook.notifySlack,
+          field === 'notifySlack'
+            ? !webhook.notify_slack
+            : webhook.notify_slack,
       };
 
       const response = await fetch(`/api/webhooks/${id}`, {
@@ -187,40 +192,12 @@ export function WebhookManagement() {
   };
 
   const updateWebhookConfig = async (id: string, config: Partial<Webhook>) => {
-    const updates: any = {};
-    const { isActive, notifyEmail, notifySlack, emailConfig, slackConfig } =
-      config;
-    if (isActive !== undefined) updates.is_active = isActive;
-    if (notifyEmail !== undefined) updates.notify_email = notifyEmail;
-    if (notifySlack !== undefined) updates.notify_slack = notifySlack;
-    if (emailConfig !== undefined) {
-      updates.email_config = {};
-      if (emailConfig?.recipientEmail !== undefined) {
-        updates.email_config.recipient_email = emailConfig.recipientEmail;
-      }
-      if (emailConfig?.templateId !== undefined) {
-        updates.email_config.template_id = emailConfig.templateId;
-      }
-    }
-    if (slackConfig !== undefined) {
-      updates.slack_config = {};
-      if (slackConfig?.webhookUrl !== undefined) {
-        updates.slack_config.webhook_url = slackConfig.webhookUrl;
-      }
-      if (slackConfig?.channelName !== undefined) {
-        updates.slack_config.channel_name = slackConfig.channelName;
-      }
-      if (slackConfig?.templateId !== undefined) {
-        updates.slack_config.template_id = slackConfig.templateId;
-      }
-    }
-
     setIsLoadingId(id);
     try {
       const response = await fetch(`/api/webhooks/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
+        body: JSON.stringify(config),
       });
 
       if (!response.ok) {
@@ -253,7 +230,7 @@ export function WebhookManagement() {
     const webhook = webhooks.find(w => w.id === id);
     if (!webhook) return;
     // If trying to enable, show config first
-    else if (!webhook[field]) {
+    else if (!webhook[field as keyof Webhook]) {
       if (field === 'notifyEmail') {
         setShowEmailConfig(id);
       } else {
@@ -354,7 +331,7 @@ export function WebhookManagement() {
                         <TableCell className='pr-8'>
                           <div className='flex items-center flex-start gap-4'>
                             <Switch
-                              checked={webhook.isActive}
+                              checked={webhook.is_active}
                               onCheckedChange={() =>
                                 toggleWebhook(webhook.id, 'isActive')
                               }
@@ -370,7 +347,7 @@ export function WebhookManagement() {
                                 <span className='text-sm'>Email</span>
                               </div>
                               <Switch
-                                checked={webhook.notifyEmail}
+                                checked={webhook.notify_email}
                                 onCheckedChange={() =>
                                   handleNotificationToggle(
                                     webhook.id,
@@ -386,7 +363,7 @@ export function WebhookManagement() {
                                 <span className='text-sm'>Slack</span>
                               </div>
                               <Switch
-                                checked={webhook.notifySlack}
+                                checked={webhook.notify_slack}
                                 onCheckedChange={() =>
                                   handleNotificationToggle(
                                     webhook.id,
@@ -562,17 +539,17 @@ function WebhookDetails({
                 <span>Email Notifications</span>
               </div>
               <Switch
-                checked={webhook.notifyEmail}
+                checked={webhook.notify_email}
                 onCheckedChange={() =>
-                  onUpdate(webhook.id, { notifyEmail: !webhook.notifyEmail })
+                  onUpdate(webhook.id, { notify_email: !webhook.notify_email })
                 }
                 disabled={isLoading}
               />
             </div>
             <div className='flex items-center gap-2'>
-              {webhook.emailConfig && (
+              {webhook.email_config && (
                 <Badge variant='outline' className='text-xs'>
-                  {webhook.emailConfig.recipientEmail}
+                  {webhook.email_config.recipient_email}
                 </Badge>
               )}
               <Button
@@ -580,7 +557,7 @@ function WebhookDetails({
                 size='sm'
                 onClick={() => setShowEmailConfig(webhook.id)}
               >
-                {webhook.emailConfig ? 'Edit' : 'Configure'}
+                {webhook.email_config ? 'Edit' : 'Configure'}
               </Button>
             </div>
           </div>
@@ -591,17 +568,17 @@ function WebhookDetails({
                 <span>Slack Notifications</span>
               </div>
               <Switch
-                checked={webhook.notifySlack}
+                checked={webhook.notify_slack}
                 onCheckedChange={() =>
-                  onUpdate(webhook.id, { notifySlack: !webhook.notifySlack })
+                  onUpdate(webhook.id, { notify_slack: !webhook.notify_slack })
                 }
                 disabled={isLoading}
               />
             </div>
             <div className='flex items-center gap-2'>
-              {webhook.slackConfig && (
+              {webhook.slack_config && (
                 <Badge variant='outline' className='text-xs'>
-                  {webhook.slackConfig.channelName}
+                  {webhook.slack_config.channel_name}
                 </Badge>
               )}
               <Button
@@ -609,7 +586,7 @@ function WebhookDetails({
                 size='sm'
                 onClick={() => setShowSlackConfig(webhook.id)}
               >
-                {webhook.slackConfig ? 'Edit' : 'Configure'}
+                {webhook.slack_config ? 'Edit' : 'Configure'}
               </Button>
             </div>
           </div>
@@ -624,32 +601,36 @@ function EmailConfigDialog() {
     webhooks,
     showEmailConfig,
     setShowEmailConfig,
-    toggleWebhook,
     updateWebhookConfig,
-    isLoading,
+    isLoadingId,
   } = useWebhook();
+  const webhook = showEmailConfig
+    ? webhooks.find(w => w.id === showEmailConfig)
+    : null;
 
   return (
     <Dialog
       open={showEmailConfig !== null}
-      onOpenChange={open => !open && setShowEmailConfig(null)}
+      onOpenChange={open => {
+        if (!open) setShowEmailConfig(null);
+      }}
     >
       <DialogContent className='max-w-md max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>Email Configuration</DialogTitle>
         </DialogHeader>
-        {showEmailConfig && (
+        {webhook && (
           <EmailConfig
-            webhook={webhooks.find(w => w.id === showEmailConfig)!}
+            webhook={webhook}
             onUpdate={async config => {
-              await updateWebhookConfig(showEmailConfig, {
-                notifyEmail: true,
-                emailConfig: config.emailConfig,
+              await updateWebhookConfig(showEmailConfig!, {
+                notify_email: true,
+                email_config: config.email_config,
               });
               setShowEmailConfig(null);
             }}
             onCancel={() => setShowEmailConfig(null)}
-            isLoading={isLoading}
+            isLoading={isLoadingId === showEmailConfig}
           />
         )}
       </DialogContent>
@@ -668,20 +649,20 @@ function EmailConfig({
   onCancel: () => void;
   isLoading: boolean;
 }) {
-  const [emailConfig, setEmailConfig] = useState(
-    webhook.emailConfig || {
-      recipientEmail: '',
-      templateId: '',
-    },
-  );
+  const [emailConfig, setEmailConfig] = useState({
+    recipient_email: webhook.email_config?.recipient_email || '',
+    template_id: webhook.email_config?.template_id || '',
+  });
+
+  const isEmailConfigured = !!webhook.email_config?.recipient_email;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!emailConfig.recipientEmail) {
+    if (!emailConfig.recipient_email) {
       toast.error('Error', { description: 'Recipient email is required' });
       return;
     }
-    await onUpdate({ emailConfig });
+    await onUpdate({ email_config: emailConfig });
   };
 
   return (
@@ -693,11 +674,11 @@ function EmailConfig({
           type='email'
           required
           placeholder='Enter recipient email'
-          value={emailConfig.recipientEmail}
+          value={emailConfig.recipient_email}
           onChange={e =>
             setEmailConfig({
               ...emailConfig,
-              recipientEmail: e.target.value,
+              recipient_email: e.target.value,
             })
           }
           disabled={isLoading}
@@ -707,11 +688,11 @@ function EmailConfig({
         <Label htmlFor='emailTemplate'>Template</Label>
         <Select
           disabled={isLoading}
-          value={emailConfig.templateId}
+          value={emailConfig.template_id}
           onValueChange={value =>
             setEmailConfig({
               ...emailConfig,
-              templateId: value,
+              template_id: value,
             })
           }
         >
@@ -719,8 +700,11 @@ function EmailConfig({
             <SelectValue placeholder='Select a template' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='template1'>Template 1</SelectItem>
-            <SelectItem value='template2'>Template 2</SelectItem>
+            {EmailTemplateOptions.map(template => (
+              <SelectItem key={template.id} value={template.id}>
+                {template.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -735,7 +719,7 @@ function EmailConfig({
         </Button>
         <Button
           type='submit'
-          disabled={isLoading || !emailConfig.recipientEmail}
+          disabled={isLoading || !emailConfig.recipient_email}
         >
           {isLoading ? (
             <>
@@ -771,7 +755,7 @@ function SlackConfigDialog() {
       open={showSlackConfig !== null}
       onOpenChange={open => {
         if (!open) {
-          if (!webhook.slackConfig) {
+          if (!webhook.slack_config) {
             toggleWebhook(webhook.id, 'notifySlack');
           }
           setShowSlackConfig(null);
@@ -786,13 +770,13 @@ function SlackConfigDialog() {
           webhook={webhook}
           onUpdate={async config => {
             await updateWebhookConfig(showSlackConfig, {
-              notifySlack: true,
-              slackConfig: config.slackConfig,
+              notify_slack: true,
+              slack_config: config.slack_config,
             });
             setShowSlackConfig(null);
           }}
           onCancel={() => {
-            if (!webhook.slackConfig) {
+            if (!webhook.slack_config) {
               toggleWebhook(webhook.id, 'notifySlack');
             }
             setShowSlackConfig(null);
@@ -816,20 +800,20 @@ function SlackConfig({
   isLoading: boolean;
 }) {
   const [slackConfig, setSlackConfig] = useState(
-    webhook.slackConfig || {
-      webhookUrl: '',
-      channelName: '',
-      templateId: '',
+    webhook.slack_config || {
+      webhook_url: '',
+      channel_name: '',
+      template_id: '',
     },
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!slackConfig.webhookUrl) {
+    if (!slackConfig.webhook_url) {
       toast.error('Error', { description: 'Webhook URL is required' });
       return;
     }
-    await onUpdate({ slackConfig });
+    await onUpdate({ slack_config: slackConfig });
   };
 
   return (
@@ -841,11 +825,11 @@ function SlackConfig({
             id='slackWebhookUrl'
             required
             placeholder='Enter Slack webhook URL'
-            value={slackConfig.webhookUrl}
+            value={slackConfig.webhook_url}
             onChange={e =>
               setSlackConfig({
                 ...slackConfig,
-                webhookUrl: e.target.value,
+                webhook_url: e.target.value,
               })
             }
             disabled={isLoading}
@@ -856,11 +840,11 @@ function SlackConfig({
           <Input
             id='slackChannel'
             placeholder='Enter channel name'
-            value={slackConfig.channelName}
+            value={slackConfig.channel_name}
             onChange={e =>
               setSlackConfig({
                 ...slackConfig,
-                channelName: e.target.value,
+                channel_name: e.target.value,
               })
             }
             disabled={isLoading}
@@ -870,11 +854,11 @@ function SlackConfig({
           <Label htmlFor='slackTemplate'>Template</Label>
           <Select
             disabled={isLoading}
-            value={slackConfig.templateId}
+            value={slackConfig.template_id}
             onValueChange={value =>
               setSlackConfig({
                 ...slackConfig,
-                templateId: value,
+                template_id: value,
               })
             }
           >
@@ -882,8 +866,11 @@ function SlackConfig({
               <SelectValue placeholder='Select a template' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='template1'>Template 1</SelectItem>
-              <SelectItem value='template2'>Template 2</SelectItem>
+              {SlackTemplateOptions.map(template => (
+                <SelectItem key={template.id} value={template.id}>
+                  {template.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -897,7 +884,7 @@ function SlackConfig({
         >
           Cancel
         </Button>
-        <Button type='submit' disabled={isLoading || !slackConfig.webhookUrl}>
+        <Button type='submit' disabled={isLoading || !slackConfig.webhook_url}>
           {isLoading ? (
             <>
               <Loader2 className='mr-2 h-4 w-4 animate-spin' />

@@ -1,140 +1,64 @@
-import { Separator } from '@/components/ui/separator';
-import Link from 'next/link';
 import { ThemeSwitcher } from '../theme-switcher';
+import { Logo } from '../Logo';
 
 export function Footer() {
   return (
-    <footer className='border-t bg-background'>
+    <footer className='bg-[#0A0A0B] py-20 px-4 border-t border-white/5 gradient-background'>
       <ThemeSwitcher />
-      <div className='container flex flex-col gap-10 py-16'>
-        <div className='grid grid-cols-2 gap-12 md:grid-cols-4'>
-          <div className='flex flex-col gap-4'>
-            <h3 className='text-lg font-semibold'>Product</h3>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Features
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Pricing
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Changelog
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Documentation
-            </Link>
+      <div className='container mx-auto max-w-6xl'>
+        <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8'>
+          <div>
+            <div className='mb-4'>
+              <Logo size='text-2xl' />
+            </div>
+            <p className='text-white/70'>
+              Building the future of notification webhook infrastructure
+            </p>
           </div>
-          <div className='flex flex-col gap-4'>
-            <h3 className='text-lg font-semibold'>Company</h3>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              About
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Blog
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Careers
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Contact
-            </Link>
-          </div>
-          <div className='flex flex-col gap-4'>
-            <h3 className='text-lg font-semibold'>Legal</h3>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Privacy
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Terms
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Cookie Policy
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Licenses
-            </Link>
-          </div>
-          <div className='flex flex-col gap-4'>
-            <h3 className='text-lg font-semibold'>Social</h3>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Twitter
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              GitHub
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Discord
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              LinkedIn
-            </Link>
-          </div>
+
+          {/* {[
+                  {
+                    title: 'Legal',
+                    links: ['Privacy', 'Terms', 'Cookie Policy', 'Licenses'],
+                  },
+                ].map(section => (
+                  <div key={section.title}>
+                    <h3 className='font-medium mb-4 text-white'>{section.title}</h3>
+                    <ul className='space-y-2'>
+                      {section.links.map(link => (
+                        <li key={link}>
+                          <a
+                            href='#'
+                            className='text-white/70 hover:text-white transition-colors'
+                          >
+                            {link}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))} */}
         </div>
-        <Separator />
-        <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
-          <p className='text-sm text-muted-foreground'>
-            © {new Date().getFullYear()} Quinx. All rights reserved.
-          </p>
-          <div className='flex gap-4'>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href='#'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Terms of Service
-            </Link>
+
+        <div className='border-t border-white/5 pt-8'>
+          <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
+            <p className='text-white/70'>
+              © 2025 Superhook. All rights reserved.
+            </p>
+            <div className='flex gap-6'>
+              <a
+                href='#'
+                className='text-white/70 hover:text-white transition-colors'
+              >
+                Privacy Policy
+              </a>
+              <a
+                href='#'
+                className='text-white/70 hover:text-white transition-colors'
+              >
+                Terms of Service
+              </a>
+            </div>
           </div>
         </div>
       </div>

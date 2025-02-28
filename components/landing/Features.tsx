@@ -96,7 +96,7 @@ export default function Features() {
         </div>
 
         {/* Top Row Features */}
-        <div className='grid md:grid-cols-3 gap-6 mb-6'>
+        <div className='grid md:grid-cols-3 px-6 gap-6 mb-6'>
           {/* Instant Tracking */}
           <div
             className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
@@ -119,8 +119,10 @@ export default function Features() {
                 ))}
               </div>
             </div>
-            <h3 className='text-xl font-medium mb-2'>Instant Tracking</h3>
-            <p className='text-zinc-400'>
+            <h3 className='text-sm md:text-xl  font-medium mb-2'>
+              Instant Tracking
+            </h3>
+            <p className='text-sm md:text-md text-zinc-400'>
               Monitor all database changes as they happen in real-time
             </p>
           </div>
@@ -131,6 +133,15 @@ export default function Features() {
             style={{ transitionDelay: '400ms' }}
           >
             <div className='bg-zinc-900 rounded-lg p-4 mb-6 w-full max-w-[240px] mx-auto'>
+              <div className='px-4 opacity-50'>
+                <div className='flex items-center gap-1.5'></div>
+                <div className='text-white text-xs'>
+                  {' '}
+                  <span className='text-purple-400 text-xs'>NEW</span> Payment
+                  received. you made 29$.
+                </div>
+                <div className='text-zinc-500 text-xs'>Today, 4:50</div>
+              </div>{' '}
               <div className='flex items-center justify-center h-32'>
                 <div className='bg-zinc-800 rounded-lg p-3 w-full max-w-[200px] transform transition-all duration-500 hover:scale-105'>
                   <div className='flex items-center gap-2 mb-2'>
@@ -157,8 +168,8 @@ export default function Features() {
                 </div>
               </div>
             </div>
-            <h3 className='text-xl font-medium mb-2'>Smart Notifications</h3>
-            <p className='text-zinc-400'>
+            <h3 className='text-sm md:text-xl  mb-2'>Smart Notifications</h3>
+            <p className='text-sm md:text-md text-zinc-400'>
               Get alerts delivered directly to your preferred channels - Slack
               or email
             </p>
@@ -241,15 +252,17 @@ export default function Features() {
                 </svg>
               </div>
             </div>
-            <h3 className='text-xl font-medium mb-2'>Scalable as you grow</h3>
-            <p className='text-zinc-400'>
+            <h3 className='text-sm md:text-xl  font-medium mb-2'>
+              Scalable as you grow
+            </h3>
+            <p className='text-sm md:text-md   text-zinc-400'>
               We&apos;re ready to meet your evolving needs.
             </p>
           </div>
         </div>
 
         {/* Bottom Row Features */}
-        <div className='grid md:grid-cols-2 gap-6 mb-8'>
+        <div className='grid md:grid-cols-2 gap-6 mb-8 px-6'>
           {/* Effortless Integration */}
           <div
             className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}
@@ -257,10 +270,10 @@ export default function Features() {
           >
             <div className='flex flex-col md:flex-row'>
               <div className='flex-1'>
-                <h3 className='text-xl font-medium mb-2'>
+                <h3 className='text-sm md:text-xl   font-medium mb-2'>
                   Effortless Integration
                 </h3>
-                <p className='text-zinc-400 mb-6'>
+                <p className='text-sm md:text-md  text-zinc-400 mb-6'>
                   Connect within minutes with your existing database, payment
                   tools, auth libraries and notification apps.
                 </p>
@@ -293,8 +306,10 @@ export default function Features() {
           >
             <div className='flex flex-col md:flex-row'>
               <div className='flex-1'>
-                <h3 className='text-xl font-medium mb-2'>Secure & Reliable</h3>
-                <p className='text-zinc-400 mb-6'>
+                <h3 className='text-sm md:text-xl   font-medium mb-2'>
+                  Secure & Reliable
+                </h3>
+                <p className='text-sm md:text-md   text-zinc-400 mb-6'>
                   Enterprise-grade security for your webhook infrastructure.
                 </p>
               </div>

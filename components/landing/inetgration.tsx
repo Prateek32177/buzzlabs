@@ -11,7 +11,7 @@ import { Plug } from 'lucide-react';
 export default function Integration() {
   return (
     <>
-      <section className='py-16 md:py-20 relative overflow-hidden bg-gradient-to-br from-black to-gray-900'>
+      <section className='py-16 md:py-20 relative overflow-hidden bg-zinc-900'>
         <div className='grid-pattern' />
         <div>
           <div className='text-center '>

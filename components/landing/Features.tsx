@@ -11,6 +11,7 @@ import {
   ResendLogo,
   TeamsLogo,
 } from '../Logos';
+import { GitHubLogoIcon } from '@radix-ui/react-icons';
 
 export default function Features() {
   const [isVisible, setIsVisible] = useState(false);
@@ -36,6 +37,7 @@ export default function Features() {
 
   const icons = [
     <SupabaseLogo className='w-6 h-6' />,
+    <GitHubLogoIcon className='w-6 h-6' />,
     <ClerkLogo className='w-6 h-6 ' />,
     <PolarLogo className='w-6 h-6 ' />,
     <LoopsLogo className='w-6 h-6 ' />,

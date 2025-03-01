@@ -83,14 +83,14 @@ export default function EmailTemplateEditor() {
           setEditedSubject(rendered.subject);
 
           // Initialize variables if any
-          const initialVars = templateData?.variables?.reduce(
-            (acc, curr) => ({
-              ...acc,
-              [curr]: '',
-            }),
-            {},
-          );
-          setVariables(initialVars);
+          // const initialVars = templateData?.variables?.reduce(
+          //   (acc, curr) => ({
+          //     ...acc,
+          //     [curr]: '',
+          //   }),
+          //   {},
+          // );
+          // setVariables(initialVars);
         }
       } catch (error) {
         console.error('Failed to load template:', error);

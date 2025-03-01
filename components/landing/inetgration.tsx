@@ -7,6 +7,7 @@ import { ResendLogo } from '../Logos/Resend';
 import { ClerkLogo } from '../Logos/Clerk';
 import { LoopsLogo } from '../Logos/Loops';
 import { Plug } from 'lucide-react';
+import { GithubLogo } from '../Logos/Github';
 
 export default function Integration() {
   return (
@@ -53,6 +54,7 @@ function IntegrationSection() {
             <div key={setIndex} className='flex gap-8'>
               {[
                 { name: 'Polar', icon: PolarLogo, comingSoon: true },
+                { name: '', icon: GithubLogo, comingSoon: false },
                 { name: 'Supabase', icon: SupabaseLogo, comingSoon: false },
                 { name: 'Clerk', icon: ClerkLogo, comingSoon: true },
               ].map((brand, i) => (

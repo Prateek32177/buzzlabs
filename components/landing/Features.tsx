@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Blocks, WandSparkles } from 'lucide-react';
+import { Lock, Unlock } from 'lucide-react';
 import {
   SlackLogo,
   SupabaseLogo,
@@ -301,84 +302,12 @@ export default function Features() {
             </div>
           </div>
 
-          {/* Custom constraints */}
-          <div
-            className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}
-            style={{ transitionDelay: '1000ms' }}
-          >
-            <div className='flex flex-col md:flex-row'>
-              <div className='flex-1'>
-                <h3 className='text-sm md:text-xl   font-medium mb-2'>
-                  Secure & Reliable
-                </h3>
-                <p className='text-sm md:text-md   text-zinc-400 mb-6'>
-                  Enterprise-grade security for your webhook infrastructure.
-                </p>
-              </div>
-              <div className='flex-1 flex items-center justify-center'>
-                <div className='relative w-32 h-16'>
-                  <div
-                    className={`absolute w-16 h-16 bg-purple-500 rounded-full opacity-80 left-0 transition-all duration-1000 ${isVisible ? 'transform-none' : 'scale-0 -translate-x-8'}`}
-                    style={{ filter: 'blur(8px)' }}
-                  ></div>
-                  <div
-                    className='absolute w-16 h-16 bg-purple-500 rounded-full opacity-80 left-0 transition-all duration-1000'
-                    style={{
-                      transform: isVisible ? 'scale(1)' : 'scale(0)',
-                      transitionDelay: '200ms',
-                    }}
-                  ></div>
-                  <div
-                    className={`absolute w-16 h-16 bg-blue-400 rounded-full opacity-80 left-8 top-0 transition-all duration-1000 ${isVisible ? 'transform-none' : 'scale-0 -translate-y-8'}`}
-                    style={{
-                      filter: 'blur(8px)',
-                      transitionDelay: '400ms',
-                    }}
-                  ></div>
-                  <div
-                    className='absolute w-16 h-16 bg-blue-400 rounded-full opacity-80 left-8 top-0 transition-all duration-1000'
-                    style={{
-                      transform: isVisible ? 'scale(1)' : 'scale(0)',
-                      transitionDelay: '600ms',
-                    }}
-                  ></div>
-                  <div
-                    className={`absolute w-16 h-16 bg-yellow-300 rounded-full opacity-80 left-16 top-0 transition-all duration-1000 ${isVisible ? 'transform-none' : 'scale-0 translate-x-8'}`}
-                    style={{
-                      filter: 'blur(8px)',
-                      transitionDelay: '800ms',
-                    }}
-                  ></div>
-                  <div
-                    className='absolute w-16 h-16 bg-yellow-300 rounded-full opacity-80 left-16 top-0 transition-all duration-1000'
-                    style={{
-                      transform: isVisible ? 'scale(1)' : 'scale(0)',
-                      transitionDelay: '1000ms',
-                    }}
-                  ></div>
-                  <div
-                    className={`absolute w-16 h-16 bg-zinc-700 rounded-full opacity-50 left-24 top-0 transition-all duration-1000 ${isVisible ? 'transform-none' : 'scale-0 translate-y-8'}`}
-                    style={{
-                      filter: 'blur(8px)',
-                      transitionDelay: '1200ms',
-                    }}
-                  ></div>
-                  <div
-                    className='absolute w-16 h-16 bg-zinc-700 rounded-full opacity-50 left-24 top-0 transition-all duration-1000'
-                    style={{
-                      transform: isVisible ? 'scale(1)' : 'scale(0)',
-                      transitionDelay: '1400ms',
-                    }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SecurityReliabilityCard />
         </div>
 
         {/* Feature Pills */}
         <div className='flex flex-wrap justify-center gap-4 mb-6'>
-          {['Slack Message Templates', 'Email Templates', 'Manage Alerts'].map(
+          {['Slack Message Templates', 'Email Templates', 'Realtime Alert logs'].map(
             (text, index) => (
               <div
                 key={index}
@@ -422,6 +351,85 @@ export default function Features() {
           }
         }
       `}</style>
+    </div>
+  );
+}
+
+function SecurityReliabilityCard() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+
+  useEffect(() => {
+    const visibilityTimer = setTimeout(() => setIsVisible(true), 300);
+    const lockTimer = setTimeout(() => setIsLocked(true), 3000);
+
+    return () => {
+      clearTimeout(visibilityTimer);
+      clearTimeout(lockTimer);
+    };
+  }, []);
+
+  return (
+    <div
+      className={`bg-zinc-900/60 rounded-xl h-full p-6 border border-zinc-800 transition-all duration-500 hover:border-emerald-400/30 hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] ${
+        isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+      }`}
+      style={{ transitionDelay: '300ms' }}
+    >
+      <div className='flex flex-col md:flex-row'>
+        <div className='flex-1'>
+          <h3 className='text-sm md:text-xl font-medium mb-2 text-white'>
+            Secure & Reliable
+          </h3>
+          <p className='text-sm md:text-md text-zinc-400 mb-6'>
+            Enterprise-grade security for your webhook infrastructure.
+          </p>
+        </div>
+
+        <div className='flex-1 flex items-center justify-center relative p-8'>
+          {/* Central security dial */}
+          <div
+            className={`absolute w-20 h-20 md:w-32 md:h-32 rounded-full transition-all duration-1000 ${
+              isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+            }`}
+            style={{ transitionDelay: '500ms' }}
+          >
+            {/* Outer ring */}
+            <div className='absolute inset-0 rounded-full border-4 border-emerald-600/30 animate-spin-slow'></div>
+
+            {/* Inner circle with glow */}
+            <div className='absolute inset-2 rounded-full bg-zinc-900 flex items-center justify-center overflow-hidden'>
+              <div className='absolute inset-0 bg-emerald-500/5'></div>
+
+              {/* Lock icon with animation */}
+              <div className='relative z-10'>
+                <div
+                  className={`transition-all duration-500 ${isLocked ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+                >
+                  <Lock
+                    className='w-12 h-12 md:w-16 md:h-16 text-emerald-400'
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <div
+                  className={`absolute inset-0 transition-all duration-500 ${isLocked ? 'opacity-0 scale-0' : 'opacity-100 scale-100'}`}
+                >
+                  <Unlock
+                    className='w-12 h-12 md:w-16 md:h-16 text-red-600'
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <div className='absolute inset-0 bg-emerald-400/30 filter blur-xl rounded-full animate-pulse-slow'></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Scanning line */}
+          <div className='absolute inset-0 overflow-hidden opacity-30'>
+            <div className='absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent animate-scan'></div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

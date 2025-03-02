@@ -91,7 +91,7 @@ export default function Hero() {
               No Code, Just Connect it
               <ArrowRight className='ml-1 h-3 w-3' />
             </Badge>
-            <h1 className='text-5xl  tracking-tight sm:text-5xl md:text-6xl lg:text-7xl'>
+            <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
               Capture Events,{' '}
               <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200'>
                 Send Notifications
@@ -174,7 +174,7 @@ export default function Hero() {
                     <span className='text-3xl font-bold text-white'>Focus</span>
                   </div>
                   <div className='mt-1 text-xs text-purple-200'>
-                    on What Matters to you, we'll handle the notifications.
+                    on What Matters to you, we'll handle the alerts.
                   </div>
                 </motion.div>
 

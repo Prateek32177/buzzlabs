@@ -6,13 +6,11 @@ import {
   BookOpen,
   Bot,
   Command,
-  Frame,
   GalleryVerticalEnd,
-  Icon,
-  Map,
-  PieChart,
   Settings2,
-  SquareTerminal,
+  LayoutPanelTop,
+  Mails,
+  SlackIcon,
 } from 'lucide-react';
 
 import { NavMain } from './nav-main';
@@ -55,7 +53,7 @@ const data = {
     {
       title: 'Manage Webhooks',
       url: '/dashboard/webhooks',
-      icon: SquareTerminal,
+      icon: LayoutPanelTop,
       active: true,
     },
     {
@@ -66,12 +64,12 @@ const data = {
     {
       title: 'Email Templates',
       url: '/dashboard/email-templates',
-      icon: BookOpen,
+      icon: Mails,
     },
     {
       title: 'Slack Templates',
       url: '/dashboard/slack-templates',
-      icon: BookOpen,
+      icon: SlackIcon,
     },
     {
       title: 'Integration Guide',

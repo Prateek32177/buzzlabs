@@ -307,18 +307,20 @@ export default function Features() {
 
         {/* Feature Pills */}
         <div className='flex flex-wrap justify-center gap-4 mb-6'>
-          {['Slack Message Templates', 'Email Templates', 'Realtime Alert logs'].map(
-            (text, index) => (
-              <div
-                key={index}
-                className={`inline-flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800 transition-all duration-500 hover:border-purple-400/50 hover:bg-zinc-800 cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: `${1200 + index * 100}ms` }}
-              >
-                <WandSparkles className='w-4 h-4 text-purple-400' />
-                <span className='text-white text-sm'>{text}</span>
-              </div>
-            ),
-          )}
+          {[
+            'Slack Message Templates',
+            'Email Templates',
+            'Realtime Alert logs',
+          ].map((text, index) => (
+            <div
+              key={index}
+              className={`inline-flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800 transition-all duration-500 hover:border-purple-400/50 hover:bg-zinc-800 cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ transitionDelay: `${1200 + index * 100}ms` }}
+            >
+              <WandSparkles className='w-4 h-4 text-purple-400' />
+              <span className='text-white text-sm'>{text}</span>
+            </div>
+          ))}
         </div>
 
         {/* Bottom Feature Pills */}

@@ -45,7 +45,8 @@ export async function POST(
     if (webhook[0].is_active) {
       if (webhook[0].notify_email) {
         await sendEmail({
-          from: 'alerts@brokersify.in',
+          userId: webhook[0].user_id,
+          from: 'Superhook Alerts <alerts@brokersify.in>',
           to: webhook[0].email_config.recipient_email,
           templateId: webhook[0].email_config.template_id,
           data: {

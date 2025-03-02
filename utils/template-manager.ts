@@ -89,7 +89,7 @@ export class TemplateService {
     data: any,
   ): Promise<any> {
     const template = await this.getUserTemplate(userId, templateId);
-    return template.render(data);
+    return template;
   }
 
   /**

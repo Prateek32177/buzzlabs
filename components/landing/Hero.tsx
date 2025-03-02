@@ -76,7 +76,7 @@ export default function Hero() {
 
       <section className='pt-40 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
         <div className='absolute inset-0 z-0'>
-          <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={5} />
+          <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
         </div>
         <div className='container   max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
@@ -103,19 +103,6 @@ export default function Hero() {
               channels.
             </p>
             <WaitlistForm />
-            {/* <div className='mt-10 flex justify-center gap-x-6'>
-              <Button
-                size='lg'
-                className='bg-gradient-to-tr from-purple-400 to-purple-700 text-white'
-              >
-                Get Started
-                <ArrowRight className='ml-2 h-5 w-5' />
-              </Button>
-              <WaitlistForm/>
-              <Button size='lg' variant='outline'>
-                View Demo
-              </Button>
-            </div> */}
             {/* Animated data points */}
             {/* Time savings data point */}
             <div className='relative z-10 mt-16 md:mt-24'>
@@ -127,14 +114,16 @@ export default function Hero() {
                     x: isVisible ? 0 : -50,
                   }}
                   transition={{ duration: 0.8, delay: 0.6 }}
-                  className='rounded-lg bg-purple-900/30 p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg bg-gradient-to-b from-purple-900/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <Clock className='h-4 w-4' />
                     <span className='text-xs font-medium'>time saved</span>
                   </div>
                   <div className='mt-1 flex items-baseline gap-1'>
-                    <span className='text-3xl font-bold text-white'>95%</span>
+                    <span className='text-3xl font-bold text-white flex-wrap'>
+                      95%
+                    </span>
                     <span className='text-sm text-purple-300'>faster</span>
                   </div>
                   <div className='mt-1 text-xs text-purple-200'>
@@ -150,7 +139,7 @@ export default function Hero() {
                     y: isVisible ? 0 : 50,
                   }}
                   transition={{ duration: 0.8, delay: 0.9 }}
-                  className='rounded-lg bg-purple-900/40 p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg  bg-gradient-to-b from-purple-900/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <BarChart3 className='h-4 w-4' />
@@ -158,7 +147,7 @@ export default function Hero() {
                       platform efficiency
                     </span>
                   </div>
-                  <div className='mt-1 flex items-baseline gap-1'>
+                  <div className='mt-1 flex items-baseline gap-1 flex-wrap'>
                     <span className='text-3xl font-bold text-white'>99.8%</span>
                     <span className='text-sm text-purple-300'>uptime</span>
                   </div>
@@ -175,7 +164,7 @@ export default function Hero() {
                     x: isVisible ? 0 : 50,
                   }}
                   transition={{ duration: 0.8, delay: 1.2 }}
-                  className='rounded-lg bg-purple-900/50 p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg bg-gradient-to-b from-purple-900/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <ArrowUpRight className='h-4 w-4' />
@@ -197,7 +186,7 @@ export default function Hero() {
                     y: isVisible ? 0 : -50,
                   }}
                   transition={{ duration: 0.8, delay: 1.5 }}
-                  className='rounded-lg bg-purple-900/60 p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg bg-gradient-to-b from-purple-900/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <BarChart3 className='h-4 w-4' />

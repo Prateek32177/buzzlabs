@@ -411,27 +411,6 @@ export default function Features() {
         </div>
       </div>
 
-      {/* Background particles */}
-      <div className='absolute inset-0 overflow-hidden pointer-events-none'>
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className='absolute w-1 h-1 rounded-full bg-purple-400/30'
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: isVisible ? 0.3 + Math.random() * 0.5 : 0,
-              transform: `scale(${0.5 + Math.random() * 2})`,
-              filter: `blur(${Math.random() * 2}px)`,
-              animation: `float ${5 + Math.random() * 10}s infinite ease-in-out`,
-              animationDelay: `${Math.random() * 5}s`,
-              transition: 'opacity 1s ease-in-out',
-              transitionDelay: `${1000 + i * 100}ms`,
-            }}
-          />
-        ))}
-      </div>
-
       <style jsx global>{`
         @keyframes float {
           0%,

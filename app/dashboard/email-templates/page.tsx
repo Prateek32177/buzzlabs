@@ -16,6 +16,8 @@ import { Label } from '@/components/ui/label';
 import dynamic from 'next/dynamic';
 import { emailTemplates } from '@/lib/templates';
 import { TemplateService } from '@/utils/template-manager';
+import { toast } from 'sonner';
+import { Loader } from 'lucide-react';
 
 const userId = '95a6137a-c8e3-4ca5-8270-db5c77a6fd1b';
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
@@ -47,7 +49,6 @@ export default function EmailTemplateEditor() {
   const [editedContent, setEditedContent] = useState<string>('');
   const [editedSubject, setEditedSubject] = useState<string>('');
   const [variables, setVariables] = useState<Record<string, string>>({});
-  const [activeView, setActiveView] = useState<string>('editor');
 
   const [templateId, setTemplateId] = useState<string>('template1');
   const [isSaving, setIsSaving] = useState(false);
@@ -57,9 +58,6 @@ export default function EmailTemplateEditor() {
 
   const templateService = new TemplateService();
   const [isLoading, setIsLoading] = useState(true);
-  const [template, setTemplate] = useState<Template | null>(null);
-  const [editedHtml, setEditedHtml] = useState<string>('');
-  const [previewData, setPreviewData] = useState<any>(null);
 
   useEffect(() => {
     async function loadTemplate() {
@@ -190,15 +188,16 @@ export default function EmailTemplateEditor() {
             </Button>
 
             {saveStatus === 'saved' && (
-              <span className='success'>✓ Saved successfully</span>
+
+              toast.success('✓ Saved successfully')
             )}
             {saveStatus === 'error' && (
-              <span className='error'>Failed to save</span>
+              toast.error('Failed to save')
             )}
           </div>
         </div>
 
-        {selectedTemplate && (
+        {selectedTemplate && !isLoading ? (
           <>
             {/* Mobile View */}
             <div className='md:hidden'>
@@ -244,7 +243,9 @@ export default function EmailTemplateEditor() {
               />
             </div>
           </>
-        )}
+        ):
+        <Loader className='w-10 h-10 text-center text-white animate-spin m-auto mt-20'/>
+        }
       </div>
     </div>
   );

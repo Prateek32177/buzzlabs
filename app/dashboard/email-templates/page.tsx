@@ -187,13 +187,8 @@ export default function EmailTemplateEditor() {
               {isSaving ? 'Saving...' : 'Save Template'}
             </Button>
 
-            {saveStatus === 'saved' && (
-
-              toast.success('✓ Saved successfully')
-            )}
-            {saveStatus === 'error' && (
-              toast.error('Failed to save')
-            )}
+            {saveStatus === 'saved' && toast.success('✓ Saved successfully')}
+            {saveStatus === 'error' && toast.error('Failed to save')}
           </div>
         </div>
 
@@ -243,9 +238,9 @@ export default function EmailTemplateEditor() {
               />
             </div>
           </>
-        ):
-        <Loader className='w-10 h-10 text-center text-white animate-spin m-auto mt-20'/>
-        }
+        ) : (
+          <Loader className='w-10 h-10 text-center text-white animate-spin m-auto mt-20' />
+        )}
       </div>
     </div>
   );

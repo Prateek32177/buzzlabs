@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
   } = await (await supbase).auth.getUser();
 
   const isAuthenticated = user?.role === 'authenticated';
-  const pathToAuthorize = ['/api'];
+  const pathToAuthorize = ['/api/webhooks'];
   const requestPathName = request.nextUrl.pathname;
 
   const isProtectedPath = pathToAuthorize.some(

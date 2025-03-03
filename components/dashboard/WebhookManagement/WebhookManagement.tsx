@@ -742,7 +742,7 @@ function SlackConfigDialog() {
     setShowSlackConfig,
     toggleWebhook,
     updateWebhookConfig,
-    isLoading,
+    isLoadingId,
   } = useWebhook();
 
   if (!showSlackConfig) return null;
@@ -781,7 +781,7 @@ function SlackConfigDialog() {
             }
             setShowSlackConfig(null);
           }}
-          isLoading={isLoading}
+          isLoading={isLoadingId === showSlackConfig}
         />
       </DialogContent>
     </Dialog>

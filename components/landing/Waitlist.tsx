@@ -36,16 +36,34 @@ export function WaitlistForm() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    setIsSuccess(true);
-    setEmail('');
+    setError('');
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      const { error } = await response.json();
+      if (!response.ok) {
+        throw new Error(error.message);
+      }
+
+      setIsSuccess(true);
+      setEmail('');
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   return (
     <div className='mt-10'>
       {isSuccess ? (
@@ -55,30 +73,37 @@ export function WaitlistForm() {
           </AlertDescription>
         </Alert>
       ) : (
-        <form onSubmit={handleSubmit} className='max-w-md mx-auto'>
-          <div className='relative flex items-center'>
-            <Input
-              type='email'
-              placeholder='Enter your email'
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              className='w-full px-4 py-3 pl-6 pr-20 h-12 rounded-full border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50'
-            />
+        <>
+          <form onSubmit={handleSubmit} className='max-w-md mx-auto'>
+            <div className='relative flex items-center'>
+              <Input
+                type='email'
+                placeholder='Enter your email'
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                className='w-full px-4 py-3 pl-6 pr-20 h-12 rounded-full border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50'
+              />
 
-            <InteractiveHoverButton
-              type='submit'
-              disabled={isLoading}
-              className='absolute right-1 h-10 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 border-none px-6 text-xs md:text-sm'
-            >
-              {isLoading ? (
-                <Loader2 className='h-5 w-5 animate-spin' />
-              ) : (
-                <>Join Waitlist</>
-              )}
-            </InteractiveHoverButton>
-          </div>
-        </form>
+              <InteractiveHoverButton
+                type='submit'
+                disabled={isLoading}
+                className='absolute right-1 h-10 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 border-none px-6 text-xs md:text-sm'
+              >
+                {isLoading ? (
+                  <Loader2 className='h-5 w-5 animate-spin' />
+                ) : (
+                  <>Join Waitlist</>
+                )}
+              </InteractiveHoverButton>
+            </div>
+            {error && (
+              <Alert className='max-w-md mx-auto mt-4 bg-red-500/20 text-red-200 border-red-500/50'>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+          </form>
+        </>
       )}
     </div>
   );

@@ -6,6 +6,7 @@ import Features from './Features';
 import { HowItWorks } from './HowItWorks';
 import { Footer } from './footer';
 import Hero from './Hero';
+import TryYourself from './TryYourSelf/try-yourself';
 
 const Index = () => {
   return (
@@ -16,6 +17,7 @@ const Index = () => {
       <Features />
       <IntegrationSection />
       <HowItWorks />
+      <TryYourself />
       <WaitlistSection />
       <Footer />
     </div>

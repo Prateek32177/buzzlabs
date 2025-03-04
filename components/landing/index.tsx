@@ -3,7 +3,6 @@ import Introduction from './Introduction';
 import WaitlistSection from './Waitlist';
 import IntegrationSection from './inetgration';
 import Features from './Features';
-import { HowItWorks } from './HowItWorks';
 import { Footer } from './footer';
 import Hero from './Hero';
 import TryYourself from './try-yourself';
@@ -16,7 +15,6 @@ const Index = () => {
       <Introduction />
       <Features />
       <IntegrationSection />
-      <HowItWorks />
       <TryYourself />
       <WaitlistSection />
       <Footer />

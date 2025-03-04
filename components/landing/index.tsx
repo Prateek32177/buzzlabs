@@ -6,7 +6,7 @@ import Features from './Features';
 import { HowItWorks } from './HowItWorks';
 import { Footer } from './footer';
 import Hero from './Hero';
-import TryYourself from './TryYourSelf/try-yourself';
+import TryYourself from './try-yourself';
 
 const Index = () => {
   return (

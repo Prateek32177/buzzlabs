@@ -14,17 +14,6 @@ import {
   Plus,
   Trash,
   X,
-  Bell,
-  Sparkles,
-  Code,
-  Server,
-  ShoppingCart,
-  Briefcase,
-  FileJson,
-  Users,
-  RefreshCw,
-  CheckCircle2,
-  XCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -216,12 +205,6 @@ function Step1WebhookCreation({
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
-
   const generateWebhookUrl = () => {
     return `https://api.yourwebhookservice.com/webhook/${crypto.randomUUID()}`;
   };
@@ -294,22 +277,20 @@ function Step1WebhookCreation({
       className='space-y-6'
     >
       <div className='text-center'>
-        <h3 className='text-2xl font-bold text-white mb-2'>
+        <h3 className='text-base md:text-2xl font-bold text-white mb-2'>
           Step 1: Create Your Webhook
         </h3>
-        <p className='text-purple-200/70 mb-6'>
-          Start by creating a webhook. You can create up to 5 webhooks.
-        </p>
+        <p className='text-purple-200/70 mb-6'>Start by creating a webhook.</p>
       </div>
 
-      <div className='bg-purple-900/5 rounded-xl border border-purple-500/20 p-6 shadow-lg'>
+      <div className='p-6 max-w-lg mx-auto'>
         <div className='flex flex-col md:flex-row gap-4'>
           <Input
             ref={inputRef}
             placeholder='Enter webhook name'
             value={webhookName}
             onChange={e => setWebhookName(e.target.value)}
-            className=' text-white bg-zinc-900/60 border border-zinc/30 placeholder:text-slate-400'
+            className=' text-white h-10 bg-zinc-900/60 border border-zinc/30 placeholder:text-slate-400'
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleCreateWebhook();
@@ -542,13 +523,12 @@ function Step2WebhookManagement({
               className='bg-zinc-900/20 rounded-xl border border-purple-500/20 p-5 shadow-sm hover:shadow-md hover:border-purple-500/30 transition-all duration-200'
             >
               <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
-                <div className='flex-1'>
-                  <h4 className='text-lg font-medium text-white'>
-                    {webhook.name}
-                  </h4>
-                </div>
-
-                <div className='flex flex-wrap md:flex-nowrap items-center gap-3'>
+                <div className='flex items-center justify-between gap-4'>
+                  <div className='flex-1'>
+                    <h4 className='text-lg font-medium text-white'>
+                      {webhook.name}
+                    </h4>
+                  </div>
                   <div className='flex items-center gap-2'>
                     <Switch
                       checked={webhook.isActive}
@@ -559,12 +539,15 @@ function Step2WebhookManagement({
                       {webhook.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </div>
+                </div>
 
-                  <div className='flex items-center space-x-4 border-l border-r border-slate-700 px-4'>
+                <div className='flex flex-wrap md:flex-nowrap items-center gap-3'>
+                  <div className='flex items-center space-x-4 border-slate-700 '>
                     <div className='flex items-center gap-2'>
                       <Mail
                         className={`h-4 w-4 ${webhook.notificationServices.email ? 'text-white' : 'text-slate-500'}`}
                       />
+                      Email
                       <Switch
                         checked={webhook.notificationServices.email}
                         onCheckedChange={() =>
@@ -582,6 +565,7 @@ function Step2WebhookManagement({
                       >
                         <path d='M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z' />
                       </svg>
+                      Slack
                       <Switch
                         checked={webhook.notificationServices.slack}
                         onCheckedChange={() =>
@@ -594,7 +578,7 @@ function Step2WebhookManagement({
 
                   <div className='flex items-center gap-2'>
                     <Button
-                      variant='ghost'
+                      variant='default'
                       size='sm'
                       onClick={() => setViewWebhook(webhook)}
                     >
@@ -1143,36 +1127,37 @@ function Step4WebhookTesting({
 
     toast.custom(
       () => (
-        <div className='flex items-start gap-3 p-4 bg-white dark:bg-zinc-900 rounded-lg shadow-md w-full'>
+        <div className='flex items-start gap-3 p-4 bg-white light:bg-zinc-900 rounded-lg shadow-md w-full'>
           <div className='flex-shrink-0'>
-            <div className='h-10 w-10 bg-red-50 dark:bg-white flex items-center justify-center p-2 rounded-full'>
-              <Mail className='text-red-600 dark:text-red-500 h-5 w-5' />
+            <div className='h-10 w-10 bg-red-50 light:bg-white flex items-center justify-center p-2 rounded-full'>
+              <Mail className='text-red-600 light:text-red-500 h-5 w-5' />
             </div>
           </div>
           <div className='flex-1 min-w-0'>
             <div className='flex justify-between items-start'>
               <div>
-                <p className='font-medium text-gray-900 dark:text-white'>
+                <p className='font-medium text-gray-900 light:text-white'>
                   New Email from Webhook Service
                 </p>
-                <p className='text-gray-600 dark:text-gray-300 text-sm mt-1'>
+                <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
                   {selectedApp} {event.replace(/_/g, ' ')} event triggered
                 </p>
-                <p className='text-gray-500 dark:text-gray-400 text-xs mt-2'>
+                <p className='text-gray-500 light:text-gray-400 text-xs mt-2'>
                   Just now
                 </p>
               </div>
             </div>
           </div>
-          <button className='rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'>
-            <X className='h-4 w-4 text-gray-500 dark:text-gray-400' />
+          <button className='rounded-full p-1 hover:bg-gray-100 light:hover:bg-gray-800 transition-colors'>
+            <X className='h-4 w-4 text-gray-500 light:text-gray-400' />
           </button>
         </div>
       ),
       {
         id: 'gmail-notification',
         duration: 5000,
-        className: 'p-0 bg-transparent border-none rounded-lg shadow-md',
+        className:
+          'p-0 bg-transparent border-none rounded-lg shadow-md max-w-sm',
         closeButton: true,
       },
     );
@@ -1182,39 +1167,40 @@ function Step4WebhookTesting({
     setShowNotification('slack');
     toast.custom(
       () => (
-        <div className='flex items-start gap-3 p-4 bg-white dark:bg-zinc-900 rounded-lg shadow-md w-full'>
+        <div className='flex items-start gap-3 p-4 bg-white light:bg-zinc-900 rounded-lg shadow-md w-full'>
           <div className='flex-shrink-0'>
-            <div className='h-10 w-10 rounded bg-[#4A154B] dark:bg-[#4A154B] flex items-center justify-center'>
+            <div className='h-10 w-10 rounded bg-[#4A154B] light:bg-[#4A154B] flex items-center justify-center'>
               <SlackIcon className='text-white h-6 w-6' />
             </div>
           </div>
           <div className='flex-1 min-w-0'>
             <div className='flex justify-between items-start'>
               <div>
-                <p className='font-medium text-gray-900 dark:text-white'>
+                <p className='font-medium text-gray-900 light:text-white'>
                   Slack Notification
                 </p>
-                <p className='text-gray-600 dark:text-gray-300 text-sm mt-1'>
+                <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
                   New {selectedApp} event: {event.replace(/_/g, ' ')}
                 </p>
                 <div className='flex items-center mt-2'>
                   <span className='inline-block h-2 w-2 rounded-full bg-green-500 mr-2'></span>
-                  <p className='text-gray-500 dark:text-gray-400 text-xs'>
+                  <p className='text-gray-500 light:text-gray-400 text-xs'>
                     Webhook Service • Just now
                   </p>
                 </div>
               </div>
             </div>
           </div>
-          <button className='rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'>
-            <X className='h-4 w-4 text-gray-500 dark:text-gray-400' />
+          <button className='rounded-full p-1 hover:bg-gray-100 light:hover:bg-gray-800 transition-colors'>
+            <X className='h-4 w-4 text-gray-500 light:text-gray-400' />
           </button>
         </div>
       ),
       {
         id: 'slack-notification',
         duration: 5000,
-        className: 'p-0 bg-transparent border-none rounded-lg shadow-md',
+        className:
+          'p-0 bg-transparent border-none rounded-lg shadow-md max-w-sm',
         closeButton: true,
       },
     );
@@ -1311,7 +1297,7 @@ function Step4WebhookTesting({
         <div className='bg-zinc-900/70 border-zinc-700 hover:border-purple-500/50 rounded-xl border  p-6 relative overflow-hidden shadow-lg'>
           <h4 className='text-lg font-medium text-white mb-4'>Live Preview</h4>
 
-          <div className='aspect-video bg-zinc-900/70 border-zinc-700 hover:border-purple-500/50 rounded-lg overflow-hidden relative border hadow-inner'>
+          <div className='aspect-square bg-zinc-900/70 border-zinc-700 hover:border-purple-500/50 rounded-lg relative border shadow-inner'>
             {/* Application animation area */}
             <div className='absolute inset-0 flex items-center justify-center'>
               {!currentEvent ? (

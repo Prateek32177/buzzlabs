@@ -69,7 +69,9 @@ export function WaitlistForm() {
       {isSuccess ? (
         <Alert className='max-w-md mx-auto bg-green-500/20 text-green-200 border-green-500/50'>
           <AlertDescription>
-            Thanks for joining! We'll keep you updated.
+            <strong>Your Spot is Reserved!</strong> We're thrilled to have you
+            with us and can't wait to share our exciting updates and features
+            with you soon.
           </AlertDescription>
         </Alert>
       ) : (
@@ -82,7 +84,7 @@ export function WaitlistForm() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
-                className='w-full px-4 py-3 pl-6 pr-20 h-12 rounded-full border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50'
+                className='placeholder:text-sm w-full px-4 py-3 pl-6 pr-20 h-12 rounded-full border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50'
               />
 
               <InteractiveHoverButton

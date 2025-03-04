@@ -114,7 +114,7 @@ export default function Hero() {
                     x: isVisible ? 0 : -50,
                   }}
                   transition={{ duration: 0.8, delay: 0.6 }}
-                  className='rounded-lg bg-gradient-to-b from-purple-900/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <Clock className='h-4 w-4' />
@@ -139,7 +139,7 @@ export default function Hero() {
                     y: isVisible ? 0 : 50,
                   }}
                   transition={{ duration: 0.8, delay: 0.9 }}
-                  className='rounded-lg  bg-gradient-to-b from-purple-900/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg  bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <BarChart3 className='h-4 w-4' />
@@ -164,7 +164,7 @@ export default function Hero() {
                     x: isVisible ? 0 : 50,
                   }}
                   transition={{ duration: 0.8, delay: 1.2 }}
-                  className='rounded-lg bg-gradient-to-b from-purple-900/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <ArrowUpRight className='h-4 w-4' />
@@ -186,7 +186,7 @@ export default function Hero() {
                     y: isVisible ? 0 : -50,
                   }}
                   transition={{ duration: 0.8, delay: 1.5 }}
-                  className='rounded-lg bg-gradient-to-b from-purple-900/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <BarChart3 className='h-4 w-4' />

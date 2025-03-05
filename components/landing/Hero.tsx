@@ -118,14 +118,14 @@ export default function Hero() {
               channels.
             </p>
             <WaitlistForm />
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+            <div className="flex items-center justify-center gap-4 mt-8">
                 <Button
                   onClick={scrollToTryItYourself}
                   size={"sm"}
-                  className="w-full sm:w-auto px-8 py-6 text-base font-medium bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white rounded-lg shadow-lg transition-all duration-300 hover:shadow-purple-500/20 hover:shadow-xl flex items-center justify-center gap-2"
+                  className="group"
                 >
                   Try it yourself
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
 
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -133,9 +133,10 @@ export default function Hero() {
                     <Button
                       variant="outline"
                       size={"sm"}
-                      className="w-full sm:w-auto px-8 py-6 text-base font-medium bg-zinc-800/80 hover:bg-zinc-700/80 text-white border border-purple-500/30 rounded-lg shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-purple-500/20 hover:shadow-xl flex items-center justify-center gap-2"
+                      className='bg-transparent p-4'
+                    
                     >
-                      <Play className="h-4 w-4 text-purple-400" />
+                      <Play className="h-4 w-4 " />
                       View demo
                     </Button>
                   </DialogTrigger>
@@ -145,7 +146,7 @@ export default function Hero() {
                         className="w-full h-full object-cover"
                         controls
                         autoPlay={isDialogOpen}
-                        src="/demo-video.mp4"
+                        src="https://www.loom.com/share/4b6b3eecea7748ca9b4bfad076ffd74f?sid=089eae2d-7f0f-4d39-9360-f29848664e76"
                         poster="/video-thumbnail.jpg"
                       >
                         Your browser does not support the video tag.

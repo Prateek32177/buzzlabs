@@ -56,20 +56,18 @@ export async function POST(
         });
       }
 
-      // if (webhook[0].notify_slack) {
-      //   await sendSlackNotification({
-      //     webhookUrl: webhook[0].slack_config.webhook_url,
-      //     channelName: webhook[0].slack_config.channel_name,
-      //     templateId: webhook[0].slack_config.template_id,
-      //     data: {
-      //       webhookId: id,
-      //       platform: verificationResult.platform,
-      //       payload: verificationResult.payload,
-      //       metadata: verificationResult.metadata,
-      //       timestamp: new Date().toISOString(),
-      //     },
-      //   });
-      // }
+      if (webhook[0].notify_slack) {
+        await sendSlackNotification({
+          webhookUrl: webhook[0].slack_config.webhook_url,
+          channelName: webhook[0].slack_config.channel_name,
+          templateId: webhook[0].slack_config.template_id,
+          data: {
+            webhookId: id,
+            payload: data,
+            timestamp: new Date().toISOString(),
+          },
+        });
+      }
     }
 
     return Response.json({

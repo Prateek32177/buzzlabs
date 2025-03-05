@@ -227,111 +227,188 @@ export const emailTemplates: Template[] = [
 
 export const slackTemplates: Template[] = [
   {
-    id: 'template1',
-    name: 'Basic Slack Message',
+    id: 'alert-critical',
+    name: 'Critical Alert',
     type: 'slack',
     render: data => ({
-      text: 'New Notification',
+      text: '🚨 Critical Alert',
       blocks: [
         {
-          type: 'section',
+          type: 'header',
           text: {
-            type: 'mrkdwn',
-            text: `*New Event*\nType: ${data.type}`,
-          },
+            type: 'plain_text',
+            text: '🚨 Critical Alert',
+            emoji: true
+          }
+        },
+        {
+          type: 'divider'
+        },
+        {
+          type: 'section',
+          fields: [
+            {
+              type: 'mrkdwn',
+              text: `*Service:*\n${data.service}`
+            },
+            {
+              type: 'mrkdwn',
+              text: `*Environment:*\n${data.environment}`
+            }
+          ]
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: '```' + JSON.stringify(data, null, 2) + '```',
-          },
+            text: `*Error Message:*\n${data.message}`
+          }
         },
+        {
+          type: 'context',
+          elements: [
+            {
+              type: 'mrkdwn',
+              text: `🕐 Occurred at: ${data.timestamp}`
+            }
+          ]
+        }
       ],
     }),
   },
   {
-    id: 'template2',
-    name: 'Alert Notification',
+    id: 'performance-alert',
+    name: 'Performance Alert',
     type: 'slack',
     render: data => ({
-      text: 'Alert Notification',
+      text: '📊 Performance Alert',
       blocks: [
         {
-          type: 'section',
+          type: 'header',
           text: {
-            type: 'mrkdwn',
-            text: `*Alert!*\nSeverity: ${data.severity}\nMessage: ${data.message}`,
-          },
+            type: 'plain_text',
+            text: '📊 Performance Alert',
+            emoji: true
+          }
         },
-      ],
+        {
+          type: 'section',
+          fields: [
+            {
+              type: 'mrkdwn',
+              text: `*Metric:*\n${data.metric}`
+            },
+            {
+              type: 'mrkdwn',
+              text: `*Current Value:*\n${data.value}`
+            },
+            {
+              type: 'mrkdwn',
+              text: `*Threshold:*\n${data.threshold}`
+            }
+          ]
+        }
+      ]
     }),
   },
   {
-    id: 'template3',
-    name: 'Daily Report',
+    id: 'deployment-notification',
+    name: 'Deployment Status',
     type: 'slack',
     render: data => ({
-      text: 'Daily Report',
+      text: '🚀 Deployment Update',
       blocks: [
         {
-          type: 'section',
+          type: 'header',
           text: {
-            type: 'mrkdwn',
-            text: `*Daily Report*\nDate: ${data.date}\nSummary: ${data.summary}`,
-          },
+            type: 'plain_text',
+            text: `🚀 Deployment ${data.status}`,
+            emoji: true
+          }
+        },
+        {
+          type: 'section',
+          fields: [
+            {
+              type: 'mrkdwn',
+              text: `*Version:*\n${data.version}`
+            },
+            {
+              type: 'mrkdwn',
+              text: `*Environment:*\n${data.environment}`
+            }
+          ]
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: '```' + JSON.stringify(data.details, null, 2) + '```',
-          },
-        },
-      ],
+            text: `*Changes:*\n${data.changes}`
+          }
+        }
+      ]
     }),
   },
   {
-    id: 'template4',
-    name: 'Incident Report',
+    id: 'security-alert',
+    name: 'Security Alert',
     type: 'slack',
     render: data => ({
-      text: 'Incident Report',
+      text: '🔒 Security Alert',
       blocks: [
         {
-          type: 'section',
+          type: 'header',
           text: {
-            type: 'mrkdwn',
-            text: `*Incident Report*\nIncident ID: ${data.incidentId}\nStatus: ${data.status}`,
-          },
+            type: 'plain_text',
+            text: '🔒 Security Alert',
+            emoji: true
+          }
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: '```' + JSON.stringify(data.details, null, 2) + '```',
-          },
-        },
-      ],
+            text: `*Alert Type:* ${data.type}\n*Severity:* ${data.severity}\n*Details:* ${data.details}`
+          }
+        }
+      ]
     }),
   },
   {
-    id: 'template5',
-    name: 'System Update',
+    id: 'system-health',
+    name: 'System Health Report',
     type: 'slack',
     render: data => ({
-      text: 'System Update',
+      text: '💻 System Health Report',
       blocks: [
         {
-          type: 'section',
+          type: 'header',
           text: {
-            type: 'mrkdwn',
-            text: `*System Update*\nVersion: ${data.version}\nDetails: ${data.details}`,
-          },
+            type: 'plain_text',
+            text: '💻 System Health Report',
+            emoji: true
+          }
         },
-      ],
+        {
+          type: 'section',
+          fields: [
+            {
+              type: 'mrkdwn',
+              text: `*CPU Usage:*\n${data.cpu}%`
+            },
+            {
+              type: 'mrkdwn',
+              text: `*Memory:*\n${data.memory}%`
+            },
+            {
+              type: 'mrkdwn',
+              text: `*Disk:*\n${data.disk}%`
+            }
+          ]
+        }
+      ]
     }),
-  },
+  }
 ];
 
 export function getTemplate(id: string, type: 'email' | 'slack'): Template {

@@ -51,7 +51,7 @@ interface Webhook {
 
 const App = () => {
   return (
-    <div className='min-h-screen bg-gradient-to-b from-purple-950 to-slate-950 overflow-x-hidden'>
+    <div id="tryityourself" className='min-h-screen bg-gradient-to-b from-purple-950 to-slate-950 overflow-x-hidden'>
       <TryYourself />
     </div>
   );
@@ -277,7 +277,7 @@ function Step1WebhookCreation({
       className='space-y-6'
     >
       <div className='text-center'>
-        <h3 className='text-base md:text-2xl font-bold text-white mb-2'>
+      <h3 className='text-2xl font-bold text-white mb-2'>
           Step 1: Create Your Webhook
         </h3>
         <p className='text-purple-200/70 mb-6'>Start by creating a webhook.</p>

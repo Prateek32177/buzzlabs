@@ -72,7 +72,7 @@ export function WebhookManagement() {
     try {
       setIsFetching(true);
       const response = await fetch('/api/webhooks');
-      if (!response.ok) throw new Error('Failed to fetch webhooks');
+      if (!response.ok) throw new Error(`Failed to fetch webhooks`);
       const data = await response.json();
       setWebhooks(data);
     } catch (error) {

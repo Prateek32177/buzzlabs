@@ -6,8 +6,23 @@ import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Ripple } from '../magicui/ripple';
+import { Play } from "lucide-react"
+import { Button } from "../ui/button"
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog"
 
 export default function Hero() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
+
+  const scrollToTryItYourself = () => {
+    const element = document.getElementById("tryityourself")
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
+    }
+  }
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -103,6 +118,42 @@ export default function Hero() {
               channels.
             </p>
             <WaitlistForm />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+                <Button
+                  onClick={scrollToTryItYourself}
+                  size={"sm"}
+                  className="w-full sm:w-auto px-8 py-6 text-base font-medium bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-white rounded-lg shadow-lg transition-all duration-300 hover:shadow-purple-500/20 hover:shadow-xl flex items-center justify-center gap-2"
+                >
+                  Try it yourself
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size={"sm"}
+                      className="w-full sm:w-auto px-8 py-6 text-base font-medium bg-zinc-800/80 hover:bg-zinc-700/80 text-white border border-purple-500/30 rounded-lg shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-purple-500/20 hover:shadow-xl flex items-center justify-center gap-2"
+                    >
+                      <Play className="h-4 w-4 text-purple-400" />
+                      View demo
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-3xl bg-zinc-900/95 border-purple-500/20 backdrop-blur-xl">
+                    <div className="aspect-video w-full overflow-hidden rounded-lg">
+                      <video
+                        className="w-full h-full object-cover"
+                        controls
+                        autoPlay={isDialogOpen}
+                        src="/demo-video.mp4"
+                        poster="/video-thumbnail.jpg"
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             {/* Animated data points */}
             {/* Time savings data point */}
             <div className='relative z-10 mt-16 md:mt-24'>

@@ -29,12 +29,8 @@ export default function Integration() {
 
             {/* Main Heading */}
             <div className='text-center mb-8 px-4'>
-              <h2
-                className={`text-3xl md:text-5xl font-medium text-white max-w-4xl mx-auto leading-tight transition-all duration-1000 opacity-100 translate-y-0`}
-              >
-                Connect SuperHook with your
-                <br />
-                favorite tools and services.
+              <h2 className='text-3xl md:text-5xl font-medium text-white max-w-4xl mx-auto leading-tight'>
+                Connect SuperHook with your favorite tools and services.
               </h2>
             </div>
           </div>

@@ -20,8 +20,8 @@ export async function GET(req: Request) {
       .select('*')
       .eq('user_id', user.id);
 
-    if (!webhooks || webhooks.length === 0) {
-      throw new Error('No webhooks found');
+    if (webhooks?.length === 0) {
+      return NextResponse.json([]);
     }
     if (error) throw error;
 
@@ -51,7 +51,7 @@ export async function GET(req: Request) {
     return NextResponse.json(formattedWebhooks);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch webhooks' },
+      { error: `Failed to fetch webhooks` },
       { status: 500 },
     );
   }

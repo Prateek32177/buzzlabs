@@ -114,7 +114,10 @@ function TryYourself() {
         <div className='flex justify-center mb-10'>
           <div className='flex items-center max-w-3xl w-full'>
             {[1, 2, 3, 4].map(step => (
-              <div key={step} className={ `${step!=4 && 'flex-1'} flex items-center`}>
+              <div
+                key={step}
+                className={`${step != 4 && 'flex-1'} flex items-center`}
+              >
                 <motion.div
                   className={`flex items-center justify-center w-10 h-10 rounded-full ${
                     step === currentStep

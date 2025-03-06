@@ -40,7 +40,7 @@ export async function GET(req: Request) {
           url: webhook.url,
           secret: decryptedToken,
           is_active: webhook.is_active,
-          platformConfig:webhook.platformConfig,
+          platformConfig: webhook.platformConfig,
           notify_email: webhook.notify_email,
           notify_slack: webhook.notify_slack,
           email_config: webhook.email_config,
@@ -48,7 +48,7 @@ export async function GET(req: Request) {
         };
       }),
     );
-console.log("webhook rs",webhooks)
+    console.log('webhook rs', webhooks);
     return NextResponse.json(formattedWebhooks);
   } catch (error) {
     return NextResponse.json(

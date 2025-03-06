@@ -1,5 +1,4 @@
 import { AppSidebar } from '@/components/dashboard/app-sidebar';
-import { Separator } from '@/components/ui/separator';
 import {
   SidebarInset,
   SidebarProvider,

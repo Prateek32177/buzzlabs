@@ -4,7 +4,16 @@ import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
-import { SmtpMessage } from '../smtp-message';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { BorderBeam } from '@/components/magicui/border-beam';
 
 export default async function Signup(props: {
   searchParams: Promise<Message>;
@@ -21,31 +30,42 @@ export default async function Signup(props: {
   return (
     <>
       <form className='mx-auto flex min-w-64 max-w-64 flex-col'>
-        <h1 className='text-2xl font-medium'>Sign up</h1>
-        <p className='text text-sm text-foreground'>
-          Already have an account?{' '}
-          <Link className='font-medium text-primary underline' href='/sign-in'>
-            Sign in
-          </Link>
-        </p>
-        <div className='mt-8 flex flex-col gap-2 [&>input]:mb-3'>
-          <Label htmlFor='email'>Email</Label>
-          <Input name='email' placeholder='you@example.com' required />
-          <Label htmlFor='password'>Password</Label>
-          <Input
-            type='password'
-            name='password'
-            placeholder='Your password'
-            minLength={6}
-            required
-          />
-          <SubmitButton formAction={signUpAction} pendingText='Signing up...'>
-            Sign up
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
+        <Card className='relative w-[350px] overflow-hidden'>
+          <CardHeader>
+            <CardTitle className='text-xl'>Sign Up</CardTitle>
+            <CardDescription>
+              Enter your credentials to create your account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className='grid w-full items-center gap-4'>
+              <div className='flex flex-col gap-2 [&>input]:mb-3'>
+                <Label htmlFor='email'>Email</Label>
+                <Input name='email' placeholder='you@example.com' required />
+                <Label htmlFor='password'>Password</Label>
+                <Input
+                  type='password'
+                  name='password'
+                  placeholder='Your password'
+                  minLength={6}
+                  required
+                />
+
+                <FormMessage message={searchParams} />
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className='flex justify-between'>
+            <Button asChild variant={'outline'}>
+              <Link href='/sign-in'>Sign in</Link>
+            </Button>
+            <SubmitButton formAction={signUpAction} pendingText='Signing up...'>
+              Sign up
+            </SubmitButton>
+          </CardFooter>
+          <BorderBeam duration={8} size={100} />
+        </Card>
       </form>
-      <SmtpMessage />
     </>
   );
 }

@@ -1,4 +1,3 @@
-import HeaderAuth from '@/components/header-auth';
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
 import { Mona_Sans as FontSans } from 'next/font/google';
@@ -39,14 +38,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* <nav className='flex h-16 w-full justify-center border-b border-b-foreground/10'>
-            <div className='flex w-full max-w-5xl items-center justify-between p-3 px-5 text-sm'>
-              <div className='flex items-center gap-5 font-semibold'>
-                <Link href={'/'}>BuzzLabs</Link>
-              </div>
-              {<HeaderAuth />}
-            </div>
-          </nav> */}
           <main className='flex min-h-screen flex-col flex-1 gap-20  items-center '>
             {children}
           </main>

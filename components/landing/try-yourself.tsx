@@ -51,7 +51,10 @@ interface Webhook {
 
 const App = () => {
   return (
-    <div id="tryityourself" className='min-h-screen bg-gradient-to-b from-purple-950 to-slate-950 overflow-x-hidden'>
+    <div
+      id='tryityourself'
+      className='min-h-screen bg-gradient-to-b from-purple-950 to-slate-950 overflow-x-hidden'
+    >
       <TryYourself />
     </div>
   );
@@ -111,7 +114,7 @@ function TryYourself() {
         <div className='flex justify-center mb-10'>
           <div className='flex items-center max-w-3xl w-full'>
             {[1, 2, 3, 4].map(step => (
-              <div key={step} className='flex-1 flex items-center'>
+              <div key={step} className={ `${step!=4 && 'flex-1'} flex items-center`}>
                 <motion.div
                   className={`flex items-center justify-center w-10 h-10 rounded-full ${
                     step === currentStep
@@ -277,7 +280,7 @@ function Step1WebhookCreation({
       className='space-y-6'
     >
       <div className='text-center'>
-      <h3 className='text-2xl font-bold text-white mb-2'>
+        <h3 className='text-2xl font-bold text-white mb-2'>
           Step 1: Create Your Webhook
         </h3>
         <p className='text-purple-200/70 mb-6'>Start by creating a webhook.</p>

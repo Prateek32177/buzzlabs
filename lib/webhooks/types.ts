@@ -1,4 +1,4 @@
-export type WebhookPlatform = 'custom' | 'clerk';
+export type WebhookPlatform = 'custom' | 'clerk' | 'supabase';
 
 export interface WebhookVerificationResult {
   isValid: boolean;

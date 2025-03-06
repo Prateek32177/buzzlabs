@@ -6,23 +6,23 @@ import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Ripple } from '../magicui/ripple';
-import { Play } from "lucide-react"
-import { Button } from "../ui/button"
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog"
+import { Play } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
 
 export default function Hero() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true)
-  }, [])
+    setIsVisible(true);
+  }, []);
 
   const scrollToTryItYourself = () => {
-    const element = document.getElementById("tryityourself")
+    const element = document.getElementById('tryityourself');
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+      element.scrollIntoView({ behavior: 'smooth' });
     }
-  }
+  };
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -118,43 +118,42 @@ export default function Hero() {
               channels.
             </p>
             <WaitlistForm />
-            <div className="flex items-center justify-center gap-4 mt-8">
-                <Button
-                  onClick={scrollToTryItYourself}
-                  size={"sm"}
-                  className="group"
-                >
-                  Try it yourself
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Button>
+            <div className='flex items-center justify-center gap-4 mt-8'>
+              <Button
+                onClick={scrollToTryItYourself}
+                size={'sm'}
+                className='group'
+              >
+                Try it yourself
+                <ArrowRight className='h-4 w-4 transition-transform duration-300 group-hover:translate-x-1' />
+              </Button>
 
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size={"sm"}
-                      className='bg-transparent p-4'
-                    
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant='outline'
+                    size={'sm'}
+                    className='bg-transparent p-4'
+                  >
+                    <Play className='h-4 w-4 ' />
+                    View demo
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className='sm:max-w-3xl bg-zinc-900/95 border-purple-500/20 backdrop-blur-xl'>
+                  <div className='aspect-video w-full overflow-hidden rounded-lg'>
+                    <video
+                      className='w-full h-full object-cover'
+                      controls
+                      autoPlay={isDialogOpen}
+                      src=''
+                      poster='/video-thumbnail.jpg'
                     >
-                      <Play className="h-4 w-4 " />
-                      View demo
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-3xl bg-zinc-900/95 border-purple-500/20 backdrop-blur-xl">
-                    <div className="aspect-video w-full overflow-hidden rounded-lg">
-                      <video
-                        className="w-full h-full object-cover"
-                        controls
-                        autoPlay={isDialogOpen}
-                        src="https://www.loom.com/share/4b6b3eecea7748ca9b4bfad076ffd74f?sid=089eae2d-7f0f-4d39-9360-f29848664e76"
-                        poster="/video-thumbnail.jpg"
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
             {/* Animated data points */}
             {/* Time savings data point */}
             <div className='relative z-10 mt-16 md:mt-24'>

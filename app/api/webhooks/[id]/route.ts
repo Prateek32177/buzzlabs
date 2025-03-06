@@ -39,6 +39,7 @@ export async function GET(
       notify_slack: webhook.notify_slack,
       email_config: webhook.email_config,
       slack_config: webhook.slack_config,
+      platformConfig: webhook.platformConfig,
     });
   } catch (error) {
     return NextResponse.json(

@@ -238,41 +238,41 @@ export const slackTemplates: Template[] = [
           text: {
             type: 'plain_text',
             text: '🚨 Critical Alert',
-            emoji: true
-          }
+            emoji: true,
+          },
         },
         {
-          type: 'divider'
+          type: 'divider',
         },
         {
           type: 'section',
           fields: [
             {
               type: 'mrkdwn',
-              text: `*Service:*\n${data.service}`
+              text: `*Service:*\n${data.service}`,
             },
             {
               type: 'mrkdwn',
-              text: `*Environment:*\n${data.environment}`
-            }
-          ]
+              text: `*Environment:*\n${data.environment}`,
+            },
+          ],
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*Error Message:*\n${data.message}`
-          }
+            text: `*Error Message:*\n${data.message}`,
+          },
         },
         {
           type: 'context',
           elements: [
             {
               type: 'mrkdwn',
-              text: `🕐 Occurred at: ${data.timestamp}`
-            }
-          ]
-        }
+              text: `🕐 Occurred at: ${data.timestamp}`,
+            },
+          ],
+        },
       ],
     }),
   },
@@ -288,27 +288,27 @@ export const slackTemplates: Template[] = [
           text: {
             type: 'plain_text',
             text: '📊 Performance Alert',
-            emoji: true
-          }
+            emoji: true,
+          },
         },
         {
           type: 'section',
           fields: [
             {
               type: 'mrkdwn',
-              text: `*Metric:*\n${data.metric}`
+              text: `*Metric:*\n${data.metric}`,
             },
             {
               type: 'mrkdwn',
-              text: `*Current Value:*\n${data.value}`
+              text: `*Current Value:*\n${data.value}`,
             },
             {
               type: 'mrkdwn',
-              text: `*Threshold:*\n${data.threshold}`
-            }
-          ]
-        }
-      ]
+              text: `*Threshold:*\n${data.threshold}`,
+            },
+          ],
+        },
+      ],
     }),
   },
   {
@@ -323,30 +323,30 @@ export const slackTemplates: Template[] = [
           text: {
             type: 'plain_text',
             text: `🚀 Deployment ${data.status}`,
-            emoji: true
-          }
+            emoji: true,
+          },
         },
         {
           type: 'section',
           fields: [
             {
               type: 'mrkdwn',
-              text: `*Version:*\n${data.version}`
+              text: `*Version:*\n${data.version}`,
             },
             {
               type: 'mrkdwn',
-              text: `*Environment:*\n${data.environment}`
-            }
-          ]
+              text: `*Environment:*\n${data.environment}`,
+            },
+          ],
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*Changes:*\n${data.changes}`
-          }
-        }
-      ]
+            text: `*Changes:*\n${data.changes}`,
+          },
+        },
+      ],
     }),
   },
   {
@@ -361,17 +361,17 @@ export const slackTemplates: Template[] = [
           text: {
             type: 'plain_text',
             text: '🔒 Security Alert',
-            emoji: true
-          }
+            emoji: true,
+          },
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `*Alert Type:* ${data.type}\n*Severity:* ${data.severity}\n*Details:* ${data.details}`
-          }
-        }
-      ]
+            text: `*Alert Type:* ${data.type}\n*Severity:* ${data.severity}\n*Details:* ${data.details}`,
+          },
+        },
+      ],
     }),
   },
   {
@@ -386,29 +386,29 @@ export const slackTemplates: Template[] = [
           text: {
             type: 'plain_text',
             text: '💻 System Health Report',
-            emoji: true
-          }
+            emoji: true,
+          },
         },
         {
           type: 'section',
           fields: [
             {
               type: 'mrkdwn',
-              text: `*CPU Usage:*\n${data.cpu}%`
+              text: `*CPU Usage:*\n${data.cpu}%`,
             },
             {
               type: 'mrkdwn',
-              text: `*Memory:*\n${data.memory}%`
+              text: `*Memory:*\n${data.memory}%`,
             },
             {
               type: 'mrkdwn',
-              text: `*Disk:*\n${data.disk}%`
-            }
-          ]
-        }
-      ]
+              text: `*Disk:*\n${data.disk}%`,
+            },
+          ],
+        },
+      ],
     }),
-  }
+  },
 ];
 
 export function getTemplate(id: string, type: 'email' | 'slack'): Template {

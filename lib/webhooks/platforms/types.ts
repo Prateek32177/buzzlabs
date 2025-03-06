@@ -7,7 +7,7 @@ export interface PlatformField {
   required?: boolean;
   options?: { label: string; value: string }[];
 }
-export type WebhookPlatform = 'custom' | 'clerk';
+export type WebhookPlatform = 'custom' | 'clerk' | 'supabase';
 export interface WebhookPlatformConfig {
   id: WebhookPlatform;
   name: string;

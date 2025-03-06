@@ -1,6 +1,6 @@
 import { WebhookPlatformConfig } from './types';
-import { Webhook, Blocks, UserCircle } from 'lucide-react';
-export type WebhookPlatform = 'custom' | 'clerk';
+import { Webhook, Blocks, UserCircle, AlertCircle } from 'lucide-react';
+export type WebhookPlatform = 'custom' | 'clerk' | 'supabase';
 
 export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
   custom: {
@@ -58,5 +58,30 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
   -H "Content-Type: application/json" \
   -d '{"type":"user.created"}'`,
     },
+  },
+  supabase: {
+    id: 'supabase',
+    name: 'Supabase',
+    description: 'Authenticate webhooks from Supabase DB',
+    icon: AlertCircle,
+    fields: [
+      {
+        key: 'webhook_id',
+        label: 'x-webhook-id',
+        description: 'Set x-webhook-id in header',
+        type: 'text',
+        placeholder: 'webhook id',
+        required: true,
+      },
+      {
+        key: 'webhook_token',
+        label: 'x-webhook-token',
+        description: 'Set x-webhook-token in header',
+        type: 'secret',
+        placeholder: 'webhook secret',
+        required: true,
+      },
+    ],
+    verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
   },
 };

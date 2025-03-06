@@ -29,23 +29,21 @@ export function PlatformConfig({
   isLoading,
 }: PlatformConfigProps) {
   const [platform, setPlatform] = useState<WebhookPlatform>(
-    webhook.platform || 'custom',
+     'supabase',
   );
   const [configValues, setConfigValues] = useState<Record<string, string>>(
-    webhook.platformConfig || {},
+    webhook.platformConfig
   );
 
   const currentConfig = platformConfigs[platform];
 
   const handlePlatformChange = (newPlatform: WebhookPlatform) => {
     setPlatform(newPlatform);
-    setConfigValues({});
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onUpdate({
-      platform,
       platformConfig: configValues,
     });
   };

@@ -13,7 +13,6 @@ export interface Webhook {
   id: string;
   name: string;
   url: string;
-  platform: WebhookPlatform;
   platformConfig: Record<string, string>;
   secret: string;
   is_active: boolean;

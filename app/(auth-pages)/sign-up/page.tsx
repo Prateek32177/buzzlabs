@@ -29,7 +29,7 @@ export default async function Signup(props: {
 
   return (
     <>
-      <form className='mx-auto flex min-w-64 max-w-64 flex-col'>
+      <form className='flex min-w-64 flex-1 flex-col'>
         <Card className='relative w-[350px] overflow-hidden'>
           <CardHeader>
             <CardTitle className='text-xl'>Sign Up</CardTitle>

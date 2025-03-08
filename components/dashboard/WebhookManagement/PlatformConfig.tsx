@@ -28,11 +28,9 @@ export function PlatformConfig({
   onUpdate,
   isLoading,
 }: PlatformConfigProps) {
-  const [platform, setPlatform] = useState<WebhookPlatform>(
-     'supabase',
-  );
+  const [platform, setPlatform] = useState<WebhookPlatform>('supabase');
   const [configValues, setConfigValues] = useState<Record<string, string>>(
-    webhook.platformConfig
+    webhook.platformConfig,
   );
 
   const currentConfig = platformConfigs[platform];

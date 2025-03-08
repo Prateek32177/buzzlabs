@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { Ellipsis } from 'lucide-react';
 
 interface Webhook {
   id: string;
@@ -296,7 +297,7 @@ function Step1WebhookCreation({
             placeholder='Enter webhook name'
             value={webhookName}
             onChange={e => setWebhookName(e.target.value)}
-            className=' text-white h-10 bg-zinc-900/60 border border-zinc/30 placeholder:text-slate-400'
+            className=' text-white h-10 bg-zinc-900/60 border border-zinc-200/30 placeholder:text-slate-400'
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleCreateWebhook();
@@ -305,9 +306,9 @@ function Step1WebhookCreation({
           />
           <Button
             onClick={handleCreateWebhook}
-            className='bg-purple-500 hover:bg-purple-600 text-white transition-all duration-200'
+            className='bg-purple-500/80 hover:bg-purple-600 text-white transition-all duration-200 h-10'
           >
-            <Plus className='mr-2 h-4 w-4' /> Create Webhook
+            <Plus className=' h-4 w-4' /> Create Webhook
           </Button>
         </div>
 
@@ -539,7 +540,7 @@ function Step2WebhookManagement({
                     <Switch
                       checked={webhook.isActive}
                       onCheckedChange={() => handleToggleStatus(webhook.id)}
-                      className='data-[state=checked]:bg-purple-600'
+                      className='data-[state=checked]:bg-white'
                     />
                     <span className='text-sm text-purple-200/70'>
                       {webhook.isActive ? 'Active' : 'Inactive'}
@@ -559,7 +560,7 @@ function Step2WebhookManagement({
                         onCheckedChange={() =>
                           handleToggleNotification(webhook.id, 'email')
                         }
-                        className='data-[state=checked]:bg-purple-600'
+                        className='data-[state=checked]:bg-white'
                       />
                     </div>
 
@@ -577,25 +578,25 @@ function Step2WebhookManagement({
                         onCheckedChange={() =>
                           handleToggleNotification(webhook.id, 'slack')
                         }
-                        className='data-[state=checked]:bg-purple-600'
+                        className='data-[state=checked]:bg-white'
                       />
                     </div>
                   </div>
 
                   <div className='flex items-center gap-2'>
                     <Button
-                      variant='default'
-                      size='sm'
+                      variant='ghost'
+                      size='icon'
                       onClick={() => setViewWebhook(webhook)}
                     >
-                      View Details
+                      <Ellipsis className='h-6 w-6' />
                     </Button>
                     <Button
                       variant='ghost'
                       size='sm'
                       onClick={() => setDeleteWebhook(webhook)}
                     >
-                      <Trash className='h-4 w-4' />
+                      <Trash className='h-6 w-6' />
                     </Button>
                   </div>
                 </div>
@@ -1000,7 +1001,6 @@ function Step3ApplicationIntegration({
                     id={event}
                     checked={selectedEvents.includes(event)}
                     onCheckedChange={() => handleToggleEvent(event)}
-                    className='data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600'
                   />
                   <label
                     htmlFor={event}

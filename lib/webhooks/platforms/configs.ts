@@ -1,8 +1,35 @@
 import { WebhookPlatformConfig } from './types';
-import { Webhook, Blocks, UserCircle, AlertCircle } from 'lucide-react';
-export type WebhookPlatform = 'custom' | 'clerk' | 'supabase';
+import { Webhook, UserCircle, AlertCircle } from 'lucide-react';
+import { WebhookPlatform } from '../types';
 
 export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
+  supabase: {
+    id: 'supabase',
+    name: 'Supabase',
+    description: 'Authenticate webhooks from Supabase DB',
+    icon: AlertCircle,
+    fields: [
+      {
+        key: 'webhook_id',
+        label: 'x-webhook-id',
+        description: 'Set x-webhook-id in header',
+        type: 'text',
+        placeholder: 'webhook id',
+        required: true,
+        readOnly: true,
+      },
+      {
+        key: 'webhook_token',
+        label: 'x-webhook-token',
+        description: 'Set x-webhook-token in header',
+        type: 'secret',
+        placeholder: 'webhook secret',
+        required: true,
+        readOnly: true,
+      },
+    ],
+    verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
+  },
   custom: {
     id: 'custom',
     name: 'Custom Integration',
@@ -15,6 +42,7 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
         description: 'Your unique webhook identifier',
         type: 'text',
         required: true,
+        readOnly: true,
       },
       {
         key: 'webhook_token',
@@ -22,6 +50,7 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
         description: 'Secret token for webhook authentication',
         type: 'secret',
         required: true,
+        readOnly: true,
       },
     ],
     verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
@@ -46,6 +75,7 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
         type: 'secret',
         placeholder: 'whsec_...',
         required: true,
+        readOnly: true,
       },
     ],
     verificationHeaders: ['svix-id', 'svix-timestamp', 'svix-signature'],
@@ -58,30 +88,5 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
   -H "Content-Type: application/json" \
   -d '{"type":"user.created"}'`,
     },
-  },
-  supabase: {
-    id: 'supabase',
-    name: 'Supabase',
-    description: 'Authenticate webhooks from Supabase DB',
-    icon: AlertCircle,
-    fields: [
-      {
-        key: 'webhook_id',
-        label: 'x-webhook-id',
-        description: 'Set x-webhook-id in header',
-        type: 'text',
-        placeholder: 'webhook id',
-        required: true,
-      },
-      {
-        key: 'webhook_token',
-        label: 'x-webhook-token',
-        description: 'Set x-webhook-token in header',
-        type: 'secret',
-        placeholder: 'webhook secret',
-        required: true,
-      },
-    ],
-    verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
   },
 };

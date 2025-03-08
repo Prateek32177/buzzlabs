@@ -7,8 +7,6 @@ export interface WebhookAuth {
   secret?: string; // For custom secret or HMAC
 }
 
-export type WebhookPlatform = 'custom' | 'clerk';
-
 export interface Webhook {
   id: string;
   name: string;

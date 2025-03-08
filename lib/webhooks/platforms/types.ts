@@ -1,3 +1,4 @@
+import { WebhookPlatform } from '../types';
 export interface PlatformField {
   key: string;
   label: string;
@@ -5,9 +6,10 @@ export interface PlatformField {
   type: 'text' | 'secret' | 'select';
   placeholder?: string;
   required?: boolean;
+  readOnly: boolean;
   options?: { label: string; value: string }[];
 }
-export type WebhookPlatform = 'custom' | 'clerk' | 'supabase';
+
 export interface WebhookPlatformConfig {
   id: WebhookPlatform;
   name: string;

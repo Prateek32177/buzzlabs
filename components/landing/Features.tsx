@@ -126,7 +126,8 @@ export default function Features() {
               Instant Tracking
             </h3>
             <p className='text-sm md:text-md text-zinc-400'>
-              Monitor all database changes as they happen in real-time
+              Monitor all database, payments, and other tracking event changes
+              as they happen in real-time
             </p>
           </div>
 
@@ -224,6 +225,7 @@ export default function Features() {
                     strokeDashoffset={isVisible ? '0' : '220'}
                     style={{
                       transition: 'stroke-dashoffset 2s ease-in-out',
+                      animation: isVisible ? 'dash 4s linear' : 'none',
                     }}
                   />
 
@@ -236,6 +238,7 @@ export default function Features() {
                     strokeDashoffset={isVisible ? '0' : '220'}
                     style={{
                       transition: 'stroke-dashoffset 2s ease-in-out',
+                      animation: isVisible ? 'dash 4s linear' : 'none',
                     }}
                   />
                   <circle
@@ -243,14 +246,11 @@ export default function Features() {
                     cy='10'
                     r='4'
                     fill='#a77ffa'
-                    className={``}
-                  />
-                  <circle
-                    cx='180'
-                    cy='10'
-                    r='7'
-                    fill='#a78bfa'
-                    className={`animate-pulse`}
+                    style={{
+                      animation: isVisible
+                        ? ' 2s ease-in-out infinite'
+                        : 'none',
+                    }}
                   />
                 </svg>
               </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { Mail, CheckCircle2 } from 'lucide-react';
+
 import { useEffect, useState, useRef } from 'react';
 import { Blocks, WandSparkles } from 'lucide-react';
 import { Lock, Unlock } from 'lucide-react';
@@ -13,6 +15,9 @@ import {
   TeamsLogo,
 } from '../Logos';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
+import { Bell, Clock, CheckCircle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Features() {
   const [isVisible, setIsVisible] = useState(false);
@@ -101,6 +106,7 @@ export default function Features() {
         {/* Top Row Features */}
         <div className='grid md:grid-cols-3 px-6 gap-6 mb-6'>
           {/* Instant Tracking */}
+
           <div
             className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
             style={{ transitionDelay: '200ms' }}
@@ -179,89 +185,7 @@ export default function Features() {
             </p>
           </div>
 
-          {/* Scalable */}
-          <div
-            className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
-            style={{ transitionDelay: '600ms' }}
-          >
-            <div className='bg-zinc-900 rounded-lg p-4 mb-6 w-full max-w-[240px] mx-auto'>
-              <div className='h-32 flex items-center justify-center'>
-                <svg
-                  width='200'
-                  height='100'
-                  viewBox='0 0 200 100'
-                  className='w-full'
-                >
-                  <defs>
-                    <filter id='glow'>
-                      <feGaussianBlur stdDeviation='7' result='blur' />
-                      <feComposite
-                        in='SourceGraphic'
-                        in2='blur'
-                        operator='over'
-                      />
-                    </filter>
-                    <linearGradient
-                      id='graphGradient'
-                      x1='0%'
-                      y1='0%'
-                      x2='100%'
-                      y2='0%'
-                    >
-                      <stop offset='0%' stopColor='#a5f3b8' stopOpacity='0.7' />
-                      <stop
-                        offset='100%'
-                        stopColor='#a5f9g8'
-                        stopOpacity='0.9'
-                      />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d='M 10,80 Q 52.5,80 75,60 T 120,50 T 180,10'
-                    fill='none'
-                    stroke='url(#graphGradient)'
-                    strokeWidth='2'
-                    strokeDasharray='220'
-                    strokeDashoffset={isVisible ? '0' : '220'}
-                    style={{
-                      transition: 'stroke-dashoffset 2s ease-in-out',
-                      animation: isVisible ? 'dash 4s linear' : 'none',
-                    }}
-                  />
-
-                  <path
-                    d='M 10,80 Q 52.5,80 75,60 T 120,50 T 180,10'
-                    fill='none'
-                    stroke='#a5f3b8'
-                    strokeWidth='2.5'
-                    strokeDasharray='220'
-                    strokeDashoffset={isVisible ? '0' : '220'}
-                    style={{
-                      transition: 'stroke-dashoffset 2s ease-in-out',
-                      animation: isVisible ? 'dash 4s linear' : 'none',
-                    }}
-                  />
-                  <circle
-                    cx='180'
-                    cy='10'
-                    r='4'
-                    fill='#a77ffa'
-                    style={{
-                      animation: isVisible
-                        ? ' 2s ease-in-out infinite'
-                        : 'none',
-                    }}
-                  />
-                </svg>
-              </div>
-            </div>
-            <h3 className='text-sm md:text-xl  font-medium mb-2'>
-              Scalable as you grow
-            </h3>
-            <p className='text-sm md:text-md   text-zinc-400'>
-              We&apos;re ready to meet your evolving needs.
-            </p>
-          </div>
+          <NotificationDigestCard />
         </div>
 
         {/* Bottom Row Features */}
@@ -282,7 +206,7 @@ export default function Features() {
                 </p>
               </div>
 
-              <div className='px-4 grid grid-cols-3 gap-2'>
+              <div className='px-4 grid grid-cols-4 md:grid-cols-3 gap-2 w-fit'>
                 {icons.map((icon, index) => (
                   <div
                     key={index}
@@ -432,6 +356,131 @@ function SecurityReliabilityCard() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+interface FrequencyOption {
+  label: string;
+  times: string[];
+}
+
+interface NotificationStats {
+  payments: number;
+  users: number;
+  deploys: number;
+  alerts: number;
+}
+
+interface DigestSummary {
+  title: string;
+  stats: NotificationStats;
+}
+
+interface DigestContentProps {
+  frequency: number;
+}
+
+export function NotificationDigestCard() {
+  const [activeFrequency, setActiveFrequency] = useState<number>(0);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    const visibilityTimer = setTimeout(() => setIsVisible(true), 300);
+    return () => clearTimeout(visibilityTimer);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveFrequency(prev => (prev + 1) % 3);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const frequencies = ['3× daily', '1× daily', 'Weekly'];
+  const stats = [
+    { icon: '💰', label: 'payments', value: 8 },
+    { icon: '👤', label: 'users', value: 5 },
+    { icon: '🚀', label: 'deploys', value: 3 },
+    { icon: '⚠️', label: 'alerts', value: 2 },
+  ];
+
+  return (
+    <div
+      className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+      }`}
+      style={{ transitionDelay: '300ms' }}
+    >
+      <div className='bg-zinc-900 rounded-lg p-4 mb-4 w-full max-w-[340px] mx-auto'>
+        {/* Frequency Selector */}
+        <div className='bg-zinc-800/50 rounded-lg p-2 mb-4'>
+          <div className='relative h-8'>
+            <div
+              className='absolute h-8 bg-purple-400/20 rounded-full transition-all duration-500 ease-out'
+              style={{
+                left: `${activeFrequency * 33.33}%`,
+                width: '33.33%',
+              }}
+            />
+            <div className='absolute inset-0 flex'>
+              {frequencies.map((freq, index) => (
+                <div
+                  key={index}
+                  className='flex-1 flex items-center justify-center'
+                >
+                  <span
+                    className={`text-sm font-medium z-10 ${
+                      activeFrequency === index
+                        ? 'text-purple-400'
+                        : 'text-zinc-400'
+                    }`}
+                  >
+                    {freq}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className='grid grid-cols-2 gap-2'>
+          {stats.map((item, index) => (
+            <div
+              key={index}
+              className='bg-zinc-800/50 p-2 rounded-lg flex items-center gap-2'
+            >
+              <div className='w-7 h-7 rounded-full bg-purple-400/10 flex items-center justify-center'>
+                <span>{item.icon}</span>
+              </div>
+              <div>
+                <div className='text-base font-semibold text-white'>
+                  {item.value}
+                </div>
+                <div className='text-xs text-zinc-400'>{item.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className='flex items-center justify-between mt-3 text-xs'>
+          <div className='flex items-center gap-1 text-purple-400'>
+            <Mail className='h-3 w-3' />
+            <span>Next: 9 AM</span>
+          </div>
+          <div className='flex items-center gap-1 text-zinc-400'>
+            <CheckCircle2 className='h-3 w-3 text-green-400' />
+            <span>Active</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 className='text-sm md:text-xl font-medium mb-1'>Smart Digest</h3>
+      <p className='text-sm text-zinc-400'>
+        Get organized summaries at your preferred frequency
+      </p>
     </div>
   );
 }

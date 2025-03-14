@@ -1,5 +1,5 @@
 'use client';
-import { ArrowRight, Clock, BarChart3, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, Clock, BarChart3,CircleGauge, ArrowUpRight } from 'lucide-react';
 import { WaitlistForm } from './Waitlist';
 import { Badge } from '../ui/badge';
 import { Sparkles } from 'lucide-react';
@@ -104,7 +104,7 @@ export default function Hero() {
                 Simplifying Alerts:
               </span>{' '}
               No Code, Just Connect it
-              <ArrowRight className='ml-1 h-3 w-3' />
+             
             </Badge>
             <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
               Capture Events,{' '}
@@ -118,7 +118,7 @@ export default function Hero() {
               channels.
             </p>
             <WaitlistForm />
-            <div className='flex items-center justify-center gap-4 mt-8'>
+            {/* <div className='flex items-center justify-center gap-4 mt-8'>
               <Button
                 onClick={scrollToTryItYourself}
                 size={'sm'}
@@ -153,7 +153,7 @@ export default function Hero() {
                   </div>
                 </DialogContent>
               </Dialog>
-            </div>
+            </div> */}
             {/* Animated data points */}
             {/* Time savings data point */}
             <div className='relative z-10 mt-16 md:mt-24'>
@@ -192,19 +192,18 @@ export default function Hero() {
                   transition={{ duration: 0.8, delay: 0.9 }}
                   className='rounded-lg  bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
-                  <div className='flex items-center gap-2 text-purple-400'>
-                    <BarChart3 className='h-4 w-4' />
+                    <div className='flex items-center gap-2 text-purple-400'>
+                    <CircleGauge className='h-4 w-4' />
                     <span className='text-xs font-medium'>
-                      platform efficiency
+                      efficiency
                     </span>
-                  </div>
-                  <div className='mt-1 flex items-baseline gap-1 flex-wrap'>
-                    <span className='text-3xl font-bold text-white'>99.8%</span>
-                    <span className='text-sm text-purple-300'>uptime</span>
-                  </div>
-                  <div className='mt-1 text-xs text-purple-200'>
-                    enterprise-grade reliability
-                  </div>
+                    </div>
+                    <div className='mt-1 flex items-baseline gap-1 flex-wrap'>
+                    <span className='text-3xl font-bold text-white'>No-code</span>
+                    </div>
+                    <div className='mt-1 text-xs text-purple-200'>
+                    Alerting direct from dashboard 
+                    </div>
                 </motion.div>
 
                 {/* Success rate data point */}

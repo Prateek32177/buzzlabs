@@ -89,7 +89,7 @@ export default function Hero() {
         <div className='absolute inset-0 bg-gradient-to-b from-zinc-900/0 via-zinc-900/10 to-zinc-900/30' />
       </div>
 
-      <section className='pt-40 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
+      <section className='pt-52 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
         <div className='absolute inset-0 z-0'>
           <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
         </div>

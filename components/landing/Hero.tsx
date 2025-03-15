@@ -113,7 +113,7 @@ export default function Hero() {
               </span>
             </h1>
             <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500  max-w-2xl mx-auto'>
-              SuperHook provides a robust webhook infrastructure to capture
+              Hookflo provides a robust webhook infrastructure to capture
               change events and send instant notifications across multiple
               channels.
             </p>

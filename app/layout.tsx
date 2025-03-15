@@ -1,23 +1,22 @@
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
-import { Mona_Sans as FontSans } from 'next/font/google';
+import localFont from 'next/font/local';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 
+// Add your custom font
+const customFont = localFont({
+  src: 'fonts/Kollektif.ttf'
+});
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000';
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: 'SuperHook',
+  title: 'Hookflo',
   description: 'No Code Notification Webhook Infrastructure',
 };
-
-const fontSans = FontSans({
-  subsets: ['latin'],
-  variable: '--font-sans',
-});
 
 export default function RootLayout({
   children,
@@ -28,8 +27,8 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body
         className={cn(
-          'min-h-screen bg-background font-sans antialiased dark',
-          fontSans.variable,
+          'min-h-screen bg-background antialiased dark',
+          customFont.className
         )}
       >
         <ThemeProvider

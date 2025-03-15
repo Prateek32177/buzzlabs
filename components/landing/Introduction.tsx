@@ -26,7 +26,7 @@ export default function Introduction() {
         >
           <GlowingAsterisk />
           <span className='text-purple-300 uppercase text-sm font-bold tracking-[0.2em] ml-3'>
-            Introducing Superhook
+            Introducing Hooflo
           </span>
         </motion.div>
         <motion.h1
@@ -37,7 +37,7 @@ export default function Introduction() {
         >
           <span className='text-white font-medium'>
             Supercharge your database, payment subscriptions, auth event
-            monitoring with Superhook.
+            monitoring with Hooflo.
           </span>{' '}
           <span className='text-gray-400 font-light'>
             The seamless way to stay in sync with your data's pulse.{' '}

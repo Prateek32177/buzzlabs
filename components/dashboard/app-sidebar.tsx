@@ -88,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
-        <span className='ml-2 text-lg font-bold'>SuperHook</span>
+        <span className='ml-2 text-lg font-bold'>H</span>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

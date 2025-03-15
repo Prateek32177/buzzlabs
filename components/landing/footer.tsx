@@ -10,7 +10,7 @@ export function Footer() {
               <Logo size='text-2xl' />
             </div>
             <p className='text-white/70 text-sm'>
-              Building the future of notification webhook infrastructure
+              Building no-code quick to setup notification system for your apps.
             </p>
           </div>
 

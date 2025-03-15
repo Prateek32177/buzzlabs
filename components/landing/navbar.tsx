@@ -82,8 +82,8 @@ export function Navbar() {
             <span className='inline-block w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse'></span>
             <p className='text-xs md:text-sm text-white/90'>
               <span className='font-medium'>Pre Launch Offer:</span> Flat{' '}
-              <span className='text-yellow-400 font-bold'>20% Off</span>{' '}
-              for waitlisted users
+              <span className='text-yellow-400 font-bold'>20% Off</span> for
+              waitlisted users
             </p>
           </div>
         </nav>

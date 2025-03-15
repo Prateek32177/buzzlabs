@@ -1,5 +1,11 @@
 'use client';
-import { ArrowRight, Clock, BarChart3,CircleGauge, ArrowUpRight } from 'lucide-react';
+import {
+  ArrowRight,
+  Clock,
+  BarChart3,
+  CircleGauge,
+  ArrowUpRight,
+} from 'lucide-react';
 import { WaitlistForm } from './Waitlist';
 import { Badge } from '../ui/badge';
 import { Sparkles } from 'lucide-react';
@@ -104,7 +110,6 @@ export default function Hero() {
                 Simplifying Alerts:
               </span>{' '}
               No Code, Just Connect it
-             
             </Badge>
             <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
               Capture Events,{' '}
@@ -113,9 +118,8 @@ export default function Hero() {
               </span>
             </h1>
             <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500  max-w-2xl mx-auto'>
-              Hookflo provides a robust webhook infrastructure to capture
-              change events and send instant notifications across multiple
-              channels.
+              Hookflo provides a robust webhook infrastructure to capture change
+              events and send instant notifications across multiple channels.
             </p>
             <WaitlistForm />
             {/* <div className='flex items-center justify-center gap-4 mt-8'>
@@ -192,18 +196,18 @@ export default function Hero() {
                   transition={{ duration: 0.8, delay: 0.9 }}
                   className='rounded-lg  bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
-                    <div className='flex items-center gap-2 text-purple-400'>
+                  <div className='flex items-center gap-2 text-purple-400'>
                     <CircleGauge className='h-4 w-4' />
-                    <span className='text-xs font-medium'>
-                      efficiency
+                    <span className='text-xs font-medium'>efficiency</span>
+                  </div>
+                  <div className='mt-1 flex items-baseline gap-1 flex-wrap'>
+                    <span className='text-3xl font-bold text-white'>
+                      No-code
                     </span>
-                    </div>
-                    <div className='mt-1 flex items-baseline gap-1 flex-wrap'>
-                    <span className='text-3xl font-bold text-white'>No-code</span>
-                    </div>
-                    <div className='mt-1 text-xs text-purple-200'>
-                    Alerting direct from dashboard 
-                    </div>
+                  </div>
+                  <div className='mt-1 text-xs text-purple-200'>
+                    Alerting direct from dashboard
+                  </div>
                 </motion.div>
 
                 {/* Success rate data point */}

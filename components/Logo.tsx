@@ -30,7 +30,8 @@ export function Logo({ variant = 'green', size = 'text-xl' }: LogoProps) {
                     transition-all duration-300 ease-in-out
                 `}
       >
-Hookflo      </h1>
+        Hookflo{' '}
+      </h1>
     </Link>
   );
 }

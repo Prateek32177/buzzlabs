@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/sonner';
 
 // Add your custom font
 const customFont = localFont({
-  src: 'fonts/Kollektif.ttf'
+  src: 'fonts/Kollektif.ttf',
 });
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={cn(
           'min-h-screen bg-background antialiased dark',
-          customFont.className
+          customFont.className,
         )}
       >
         <ThemeProvider

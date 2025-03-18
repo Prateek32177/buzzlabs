@@ -109,7 +109,7 @@ export default function Hero() {
               <span className='text-purple-400 mr-1'>
                 Simplifying Alerts:
               </span>{' '}
-              No Code, Just Connect it
+              No Code, Just Hook it
             </Badge>
             <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
               Capture Events,{' '}
@@ -119,7 +119,7 @@ export default function Hero() {
             </h1>
             <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500  max-w-2xl mx-auto'>
               Hookflo provides a robust webhook infrastructure to capture change
-              events and send instant notifications across multiple channels.
+              events from multiple platforms and send instant notifications across multiple channels.
             </p>
             <WaitlistForm />
             {/* <div className='flex items-center justify-center gap-4 mt-8'>

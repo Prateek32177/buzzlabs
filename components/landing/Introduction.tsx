@@ -47,7 +47,7 @@ export default function Introduction() {
             just a few clicks.{' '}
           </span>
           <span className='text-white'>
-            Zero complexity, lightning-fast setup, No code library installation
+            Zero complexity, lightning-fast setup, No library installation
             and Instant alerts make tracking any change event activity
             effortless.
           </span>

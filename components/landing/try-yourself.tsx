@@ -48,6 +48,10 @@ interface Webhook {
     email: boolean;
     slack: boolean;
   };
+  notificationFrequency: {
+    type: 'instant' | 'daily' | 'twice_daily' | 'thrice_daily';
+    time?: string; // For daily digests
+  };
 }
 
 const App = () => {
@@ -83,7 +87,7 @@ function TryYourself() {
   };
 
   return (
-    <section className='w-full py-24 relative overflow-hidden bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)]'>
+    <section className='w-full py-24 relative overflow-hidden bg-zinc-900/60 rounded-xl p-6 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)]'>
       {/* Background elements */}
 
       <div className='container max-w-6xl mx-auto px-4 relative z-10'>
@@ -228,6 +232,7 @@ function Step1WebhookCreation({
       toast.error('Error', {
         description: 'Please enter a webhook name',
       });
+    
       return;
     }
 
@@ -249,6 +254,10 @@ function Step1WebhookCreation({
         email: true,
         slack: true,
       },
+      notificationFrequency: {
+        type: 'instant',
+        time: '9',
+      },
     };
 
     setWebhooks([...webhooks, newWebhook]);
@@ -262,6 +271,7 @@ function Step1WebhookCreation({
     if (inputRef.current) {
       inputRef.current.focus();
     }
+    goToNextStep();
   };
 
   const handleNext = () => {
@@ -306,7 +316,7 @@ function Step1WebhookCreation({
           />
           <Button
             onClick={handleCreateWebhook}
-            className='bg-purple-500/80 hover:bg-purple-600 text-white transition-all duration-200 h-10'
+      
           >
             <Plus className=' h-4 w-4' /> Create Webhook
           </Button>
@@ -374,6 +384,44 @@ function Step2WebhookManagement({
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const [showCreateWebhook, setShowCreateWebhook] = useState(false);
   const [webhookName, setWebhookName] = useState('');
+  const [frequency, setFrequency] = useState(
+    viewWebhook?.notificationFrequency?.type || 'instant',
+  );
+  const [deliveryTime, setDeliveryTime] = useState(
+    viewWebhook?.notificationFrequency?.time || '',
+  );
+
+  useEffect(() => {
+    // Update initial values when webhook changes
+    if (viewWebhook) {
+      setFrequency(viewWebhook.notificationFrequency?.type || 'instant');
+      setDeliveryTime(viewWebhook.notificationFrequency?.time || '');
+    }
+  }, [viewWebhook]);
+
+  useEffect(() => {
+    // Set default time values when frequency changes
+    let defaultTime = '';
+    switch (frequency) {
+      case 'daily':
+        defaultTime = '9';
+        break;
+      case 'twice_daily':
+        defaultTime = '9,17';
+        break;
+      case 'thrice_daily':
+        defaultTime = '9,13,17';
+        break;
+      default:
+        defaultTime = '';
+    }
+    setDeliveryTime(defaultTime);
+
+    // Update webhook with new frequency and time
+    if (viewWebhook) {
+      handleUpdateFrequency(viewWebhook.id, frequency, defaultTime);
+    }
+  }, [frequency]);
 
   const handleToggleStatus = (id: string) => {
     setWebhooks(
@@ -427,6 +475,10 @@ function Step2WebhookManagement({
         email: true,
         slack: true,
       },
+      notificationFrequency: {
+        type: 'instant',
+        time: '9',
+      },
     };
 
     setWebhooks([...webhooks, newWebhook]);
@@ -478,6 +530,26 @@ function Step2WebhookManagement({
       setSelectedWebhook(webhooks[0]);
       goToNextStep();
     }
+  };
+  // Update the View Webhook Modal section within Step2WebhookManagement to include frequency settings
+  const handleUpdateFrequency = (
+    id: string,
+    type: 'instant' | 'daily' | 'twice_daily' | 'thrice_daily',
+    time?: string,
+  ) => {
+    setWebhooks(
+      webhooks.map(webhook =>
+        webhook.id === id
+          ? {
+              ...webhook,
+              notificationFrequency: {
+                type,
+                time: time || webhook.notificationFrequency?.time,
+              },
+            }
+          : webhook,
+      ),
+    );
   };
 
   return (
@@ -681,6 +753,95 @@ function Step2WebhookManagement({
                         <span className='ml-2 text-xs'>Copied!</span>
                       )}
                     </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className='space-y-2'>
+                <Label className='text-purple-200/70'>
+                  Notification Frequency
+                </Label>
+                <div className='p-3 rounded-md border space-y-4'>
+                  <Select
+                    value={frequency}
+                    onValueChange={(
+                      value:
+                        | 'instant'
+                        | 'daily'
+                        | 'twice_daily'
+                        | 'thrice_daily',
+                    ) => {
+                      setFrequency(value);
+                    }}
+                  >
+                    <SelectTrigger className='bg-zinc-900/70 border-zinc-700 text-white'>
+                      <SelectValue placeholder='Select frequency' />
+                    </SelectTrigger>
+                    <SelectContent className='bg-zinc-900 border-zinc-700 text-white'>
+                      <SelectItem value='instant'>Instant</SelectItem>
+                      <SelectItem value='daily'>Daily</SelectItem>
+                      <SelectItem value='twice_daily'>Twice Daily</SelectItem>
+                      <SelectItem value='thrice_daily'>Thrice Daily</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {frequency !== 'instant' && (
+                    <div className='space-y-2'>
+                      <Label className='text-purple-200/70 text-sm'>
+                        Delivery Time
+                      </Label>
+                      <Select
+                        value={deliveryTime}
+                        onValueChange={value => {
+                          setDeliveryTime(value);
+                          if (viewWebhook) {
+                            handleUpdateFrequency(
+                              viewWebhook.id,
+                              frequency,
+                              value,
+                            );
+                          }
+                        }}
+                      >
+                        <SelectTrigger className='bg-zinc-900/70 border-zinc-700 text-white'>
+                          <SelectValue placeholder='Select time' />
+                        </SelectTrigger>
+                        <SelectContent className='bg-zinc-900 border-zinc-700 text-white'>
+                          {frequency === 'daily' && (
+                            <>
+                              <SelectItem value='9'>9:00 AM</SelectItem>
+                              <SelectItem value='10'>10:00 AM</SelectItem>
+                            </>
+                          )}
+                          {frequency === 'twice_daily' && (
+                            <>
+                              <SelectItem value='9,17'>
+                                9:00 AM & 5:00 PM
+                              </SelectItem>
+                              <SelectItem value='10,18'>
+                                10:00 AM & 6:00 PM
+                              </SelectItem>
+                            </>
+                          )}
+                          {frequency === 'thrice_daily' && (
+                            <>
+                              <SelectItem value='9,13,17'>
+                                9:00 AM, 1:00 PM & 5:00 PM
+                              </SelectItem>
+                              <SelectItem value='10,14,18'>
+                                10:00 AM, 2:00 PM & 6:00 PM
+                              </SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <div className='text-sm text-purple-200/70 mt-2'>
+                    {frequency === 'instant'
+                      ? 'Notifications will be sent immediately'
+                      : `Digest will be sent ${frequency.replace('_', ' ')}`}
                   </div>
                 </div>
               </div>
@@ -1480,3 +1641,5 @@ function Step4WebhookTesting({
     </motion.div>
   );
 }
+
+

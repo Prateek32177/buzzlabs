@@ -160,9 +160,9 @@ export default function Hero() {
             </div> */}
             {/* Animated data points */}
             {/* Time savings data point */}
-            <div className='relative z-10 mt-16 md:mt-24'>
-              <div className='grid grid-cols-2 md:grid-cols-4 gap-4 px-4 md:px-0'>
-                <motion.div
+            <div className='relative z-10 mt-16 md:mt-20 '>
+              <div className='grid grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
+                {/* <motion.div
                   initial={{ opacity: 0, x: -50 }}
                   animate={{
                     opacity: isVisible ? 1 : 0,
@@ -184,7 +184,7 @@ export default function Hero() {
                   <div className='mt-1 text-xs text-purple-200'>
                     vs. manual integration
                   </div>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Efficiency data point */}
                 <motion.div
@@ -194,7 +194,7 @@ export default function Hero() {
                     y: isVisible ? 0 : 50,
                   }}
                   transition={{ duration: 0.8, delay: 0.9 }}
-                  className='rounded-lg  bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg  bg-gradient-to-b from-zinc-800/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <CircleGauge className='h-4 w-4' />
@@ -206,12 +206,12 @@ export default function Hero() {
                     </span>
                   </div>
                   <div className='mt-1 text-xs text-purple-200'>
-                    Alerting direct from dashboard
+                    Alerting directly from dashboard
                   </div>
                 </motion.div>
 
                 {/* Success rate data point */}
-                <motion.div
+                {/* <motion.div
                   initial={{ opacity: 0, x: 50 }}
                   animate={{
                     opacity: isVisible ? 1 : 0,
@@ -230,7 +230,7 @@ export default function Hero() {
                   <div className='mt-1 text-xs text-purple-200'>
                     on What Matters to you, we'll handle the alerts.
                   </div>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Integration speed data point */}
                 <motion.div

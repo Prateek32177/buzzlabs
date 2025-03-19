@@ -103,13 +103,14 @@ export default function Hero() {
           <div className='text-center max-w-4xl mx-auto'>
             <Badge
               variant={'default'}
-              className='mb-4 bg-white/10 text-white/80 shadow-md hover:bg-white/10'
+              className='mb-4 bg-white/10 text-white/80 shadow-md hover:bg-white/10 text-xs sm:text-sm px-2 py-1 sm:px-3'
             >
-              <Sparkles className='w-4 h-4 text-purple-400 mr-2' />
-              <span className='text-purple-400 mr-1'>
+              <Sparkles className='w-4 h-4  text-purple-400 mr-2' />
+              <span className='text-purple-400 mr-1 '>
                 Simplifying Alerts:
-              </span>{' '}
-              No Code, Just Hook it
+              </span>
+              <span className='hidden sm:inline'>No Code, Just Hook it</span>
+              <span className='sm:hidden'>Just Hook it</span>
             </Badge>
             <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
               Capture Events,{' '}
@@ -160,8 +161,8 @@ export default function Hero() {
             </div> */}
             {/* Animated data points */}
             {/* Time savings data point */}
-            <div className='relative z-10 mt-16 md:mt-20 '>
-              <div className='grid grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
+            <div className='relative z-10 mt-16 md:mt-20 w-full '>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
                 {/* <motion.div
                   initial={{ opacity: 0, x: -50 }}
                   animate={{
@@ -201,7 +202,7 @@ export default function Hero() {
                     <span className='text-xs font-medium'>efficiency</span>
                   </div>
                   <div className='mt-1 flex items-baseline gap-1 flex-wrap'>
-                    <span className='text-3xl font-bold text-white'>
+                    <span className='text-2xl md:text-3xl font-bold text-white'>
                       No-code
                     </span>
                   </div>
@@ -249,7 +250,7 @@ export default function Hero() {
                     </span>
                   </div>
                   <div className='mt-1 flex items-baseline gap-1'>
-                    <span className='text-3xl font-bold text-white'>
+                    <span className='text-2xl md:text-3xl font-bold text-white'>
                       in 5 mins
                     </span>
                   </div>

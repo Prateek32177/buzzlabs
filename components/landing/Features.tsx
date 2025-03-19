@@ -86,7 +86,7 @@ export default function Features() {
           <div
             className={`inline-flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full border border-purple-400/20 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
           >
-            <Blocks className='w-4 h-4 text-purple-400 animate-pulse' />
+            <Blocks className='w-4 h-4 text-purple-400' />
             <span className='text-purple-400 text-sm font-medium'>
               What you&apos;ll get
             </span>

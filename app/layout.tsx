@@ -1,14 +1,11 @@
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
-import localFont from 'next/font/local';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 import { Open_Sans } from 'next/font/google';
-// Add your custom font
+
 const openSans = Open_Sans({ subsets: ['latin'] });
-const customFont = localFont({
-  src: 'fonts/Kollektif.ttf',
-});
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000';
@@ -21,27 +18,16 @@ const defaultUrl = process.env.VERCEL_URL
     authors: [{ name: 'Hookflo' }],
     creator: 'Hookflo',
     publisher: 'Hookflo',
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
     openGraph: {
       type: 'website',
       locale: 'en_US',
-      url: 'https://www.hookflo.in/',
+      url: 'https://www.hookflo.com/',
       siteName: 'Hookflo',
-      title: 'Hookflo - No Code Notification Webhook Infrastructure',
+      title: 'Hookflo - Quick to setup alerting system for web apps',
       description: 'No Code Notification Webhook Infrastructure',
       images: [
         {
-          url: '/og-image.png', // Make sure to add this image in your public folder
+          url: '/og-image.png',
           width: 1200,
           height: 630,
           alt: 'Hookflo - No Code Webhook Platform',
@@ -50,14 +36,11 @@ const defaultUrl = process.env.VERCEL_URL
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Hookflo - No Code Notification Webhook Infrastructure',
+      title: 'Hookflo - Quick to setup alerting system for web apps',
       description: 'No Code Notification Webhook Infrastructure',
-      images: ['/og-image.png'], // Make sure to add this image in your public folder
+      images: ['/og-image.png'],
       creator: '@Prateek53788134',
       site: '@Prateek53788134',
-    },
-    alternates: {
-      canonical: 'https://www.hookflo.in/',
     }
   };
 export default function RootLayout({
@@ -68,7 +51,6 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
-      <link rel="canonical" href="https://www.hookflo.in/" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link

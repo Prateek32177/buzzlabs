@@ -244,9 +244,7 @@ export default function Hero() {
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <BarChart3 className='h-4 w-4' />
-                    <span className='text-xs font-medium'>
-                      integration
-                    </span>
+                    <span className='text-xs font-medium'>integration</span>
                   </div>
                   <div className='mt-1 flex items-baseline gap-1'>
                     <span className='text-2xl md:text-3xl font-bold text-white'>

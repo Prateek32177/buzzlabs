@@ -3,8 +3,9 @@ import './globals.css';
 import localFont from 'next/font/local';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
-
+import { Open_Sans } from 'next/font/google';
 // Add your custom font
+const openSans = Open_Sans({ subsets: ['latin'] });
 const customFont = localFont({
   src: 'fonts/Kollektif.ttf',
 });
@@ -28,7 +29,7 @@ export default function RootLayout({
       <body
         className={cn(
           'min-h-screen bg-background antialiased dark',
-          customFont.className,
+          openSans.className,
         )}
       >
         <ThemeProvider

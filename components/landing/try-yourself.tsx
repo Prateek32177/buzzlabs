@@ -232,7 +232,7 @@ function Step1WebhookCreation({
       toast.error('Error', {
         description: 'Please enter a webhook name',
       });
-    
+
       return;
     }
 
@@ -314,10 +314,7 @@ function Step1WebhookCreation({
               }
             }}
           />
-          <Button
-            onClick={handleCreateWebhook}
-      
-          >
+          <Button onClick={handleCreateWebhook}>
             <Plus className=' h-4 w-4' /> Create Webhook
           </Button>
         </div>
@@ -350,11 +347,8 @@ function Step1WebhookCreation({
       </div>
 
       <div className='flex justify-end mt-6'>
-        <Button
-          onClick={handleNext}
-          className='bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200'
-        >
-          Next Step <ArrowRight className='ml-2 h-4 w-4' />
+        <Button variant={'ghost'} onClick={handleNext}>
+          Next <ArrowRight className='ml-2 h-4 w-4' />
         </Button>
       </div>
     </motion.div>
@@ -938,10 +932,7 @@ function Step2WebhookManagement({
         <Button onClick={goToPreviousStep}>
           <ArrowLeft className='mr-2 h-4 w-4' /> Previous
         </Button>
-        <Button
-          onClick={handleNext}
-          className='bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200'
-        >
+        <Button variant={'ghost'} onClick={handleNext}>
           Next <ArrowRight className='ml-2 h-4 w-4' />
         </Button>
       </div>
@@ -1296,28 +1287,44 @@ function Step4WebhookTesting({
       () => (
         <div className='flex items-start gap-3 p-4 bg-white light:bg-zinc-900 rounded-lg shadow-md w-full'>
           <div className='flex-shrink-0'>
-            <div className='h-10 w-10 bg-red-50 light:bg-white flex items-center justify-center p-2 rounded-full'>
-              <Mail className='text-red-600 light:text-red-500 h-5 w-5' />
+            <div className='h-10 w-10 rounded bg-red-800/20 light:bg-red-500 flex items-center justify-center p-2'>
+              <Mail className='text-red-700 light:text-red-500 h-8 w-8' />
             </div>
           </div>
           <div className='flex-1 min-w-0'>
             <div className='flex justify-between items-start'>
               <div>
                 <p className='font-medium text-gray-900 light:text-white'>
-                  New Email from Webhook Service
+                  {selectedWebhook?.notificationFrequency.type === 'instant'
+                    ? 'New Event from Webhook Service'
+                    : `${selectedWebhook?.notificationFrequency.type.replace('_', ' ')} Digest from Webhook Service`}
                 </p>
                 <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
-                  {selectedApp} {event.replace(/_/g, ' ')} event triggered
+                  {selectedWebhook?.notificationFrequency.type === 'instant'
+                    ? `${selectedApp} ${event.replace(/_/g, ' ')} event triggered`
+                    : `Summary of recent ${selectedApp} events:`}
                 </p>
+                {selectedWebhook?.notificationFrequency.type !== 'instant' && (
+                  <div className='mt-2 space-y-1 border-l-2 border-gray-200 pl-3'>
+                    <p className='text-gray-600 light:text-gray-300 text-sm'>
+                      • {event.replace(/_/g, ' ')} (just now)
+                    </p>
+                    <p className='text-gray-600 light:text-gray-300 text-sm'>
+                      • 2 more {event.replace(/_/g, ' ')}
+                    </p>
+                    <p className='text-gray-600 light:text-gray-300 text-sm'>
+                      • 3 other events
+                    </p>
+                  </div>
+                )}
                 <p className='text-gray-500 light:text-gray-400 text-xs mt-2'>
-                  Just now
+                  {selectedWebhook?.notificationFrequency.type === 'instant'
+                    ? 'Just now'
+                    : `Scheduled delivery at ${selectedWebhook?.notificationFrequency.time}`}
                 </p>
               </div>
             </div>
           </div>
-          <button className='rounded-full p-1 hover:bg-gray-100 light:hover:bg-gray-800 transition-colors'>
-            <X className='h-4 w-4 text-gray-500 light:text-gray-400' />
-          </button>
         </div>
       ),
       {
@@ -1344,23 +1351,44 @@ function Step4WebhookTesting({
             <div className='flex justify-between items-start'>
               <div>
                 <p className='font-medium text-gray-900 light:text-white'>
-                  Slack Notification
+                  {selectedWebhook?.notificationFrequency.type === 'instant'
+                    ? 'Slack Notification'
+                    : `${selectedWebhook?.notificationFrequency.type.replace('_', ' ')} Digest`}
                 </p>
-                <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
-                  New {selectedApp} event: {event.replace(/_/g, ' ')}
-                </p>
+                {selectedWebhook?.notificationFrequency.type === 'instant' ? (
+                  <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
+                    New {selectedApp} event: {event.replace(/_/g, ' ')}
+                  </p>
+                ) : (
+                  <>
+                    <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
+                      Recent {selectedApp} events summary:
+                    </p>
+                    <div className='mt-2 space-y-1 border-l-2 border-gray-200 pl-3'>
+                      <p className='text-gray-600 light:text-gray-300 text-sm'>
+                        • {event.replace(/_/g, ' ')} (just now)
+                      </p>
+                      <p className='text-gray-600 light:text-gray-300 text-sm'>
+                        • 3 similar {event.replace(/_/g, ' ')} events
+                      </p>
+                      <p className='text-gray-600 light:text-gray-300 text-sm'>
+                        • 2 other webhook activities
+                      </p>
+                    </div>
+                  </>
+                )}
                 <div className='flex items-center mt-2'>
                   <span className='inline-block h-2 w-2 rounded-full bg-green-500 mr-2'></span>
                   <p className='text-gray-500 light:text-gray-400 text-xs'>
-                    Webhook Service • Just now
+                    Webhook Service •{' '}
+                    {selectedWebhook?.notificationFrequency.type === 'instant'
+                      ? 'Just now'
+                      : `Scheduled delivery at ${selectedWebhook?.notificationFrequency.time}`}
                   </p>
                 </div>
               </div>
             </div>
           </div>
-          <button className='rounded-full p-1 hover:bg-gray-100 light:hover:bg-gray-800 transition-colors'>
-            <X className='h-4 w-4 text-gray-500 light:text-gray-400' />
-          </button>
         </div>
       ),
       {
@@ -1641,5 +1669,3 @@ function Step4WebhookTesting({
     </motion.div>
   );
 }
-
-

@@ -81,7 +81,7 @@ export function Navbar() {
           <div className='gap-2 px-4 py-1.5 flex items-center justify-center backdrop-blur-sm'>
             <span className='inline-block w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse'></span>
             <p className='text-xs md:text-sm text-white/90'>
-              <span className='font-medium'>Pre Launch Offer:</span>{" "}
+              <span className='font-medium'>Pre Launch Offer:</span>{' '}
               <span className='text-yellow-400 font-bold'>20% Off</span> for
               waitlisted users
             </p>

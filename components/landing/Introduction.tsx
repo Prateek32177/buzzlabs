@@ -47,9 +47,8 @@ export default function Introduction() {
             just a few clicks.{' '}
           </span>
           <span className='text-white'>
-            Zero complexity, lightning-fast setup, No library installation
-            and Instant alerts make tracking any change event activity
-            effortless.
+            Zero complexity, lightning-fast setup, No library installation and
+            Instant alerts make tracking any change event activity effortless.
           </span>
         </motion.h1>
       </div>

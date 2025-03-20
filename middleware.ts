@@ -17,10 +17,7 @@ export async function middleware(request: NextRequest) {
   const requestPathName = request.nextUrl.pathname;
 
   // Maintenance mode check
-  if (
-    isMaintenanceMode &&
-    !requestPathName.startsWith('/maintenance')
-  ) {
+  if (isMaintenanceMode && !requestPathName.startsWith('/maintenance')) {
     return NextResponse.redirect(new URL('/maintenance', request.url));
   }
 

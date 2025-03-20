@@ -106,21 +106,20 @@ export default function Hero() {
               className='mb-4 bg-white/10 text-white/80 shadow-md hover:bg-white/10 text-xs sm:text-sm px-2 py-1 sm:px-3'
             >
               <Sparkles className='w-4 h-4  text-purple-400 mr-2' />
-              <span className='text-purple-400 mr-1 '>
-                Simplifying Alerts:
-              </span>
+              <span className='text-purple-400 mr-1 '>Simplifying Alerts:</span>
               <span className='hidden sm:inline'>No Code, Just Hook it</span>
               <span className='sm:hidden'>Just Hook it</span>
             </Badge>
             <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
-              Capture Events,{' '}
+              Transform Events into{' '}
               <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200'>
-                Send Notifications
+                Instant Notifications
               </span>
             </h1>
-            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500  max-w-2xl mx-auto'>
-              Hookflo provides a robust webhook infrastructure to capture change
-              events from multiple platforms and send instant notifications across multiple channels.
+            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500 max-w-2xl mx-auto'>
+              Capture events from multiple platforms and instantly relay
+              notifications across various channels with our robust webhook
+              infrastructure.
             </p>
             <WaitlistForm />
             {/* <div className='flex items-center justify-center gap-4 mt-8'>
@@ -207,7 +206,7 @@ export default function Hero() {
                     </span>
                   </div>
                   <div className='mt-1 text-xs text-purple-200'>
-                    Alerting directly from dashboard
+                    direct alert configuration from dashboard
                   </div>
                 </motion.div>
 
@@ -255,7 +254,7 @@ export default function Hero() {
                     </span>
                   </div>
                   <div className='mt-1 text-xs text-purple-200'>
-                    vs 7 days manual alert setup
+                    Instead of days spent on custom integration
                   </div>
                 </motion.div>
               </div>

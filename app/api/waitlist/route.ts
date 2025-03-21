@@ -17,14 +17,32 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Generate a simple verification token
-    const verificationToken = crypto.randomBytes(16).toString('hex');
+    // Check if contact already exists
+    const checkContactResponse = await fetch(
+      `https://app.loops.so/api/v1/contacts/find?email=${encodeURIComponent(email)}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
+        },
+      }
+    );
 
-    // Create verification URL
+    const contactData = await checkContactResponse.json();
+
+    // If contact exists, return error
+    if (checkContactResponse.ok && contactData.contact) {
+      return NextResponse.json(
+        { error: 'You are already on the waitlist!' },
+        { status: 400 }
+      );
+    }
+
+    const verificationToken = crypto.randomBytes(16).toString('hex');
     const baseUrl = process.env.PROD_URL || 'http://localhost:3000';
     const verificationUrl = `${baseUrl}/api/verify-email?email=${encodeURIComponent(email)}&token=${verificationToken}`;
 
-    // Send verification email and create contact in one go
+    // Continue with the existing email sending logic...
     const sendEmailOptions = {
       method: 'POST',
       headers: {

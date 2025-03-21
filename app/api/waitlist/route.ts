@@ -25,16 +25,15 @@ export async function POST(req: NextRequest) {
         headers: {
           Authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
         },
-      }
+      },
     );
 
     const contactData = await checkContactResponse.json();
 
-    // If contact exists, return error
-    if (checkContactResponse.ok && contactData.contact) {
+    if (checkContactResponse.ok && Array.isArray(contactData) && contactData.length > 0) {
       return NextResponse.json(
-        { error: 'You are already on the waitlist!' },
-        { status: 400 }
+      { error: { message: 'You are already on the waitlist!' } },
+      { status: 409 },
       );
     }
 
@@ -57,10 +56,10 @@ export async function POST(req: NextRequest) {
           productName: 'Hookflo',
           verificationUrl: verificationUrl,
         },
-        addToAudience: true,
-        userData: {
+        userData:{
           emailVerified: false,
         },
+        addToAudience: true,
       }),
     };
 

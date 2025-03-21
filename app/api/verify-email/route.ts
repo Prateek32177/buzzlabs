@@ -19,10 +19,7 @@ export async function GET(req: NextRequest) {
       },
       body: JSON.stringify({
         email,
-        // Update verification status in user data
-        userData: {
-          emailVerified: true,
-        },
+        emailVerified: true
       }),
     };
 

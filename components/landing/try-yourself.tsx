@@ -109,9 +109,7 @@ function TryYourself() {
             Try It yourself
           </motion.h2>
           <p className='text-purple-200/80 text-center max-w-2xl mx-auto text-lg'>
-            Experience the power of our notification webhook infrastructure
-            system with this interactive demo. Follow the steps below to create,
-            manage, and test webhooks.
+            Follow the steps below to create, manage, and test webhooks.
           </p>
         </div>
 

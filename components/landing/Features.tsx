@@ -48,8 +48,8 @@ export default function Features() {
     <PolarLogo className='w-6 h-6 ' />,
     <LoopsLogo className='w-6 h-6 ' />,
     <SlackLogo className='w-12 h-12' />,
-    <ResendLogo className='w-12 h-12 ' />,
-    <TeamsLogo className='w-6 h-6 text-indigo-400 ' />,
+    // <ResendLogo className='w-12 h-12 ' />,
+    // <TeamsLogo className='w-6 h-6 text-indigo-400 ' />,
   ];
 
   // Intersection observer to trigger animations when section is visible

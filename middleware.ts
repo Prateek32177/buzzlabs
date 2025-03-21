@@ -23,7 +23,13 @@ export async function middleware(request: NextRequest) {
 
   // Waitlist mode check
   if (isWaitlistMode) {
-    const allowedPaths = ['/', '/api/waitlist'];
+    const allowedPaths = [
+      '/',
+      '/api/waitlist',
+      '/api/verify-email',
+      '/verification-success',
+      '/verification-failed',
+    ];
     if (!allowedPaths.some(path => requestPathName === path)) {
       return NextResponse.rewrite(new URL('/unauthorized', request.url));
     }
@@ -73,6 +79,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)',
   ],
 };

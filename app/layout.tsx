@@ -3,7 +3,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 import { Open_Sans } from 'next/font/google';
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from '@vercel/analytics/react';
 
 const openSans = Open_Sans({ subsets: ['latin'] });
 
@@ -98,7 +98,7 @@ export default function RootLayout({
           </main>
           <Toaster richColors />
         </ThemeProvider>
-        <Analytics/>
+        <Analytics />
       </body>
     </html>
   );

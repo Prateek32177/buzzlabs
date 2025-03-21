@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const verificationToken = crypto.randomBytes(16).toString('hex');
 
     // Create verification URL
-    const baseUrl = process.env.VERCEL_URL || 'http://localhost:3000';
+    const baseUrl = process.env.PROD_URL || 'http://localhost:3000';
     const verificationUrl = `${baseUrl}/api/verify-email?email=${encodeURIComponent(email)}&token=${verificationToken}`;
 
     // Send verification email and create contact in one go

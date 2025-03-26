@@ -14,6 +14,7 @@ import {
   ResendLogo,
   TeamsLogo,
 } from '../Logos';
+import { CreditCardIcon, UsersIcon, BellAlertIcon,BoltIcon } from '@heroicons/react/24/solid'
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { Bell, Clock, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -399,10 +400,10 @@ export function NotificationDigestCard() {
 
   const frequencies = ['3× daily', '1× daily', 'Weekly'];
   const stats = [
-    { icon: '💰', label: 'payments', value: 8 },
-    { icon: '👤', label: 'users', value: 5 },
-    { icon: '🚀', label: 'deploys', value: 3 },
-    { icon: '⚠️', label: 'alerts', value: 2 },
+    { icon: CreditCardIcon, label: 'payments', value: 8 },
+    { icon: UsersIcon, label: 'users', value: 5 },
+    { icon: BoltIcon, label: 'deploys', value: 3 },
+    { icon: BellAlertIcon, label: 'alerts', value: 2 },
   ];
 
   return (
@@ -451,8 +452,8 @@ export function NotificationDigestCard() {
               key={index}
               className='bg-zinc-800/50 p-2 rounded-lg flex items-center gap-2'
             >
-              <div className='w-7 h-7 rounded-full bg-purple-400/10 flex items-center justify-center'>
-                <span>{item.icon}</span>
+              <div className='w-8 h-8 rounded-full bg-purple-400/10 flex items-center justify-center'>
+                <span><item.icon className="w-5 h-5 text-purple-400" /></span>
               </div>
               <div>
                 <div className='text-base font-semibold text-white'>

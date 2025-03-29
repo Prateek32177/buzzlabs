@@ -14,7 +14,12 @@ import {
   ResendLogo,
   TeamsLogo,
 } from '../Logos';
-import { CreditCardIcon, UsersIcon, BellAlertIcon,BoltIcon } from '@heroicons/react/24/solid'
+import {
+  CreditCardIcon,
+  UsersIcon,
+  BellAlertIcon,
+  BoltIcon,
+} from '@heroicons/react/24/solid';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { Bell, Clock, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -453,7 +458,9 @@ export function NotificationDigestCard() {
               className='bg-zinc-800/50 p-2 rounded-lg flex items-center gap-2'
             >
               <div className='w-8 h-8 rounded-full bg-purple-400/10 flex items-center justify-center'>
-                <span><item.icon className="w-5 h-5 text-purple-400" /></span>
+                <span>
+                  <item.icon className='w-5 h-5 text-purple-400' />
+                </span>
               </div>
               <div>
                 <div className='text-base font-semibold text-white'>

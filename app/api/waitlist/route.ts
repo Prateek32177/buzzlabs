@@ -30,10 +30,14 @@ export async function POST(req: NextRequest) {
 
     const contactData = await checkContactResponse.json();
 
-    if (checkContactResponse.ok && Array.isArray(contactData) && contactData.length > 0) {
+    if (
+      checkContactResponse.ok &&
+      Array.isArray(contactData) &&
+      contactData.length > 0
+    ) {
       return NextResponse.json(
-      { error: { message: 'You are already on the waitlist!' } },
-      { status: 409 },
+        { error: { message: 'You are already on the waitlist!' } },
+        { status: 409 },
       );
     }
 
@@ -56,7 +60,7 @@ export async function POST(req: NextRequest) {
           productName: 'Hookflo',
           verificationUrl: verificationUrl,
         },
-        userData:{
+        userData: {
           emailVerified: false,
         },
         addToAudience: true,

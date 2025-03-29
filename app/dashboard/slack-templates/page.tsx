@@ -285,7 +285,6 @@ function formatSlackMessage(text: string): string {
     .replace(/~([^~]+)~/g, '<del>$1</del>') // Strikethrough
     .replace(/`([^`]+)`/g, '<code>$1</code>') // Code
     .replace(/\n/g, '<br />') // New lines
-    .replace(/•/g, '•') // Preserve bullets
     .replace(/<!here>/g, '<span class="text-cyan-400">@here</span>') // @here mention
     .replace(/<!channel>/g, '<span class="text-cyan-400">@channel</span>') // @channel mention
     .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" class="text-blue-400 hover:underline">$1</a>'); // URLs

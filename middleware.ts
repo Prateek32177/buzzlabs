@@ -7,16 +7,36 @@ function getMaintenanceMode(): boolean {
   return process.env.MAINTENANCE_MODE?.toLowerCase() === 'true';
 }
 
+function getWaitlistMode(): boolean {
+  return process.env.WAITLIST_MODE?.toLowerCase() === 'true';
+}
+
 export async function middleware(request: NextRequest) {
   const isMaintenanceMode = getMaintenanceMode();
+  const isWaitlistMode = getWaitlistMode();
+  const requestPathName = request.nextUrl.pathname;
 
-  if (
-    isMaintenanceMode &&
-    !request.nextUrl.pathname.startsWith('/maintenance')
-  ) {
+  // Maintenance mode check
+  if (isMaintenanceMode && !requestPathName.startsWith('/maintenance')) {
     return NextResponse.redirect(new URL('/maintenance', request.url));
   }
 
+  // Waitlist mode check
+  if (isWaitlistMode) {
+    const allowedPaths = [
+      '/',
+      '/api/waitlist',
+      '/api/verify-email',
+      '/verification-success',
+      '/verification-failed',
+    ];
+    if (!allowedPaths.some(path => requestPathName === path)) {
+      return NextResponse.rewrite(new URL('/unauthorized', request.url));
+    }
+    return NextResponse.next();
+  }
+
+  // Rest of your existing authentication logic
   const supbase = createClient();
   const {
     data: { user },
@@ -25,7 +45,6 @@ export async function middleware(request: NextRequest) {
 
   const isAuthenticated = user?.role === 'authenticated';
   const pathToAuthorize = ['/api/webhooks'];
-  const requestPathName = request.nextUrl.pathname;
 
   const isProtectedPath = pathToAuthorize.some(
     path =>
@@ -60,14 +79,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - images - .svg, .png, .jpg, .jpeg, .gif, .webp
-     * Feel free to modify this pattern to include more paths.
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)',
   ],
 };

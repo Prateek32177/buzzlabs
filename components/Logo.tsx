@@ -30,7 +30,7 @@ export function Logo({ variant = 'green', size = 'text-xl' }: LogoProps) {
                     transition-all duration-300 ease-in-out
                 `}
       >
-        Superhook
+        Hookflo{' '}
       </h1>
     </Link>
   );

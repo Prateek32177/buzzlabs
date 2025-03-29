@@ -20,7 +20,7 @@ export default function Integration() {
               <div
                 className={`inline-flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full border border-purple-400/20 transition-all duration-700 opacity-100 translate-y-0`}
               >
-                <Plug className='w-4 h-4 text-purple-400 animate-pulse' />
+                <Plug className='w-4 h-4 text-purple-400' />
                 <span className='text-purple-400 text-sm font-medium'>
                   Powerful Integrations
                 </span>

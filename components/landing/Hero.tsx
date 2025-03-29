@@ -1,5 +1,11 @@
 'use client';
-import { ArrowRight, Clock, BarChart3, ArrowUpRight } from 'lucide-react';
+import {
+  ArrowRight,
+  Clock,
+  BarChart3,
+  CircleGauge,
+  ArrowUpRight,
+} from 'lucide-react';
 import { WaitlistForm } from './Waitlist';
 import { Badge } from '../ui/badge';
 import { Sparkles } from 'lucide-react';
@@ -89,7 +95,7 @@ export default function Hero() {
         <div className='absolute inset-0 bg-gradient-to-b from-zinc-900/0 via-zinc-900/10 to-zinc-900/30' />
       </div>
 
-      <section className='pt-40 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
+      <section className='pt-52 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
         <div className='absolute inset-0 z-0'>
           <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
         </div>
@@ -97,28 +103,26 @@ export default function Hero() {
           <div className='text-center max-w-4xl mx-auto'>
             <Badge
               variant={'default'}
-              className='mb-4 bg-white/10 text-white/80 shadow-md hover:bg-white/10'
+              className='mb-4 bg-white/10 text-white/80 shadow-md hover:bg-white/10 text-xs sm:text-sm px-2 py-1 sm:px-3'
             >
-              <Sparkles className='w-4 h-4 text-purple-400 mr-2' />
-              <span className='text-purple-400 mr-1'>
-                Simplifying Alerts:
-              </span>{' '}
-              No Code, Just Connect it
-              <ArrowRight className='ml-1 h-3 w-3' />
+              <Sparkles className='w-4 h-4  text-purple-400 mr-2' />
+              <span className='text-purple-400 mr-1 '>Simplifying Alerts:</span>
+              <span className='hidden sm:inline'>No Code, Just Hook it</span>
+              <span className='sm:hidden'>Just Hook it</span>
             </Badge>
             <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
-              Capture Events,{' '}
+              Transform Events into{' '}
               <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200'>
-                Send Notifications
+                Instant Notifications
               </span>
             </h1>
-            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500  max-w-2xl mx-auto'>
-              SuperHook provides a robust webhook infrastructure to capture
-              change events and send instant notifications across multiple
-              channels.
+            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500 max-w-2xl mx-auto'>
+              Capture events from multiple platforms and instantly relay
+              notifications across various channels with our robust webhook
+              infrastructure.
             </p>
             <WaitlistForm />
-            <div className='flex items-center justify-center gap-4 mt-8'>
+            {/* <div className='flex items-center justify-center gap-4 mt-8'>
               <Button
                 onClick={scrollToTryItYourself}
                 size={'sm'}
@@ -153,12 +157,12 @@ export default function Hero() {
                   </div>
                 </DialogContent>
               </Dialog>
-            </div>
+            </div> */}
             {/* Animated data points */}
             {/* Time savings data point */}
-            <div className='relative z-10 mt-16 md:mt-24'>
-              <div className='grid grid-cols-2 md:grid-cols-4 gap-4 px-4 md:px-0'>
-                <motion.div
+            <div className='relative z-10 mt-16 md:mt-20 w-full '>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
+                {/* <motion.div
                   initial={{ opacity: 0, x: -50 }}
                   animate={{
                     opacity: isVisible ? 1 : 0,
@@ -180,7 +184,7 @@ export default function Hero() {
                   <div className='mt-1 text-xs text-purple-200'>
                     vs. manual integration
                   </div>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Efficiency data point */}
                 <motion.div
@@ -190,25 +194,24 @@ export default function Hero() {
                     y: isVisible ? 0 : 50,
                   }}
                   transition={{ duration: 0.8, delay: 0.9 }}
-                  className='rounded-lg  bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg  bg-gradient-to-b from-zinc-800/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
-                    <BarChart3 className='h-4 w-4' />
-                    <span className='text-xs font-medium'>
-                      platform efficiency
-                    </span>
+                    <CircleGauge className='h-4 w-4' />
+                    <span className='text-xs font-medium'>efficiency</span>
                   </div>
                   <div className='mt-1 flex items-baseline gap-1 flex-wrap'>
-                    <span className='text-3xl font-bold text-white'>99.8%</span>
-                    <span className='text-sm text-purple-300'>uptime</span>
+                    <span className='text-2xl md:text-3xl font-bold text-white'>
+                      No-code
+                    </span>
                   </div>
                   <div className='mt-1 text-xs text-purple-200'>
-                    enterprise-grade reliability
+                    direct alert configuration from dashboard
                   </div>
                 </motion.div>
 
                 {/* Success rate data point */}
-                <motion.div
+                {/* <motion.div
                   initial={{ opacity: 0, x: 50 }}
                   animate={{
                     opacity: isVisible ? 1 : 0,
@@ -227,7 +230,7 @@ export default function Hero() {
                   <div className='mt-1 text-xs text-purple-200'>
                     on What Matters to you, we'll handle the alerts.
                   </div>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Integration speed data point */}
                 <motion.div
@@ -241,17 +244,15 @@ export default function Hero() {
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <BarChart3 className='h-4 w-4' />
-                    <span className='text-xs font-medium'>
-                      integration speed
-                    </span>
+                    <span className='text-xs font-medium'>integration</span>
                   </div>
                   <div className='mt-1 flex items-baseline gap-1'>
-                    <span className='text-3xl font-bold text-white'>
+                    <span className='text-2xl md:text-3xl font-bold text-white'>
                       in 5 mins
                     </span>
                   </div>
                   <div className='mt-1 text-xs text-purple-200'>
-                    vs 7 days manual alert setup
+                    Instead of days spent on custom integration
                   </div>
                 </motion.div>
               </div>

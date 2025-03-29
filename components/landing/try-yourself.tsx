@@ -48,6 +48,10 @@ interface Webhook {
     email: boolean;
     slack: boolean;
   };
+  notificationFrequency: {
+    type: 'instant' | 'daily' | 'twice_daily' | 'thrice_daily';
+    time?: string; // For daily digests
+  };
 }
 
 const App = () => {
@@ -83,7 +87,7 @@ function TryYourself() {
   };
 
   return (
-    <section className='w-full py-24 relative overflow-hidden bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)]'>
+    <section className='w-full py-24 relative overflow-hidden bg-zinc-900/60 rounded-xl p-6 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)]'>
       {/* Background elements */}
 
       <div className='container max-w-6xl mx-auto px-4 relative z-10'>
@@ -105,9 +109,7 @@ function TryYourself() {
             Try It yourself
           </motion.h2>
           <p className='text-purple-200/80 text-center max-w-2xl mx-auto text-lg'>
-            Experience the power of our notification webhook infrastructure
-            system with this interactive demo. Follow the steps below to create,
-            manage, and test webhooks.
+            Follow the steps below to create, manage, and test webhooks.
           </p>
         </div>
 
@@ -188,6 +190,11 @@ function TryYourself() {
                 selectedApp={selectedApp}
                 selectedEvents={selectedEvents}
                 goToPreviousStep={goToPreviousStep}
+                setCurrentStep={setCurrentStep}
+                setWebhooks={setWebhooks}
+                setSelectedWebhook={setSelectedWebhook}
+                setSelectedApp={setSelectedApp}
+                setSelectedEvents={setSelectedEvents}
               />
             )}
           </AnimatePresence>
@@ -228,6 +235,7 @@ function Step1WebhookCreation({
       toast.error('Error', {
         description: 'Please enter a webhook name',
       });
+
       return;
     }
 
@@ -249,6 +257,10 @@ function Step1WebhookCreation({
         email: true,
         slack: true,
       },
+      notificationFrequency: {
+        type: 'instant',
+        time: '9',
+      },
     };
 
     setWebhooks([...webhooks, newWebhook]);
@@ -262,6 +274,7 @@ function Step1WebhookCreation({
     if (inputRef.current) {
       inputRef.current.focus();
     }
+    goToNextStep();
   };
 
   const handleNext = () => {
@@ -283,7 +296,7 @@ function Step1WebhookCreation({
       transition={{ duration: 0.3 }}
       className='space-y-6'
     >
-      <div className='text-center'>
+      <div className='text-center' id='step-top'>
         <h3 className='text-2xl font-bold text-white mb-2'>
           Step 1: Create Your Webhook
         </h3>
@@ -293,6 +306,7 @@ function Step1WebhookCreation({
       <div className='p-6 max-w-lg mx-auto'>
         <div className='flex flex-col md:flex-row gap-4'>
           <Input
+            id='webhook-name-input'
             ref={inputRef}
             placeholder='Enter webhook name'
             value={webhookName}
@@ -304,10 +318,7 @@ function Step1WebhookCreation({
               }
             }}
           />
-          <Button
-            onClick={handleCreateWebhook}
-            className='bg-purple-500/80 hover:bg-purple-600 text-white transition-all duration-200 h-10'
-          >
+          <Button onClick={handleCreateWebhook}>
             <Plus className=' h-4 w-4' /> Create Webhook
           </Button>
         </div>
@@ -340,11 +351,8 @@ function Step1WebhookCreation({
       </div>
 
       <div className='flex justify-end mt-6'>
-        <Button
-          onClick={handleNext}
-          className='bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200'
-        >
-          Next Step <ArrowRight className='ml-2 h-4 w-4' />
+        <Button onClick={handleNext} size={'sm'}>
+          Next <ArrowRight className='h-4 w-4' />
         </Button>
       </div>
     </motion.div>
@@ -374,6 +382,44 @@ function Step2WebhookManagement({
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const [showCreateWebhook, setShowCreateWebhook] = useState(false);
   const [webhookName, setWebhookName] = useState('');
+  const [frequency, setFrequency] = useState(
+    viewWebhook?.notificationFrequency?.type || 'instant',
+  );
+  const [deliveryTime, setDeliveryTime] = useState(
+    viewWebhook?.notificationFrequency?.time || '',
+  );
+
+  useEffect(() => {
+    // Update initial values when webhook changes
+    if (viewWebhook) {
+      setFrequency(viewWebhook.notificationFrequency?.type || 'instant');
+      setDeliveryTime(viewWebhook.notificationFrequency?.time || '');
+    }
+  }, [viewWebhook]);
+
+  useEffect(() => {
+    // Set default time values when frequency changes
+    let defaultTime = '';
+    switch (frequency) {
+      case 'daily':
+        defaultTime = '9';
+        break;
+      case 'twice_daily':
+        defaultTime = '9,17';
+        break;
+      case 'thrice_daily':
+        defaultTime = '9,13,17';
+        break;
+      default:
+        defaultTime = '';
+    }
+    setDeliveryTime(defaultTime);
+
+    // Update webhook with new frequency and time
+    if (viewWebhook) {
+      handleUpdateFrequency(viewWebhook.id, frequency, defaultTime);
+    }
+  }, [frequency]);
 
   const handleToggleStatus = (id: string) => {
     setWebhooks(
@@ -427,6 +473,10 @@ function Step2WebhookManagement({
         email: true,
         slack: true,
       },
+      notificationFrequency: {
+        type: 'instant',
+        time: '9',
+      },
     };
 
     setWebhooks([...webhooks, newWebhook]);
@@ -477,7 +527,30 @@ function Step2WebhookManagement({
     if (webhooks.length > 0) {
       setSelectedWebhook(webhooks[0]);
       goToNextStep();
+      document
+        .getElementById('step-top')
+        ?.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+  // Update the View Webhook Modal section within Step2WebhookManagement to include frequency settings
+  const handleUpdateFrequency = (
+    id: string,
+    type: 'instant' | 'daily' | 'twice_daily' | 'thrice_daily',
+    time?: string,
+  ) => {
+    setWebhooks(
+      webhooks.map(webhook =>
+        webhook.id === id
+          ? {
+              ...webhook,
+              notificationFrequency: {
+                type,
+                time: time || webhook.notificationFrequency?.time,
+              },
+            }
+          : webhook,
+      ),
+    );
   };
 
   return (
@@ -488,7 +561,7 @@ function Step2WebhookManagement({
       transition={{ duration: 0.3 }}
       className='space-y-6'
     >
-      <div className='text-center'>
+      <div className='text-center' id='step-top'>
         <h3 className='text-2xl font-bold text-white mb-2'>
           Step 2: Manage Your Webhooks
         </h3>
@@ -684,6 +757,95 @@ function Step2WebhookManagement({
                   </div>
                 </div>
               </div>
+
+              <div className='space-y-2'>
+                <Label className='text-purple-200/70'>
+                  Notification Frequency
+                </Label>
+                <div className='p-3 rounded-md border space-y-4'>
+                  <Select
+                    value={frequency}
+                    onValueChange={(
+                      value:
+                        | 'instant'
+                        | 'daily'
+                        | 'twice_daily'
+                        | 'thrice_daily',
+                    ) => {
+                      setFrequency(value);
+                    }}
+                  >
+                    <SelectTrigger className='bg-zinc-900/70 border-zinc-700 text-white'>
+                      <SelectValue placeholder='Select frequency' />
+                    </SelectTrigger>
+                    <SelectContent className='bg-zinc-900 border-zinc-700 text-white'>
+                      <SelectItem value='instant'>Instant</SelectItem>
+                      <SelectItem value='daily'>Daily</SelectItem>
+                      <SelectItem value='twice_daily'>Twice Daily</SelectItem>
+                      <SelectItem value='thrice_daily'>Thrice Daily</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {frequency !== 'instant' && (
+                    <div className='space-y-2'>
+                      <Label className='text-purple-200/70 text-sm'>
+                        Delivery Time
+                      </Label>
+                      <Select
+                        value={deliveryTime}
+                        onValueChange={value => {
+                          setDeliveryTime(value);
+                          if (viewWebhook) {
+                            handleUpdateFrequency(
+                              viewWebhook.id,
+                              frequency,
+                              value,
+                            );
+                          }
+                        }}
+                      >
+                        <SelectTrigger className='bg-zinc-900/70 border-zinc-700 text-white'>
+                          <SelectValue placeholder='Select time' />
+                        </SelectTrigger>
+                        <SelectContent className='bg-zinc-900 border-zinc-700 text-white'>
+                          {frequency === 'daily' && (
+                            <>
+                              <SelectItem value='9'>9:00 AM</SelectItem>
+                              <SelectItem value='10'>10:00 AM</SelectItem>
+                            </>
+                          )}
+                          {frequency === 'twice_daily' && (
+                            <>
+                              <SelectItem value='9,17'>
+                                9:00 AM & 5:00 PM
+                              </SelectItem>
+                              <SelectItem value='10,18'>
+                                10:00 AM & 6:00 PM
+                              </SelectItem>
+                            </>
+                          )}
+                          {frequency === 'thrice_daily' && (
+                            <>
+                              <SelectItem value='9,13,17'>
+                                9:00 AM, 1:00 PM & 5:00 PM
+                              </SelectItem>
+                              <SelectItem value='10,14,18'>
+                                10:00 AM, 2:00 PM & 6:00 PM
+                              </SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <div className='text-sm text-purple-200/70 mt-2'>
+                    {frequency === 'instant'
+                      ? 'Notifications will be sent immediately'
+                      : `Digest will be sent ${frequency.replace('_', ' ')}`}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -774,14 +936,11 @@ function Step2WebhookManagement({
       </Dialog>
 
       <div className='flex justify-between mt-6'>
-        <Button onClick={goToPreviousStep}>
-          <ArrowLeft className='mr-2 h-4 w-4' /> Previous
+        <Button onClick={goToPreviousStep} size={'sm'} variant={'ghost'}>
+          <ArrowLeft className='h-4 w-4' /> Previous
         </Button>
-        <Button
-          onClick={handleNext}
-          className='bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200'
-        >
-          Next <ArrowRight className='ml-2 h-4 w-4' />
+        <Button size={'sm'} onClick={handleNext}>
+          Next <ArrowRight className='h-4 w-4' />
         </Button>
       </div>
     </motion.div>
@@ -852,7 +1011,6 @@ function Step3ApplicationIntegration({
       toast.error('Error', {
         description: 'Please select an application',
       });
-
       return;
     }
 
@@ -864,7 +1022,7 @@ function Step3ApplicationIntegration({
 
       return;
     }
-
+    document.getElementById('step-top')?.scrollIntoView({ behavior: 'smooth' });
     setError(null);
     goToNextStep();
   };
@@ -877,7 +1035,7 @@ function Step3ApplicationIntegration({
       transition={{ duration: 0.3 }}
       className='space-y-6'
     >
-      <div className='text-center'>
+      <div className='text-center' id='step-top'>
         <h3 className='text-2xl font-bold text-white mb-2'>
           Step 3: Integrate with Applications
         </h3>
@@ -1021,18 +1179,19 @@ function Step3ApplicationIntegration({
         )}
       </div>
 
-      <div className='flex justify-between mt-6'>
-        <Button onClick={goToPreviousStep}>
-          <ArrowLeft className='mr-2 h-4 w-4' /> Previous
+      <div className='flex justify-between mt-6 align-middle overflow-auto'>
+        <Button onClick={goToPreviousStep} size={'sm'} variant={'ghost'}>
+          <ArrowLeft className=' h-4 w-4' /> Previous
         </Button>
         <Button
+          size={'sm'}
           onClick={handleNext}
           className='bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200'
           disabled={
             !selectedApp || !selectedWebhook || selectedEvents.length === 0
           }
         >
-          Create Integration <ArrowRight className='ml-2 h-4 w-4' />
+          Create Integration <ArrowRight className=' h-4 w-4' />
         </Button>
       </div>
     </motion.div>
@@ -1045,6 +1204,11 @@ interface Step4Props {
   selectedApp: string | null;
   selectedEvents: string[];
   goToPreviousStep: () => void;
+  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+  setWebhooks: React.Dispatch<React.SetStateAction<Webhook[]>>;
+  setSelectedWebhook: React.Dispatch<React.SetStateAction<Webhook | null>>;
+  setSelectedApp: React.Dispatch<React.SetStateAction<string | null>>;
+  setSelectedEvents: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 function SlackIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -1066,6 +1230,11 @@ function Step4WebhookTesting({
   selectedApp,
   selectedEvents,
   goToPreviousStep,
+  setCurrentStep,
+  setWebhooks,
+  setSelectedWebhook,
+  setSelectedApp,
+  setSelectedEvents,
 }: Step4Props) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentEvent, setCurrentEvent] = useState<string | null>(null);
@@ -1135,35 +1304,51 @@ function Step4WebhookTesting({
       () => (
         <div className='flex items-start gap-3 p-4 bg-white light:bg-zinc-900 rounded-lg shadow-md w-full'>
           <div className='flex-shrink-0'>
-            <div className='h-10 w-10 bg-red-50 light:bg-white flex items-center justify-center p-2 rounded-full'>
-              <Mail className='text-red-600 light:text-red-500 h-5 w-5' />
+            <div className='h-10 w-10 rounded bg-red-800/20 light:bg-red-500 flex items-center justify-center p-2'>
+              <Mail className='text-red-700 light:text-red-500 h-8 w-8' />
             </div>
           </div>
           <div className='flex-1 min-w-0'>
             <div className='flex justify-between items-start'>
               <div>
                 <p className='font-medium text-gray-900 light:text-white'>
-                  New Email from Webhook Service
+                  {selectedWebhook?.notificationFrequency.type === 'instant'
+                    ? 'New Event from Webhook Service'
+                    : `${selectedWebhook?.notificationFrequency.type.replace('_', ' ')} Digest from Webhook Service`}
                 </p>
                 <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
-                  {selectedApp} {event.replace(/_/g, ' ')} event triggered
+                  {selectedWebhook?.notificationFrequency.type === 'instant'
+                    ? `${selectedApp} ${event.replace(/_/g, ' ')} event triggered`
+                    : `Summary of recent ${selectedApp} events:`}
                 </p>
+                {selectedWebhook?.notificationFrequency.type !== 'instant' && (
+                  <div className='mt-2 space-y-1 border-l-2 border-gray-200 pl-3'>
+                    <p className='text-gray-600 light:text-gray-300 text-sm'>
+                      • {event.replace(/_/g, ' ')} (just now)
+                    </p>
+                    <p className='text-gray-600 light:text-gray-300 text-sm'>
+                      • 2 more {event.replace(/_/g, ' ')}
+                    </p>
+                    <p className='text-gray-600 light:text-gray-300 text-sm'>
+                      • 3 other events
+                    </p>
+                  </div>
+                )}
                 <p className='text-gray-500 light:text-gray-400 text-xs mt-2'>
-                  Just now
+                  {selectedWebhook?.notificationFrequency.type === 'instant'
+                    ? 'Just now'
+                    : `Scheduled delivery at ${selectedWebhook?.notificationFrequency.time}`}
                 </p>
               </div>
             </div>
           </div>
-          <button className='rounded-full p-1 hover:bg-gray-100 light:hover:bg-gray-800 transition-colors'>
-            <X className='h-4 w-4 text-gray-500 light:text-gray-400' />
-          </button>
         </div>
       ),
       {
         id: 'gmail-notification',
         duration: 5000,
         className:
-          'p-0 bg-transparent border-none rounded-lg shadow-md max-w-sm',
+          'p-0 bg-transparent border-none rounded-lg shadow-md max-w-md',
         closeButton: true,
       },
     );
@@ -1183,30 +1368,51 @@ function Step4WebhookTesting({
             <div className='flex justify-between items-start'>
               <div>
                 <p className='font-medium text-gray-900 light:text-white'>
-                  Slack Notification
+                  {selectedWebhook?.notificationFrequency.type === 'instant'
+                    ? 'Slack Notification'
+                    : `${selectedWebhook?.notificationFrequency.type.replace('_', ' ')} Digest`}
                 </p>
-                <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
-                  New {selectedApp} event: {event.replace(/_/g, ' ')}
-                </p>
+                {selectedWebhook?.notificationFrequency.type === 'instant' ? (
+                  <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
+                    New {selectedApp} event: {event.replace(/_/g, ' ')}
+                  </p>
+                ) : (
+                  <>
+                    <p className='text-gray-600 light:text-gray-300 text-sm mt-1'>
+                      Recent {selectedApp} events summary:
+                    </p>
+                    <div className='mt-2 space-y-1 border-l-2 border-gray-200 pl-3'>
+                      <p className='text-gray-600 light:text-gray-300 text-sm'>
+                        • {event.replace(/_/g, ' ')} (just now)
+                      </p>
+                      <p className='text-gray-600 light:text-gray-300 text-sm'>
+                        • 3 similar {event.replace(/_/g, ' ')} events
+                      </p>
+                      <p className='text-gray-600 light:text-gray-300 text-sm'>
+                        • 2 other webhook activities
+                      </p>
+                    </div>
+                  </>
+                )}
                 <div className='flex items-center mt-2'>
                   <span className='inline-block h-2 w-2 rounded-full bg-green-500 mr-2'></span>
                   <p className='text-gray-500 light:text-gray-400 text-xs'>
-                    Webhook Service • Just now
+                    Webhook Service •{' '}
+                    {selectedWebhook?.notificationFrequency.type === 'instant'
+                      ? 'Just now'
+                      : `Scheduled delivery at ${selectedWebhook?.notificationFrequency.time}`}
                   </p>
                 </div>
               </div>
             </div>
           </div>
-          <button className='rounded-full p-1 hover:bg-gray-100 light:hover:bg-gray-800 transition-colors'>
-            <X className='h-4 w-4 text-gray-500 light:text-gray-400' />
-          </button>
         </div>
       ),
       {
         id: 'slack-notification',
         duration: 5000,
         className:
-          'p-0 bg-transparent border-none rounded-lg shadow-md max-w-sm',
+          'p-0 bg-transparent border-none rounded-lg shadow-md max-w-md',
         closeButton: true,
       },
     );
@@ -1219,7 +1425,7 @@ function Step4WebhookTesting({
       transition={{ duration: 0.3 }}
       className='space-y-6'
     >
-      <div className='text-center'>
+      <div className='text-center' id='step-top'>
         <h3 className='text-2xl font-bold text-white mb-2'>
           Step 4: Test Your Webhook
         </h3>
@@ -1303,11 +1509,11 @@ function Step4WebhookTesting({
         <div className='bg-zinc-900/70 border-zinc-700 hover:border-purple-500/50 rounded-xl border  p-6 relative overflow-hidden shadow-lg'>
           <h4 className='text-lg font-medium text-white mb-4'>Live Preview</h4>
 
-          <div className='aspect-square bg-zinc-900/70 border-zinc-700 hover:border-purple-500/50 rounded-lg relative border shadow-inner'>
+          <div className='aspect-square bg-zinc-900/70 border-zinc-700 hover:border-purple-500/50 rounded-lg relative border shadow-inner overflow-hidden'>
             {/* Application animation area */}
-            <div className='absolute inset-0 flex items-center justify-center'>
+            <div className='absolute inset-0 flex items-center justify-center p-4'>
               {!currentEvent ? (
-                <div className='text-purple-200/70 text-center'>
+                <div className='text-purple-200/70 text-center p-2 '>
                   <p>Trigger an event to see it in action</p>
                 </div>
               ) : (
@@ -1319,39 +1525,39 @@ function Step4WebhookTesting({
                     stiffness: 400,
                     damping: 30,
                   }}
-                  className='w-full h-full flex items-center justify-center'
+                  className='w-full h-full flex items-center justify-center p-2'
                 >
                   {selectedApp === 'supabase' && (
-                    <div className='relative w-4/5 max-w-md'>
-                      <div className='bg-emerald-900/70 rounded-t-lg p-3'>
+                    <div className='relative w-full max-w-[280px] sm:max-w-[320px] transform scale-[1.2] sm:scale-100'>
+                      <div className='bg-emerald-900/70 rounded-t-lg p-2 sm:p-3'>
                         <div className='flex items-center'>
-                          <div className='w-8 h-8 rounded-full bg-emerald-950 flex items-center justify-center mr-3'>
+                          <div className='w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-950 flex items-center justify-center mr-2 sm:mr-3'>
                             <svg
                               viewBox='0 0 24 24'
-                              className='w-5 h-5 text-emerald-500'
+                              className='w-4 h-4 sm:w-5 sm:h-5 text-emerald-500'
                               fill='currentColor'
                             >
                               <path d='M21.362 9.354H12V.396a.396.396 0 0 0-.716-.233L2.203 12.424l-.401.562a1.04 1.04 0 0 0 .836 1.659H12v8.959a.396.396 0 0 0 .716.233l9.081-12.261.401-.562a1.04 1.04 0 0 0-.836-1.66z' />
                             </svg>
                           </div>
-                          <span className='text-white font-medium'>
+                          <span className='text-white font-medium text-sm sm:text-base'>
                             Supabase Database
                           </span>
                         </div>
                       </div>
-                      <div className='bg-slate-900 p-4 rounded-b-lg border border-slate-700 border-t-0 shadow-lg'>
-                        <div className='space-y-3'>
-                          <div className='flex justify-between items-center'>
+                      <div className='bg-slate-900 p-3 sm:p-4 rounded-b-lg border border-slate-700 border-t-0 shadow-lg'>
+                        <div className='space-y-2 sm:space-y-3'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>Event:</span>
                             <span className='text-purple-400 font-medium capitalize'>
                               {currentEvent}
                             </span>
                           </div>
-                          <div className='flex justify-between items-center'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>Table:</span>
                             <span className='text-white'>users</span>
                           </div>
-                          <div className='flex justify-between items-center'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>Status:</span>
                             <span className='text-emerald-500'>Success</span>
                           </div>
@@ -1367,38 +1573,38 @@ function Step4WebhookTesting({
                   )}
 
                   {selectedApp === 'github' && (
-                    <div className='relative w-4/5 max-w-md'>
-                      <div className='bg-gray-900 rounded-t-lg p-3'>
+                    <div className='relative w-full max-w-[280px] sm:max-w-[320px] transform scale-[1.2] sm:scale-100'>
+                      <div className='bg-gray-900 rounded-t-lg p-2 sm:p-3'>
                         <div className='flex items-center'>
-                          <div className='w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center mr-3'>
+                          <div className='w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-800 flex items-center justify-center mr-2 sm:mr-3'>
                             <svg
                               viewBox='0 0 24 24'
-                              className='w-5 h-5 text-white'
+                              className='w-4 h-4 sm:w-5 sm:h-5 text-white'
                               fill='currentColor'
                             >
                               <path d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12' />
                             </svg>
                           </div>
-                          <span className='text-white font-medium'>
+                          <span className='text-white font-medium text-sm sm:text-base'>
                             GitHub Repository
                           </span>
                         </div>
                       </div>
-                      <div className='bg-slate-900 p-4 rounded-b-lg border border-slate-700 border-t-0 shadow-lg'>
-                        <div className='space-y-3'>
-                          <div className='flex justify-between items-center'>
+                      <div className='bg-slate-900 p-3 sm:p-4 rounded-b-lg border border-slate-700 border-t-0 shadow-lg'>
+                        <div className='space-y-2 sm:space-y-3'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>Event:</span>
                             <span className='text-purple-400 font-medium capitalize'>
                               {currentEvent?.replace(/_/g, ' ')}
                             </span>
                           </div>
-                          <div className='flex justify-between items-center'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>
                               Repository:
                             </span>
                             <span className='text-white'>user/project</span>
                           </div>
-                          <div className='flex justify-between items-center'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>Status:</span>
                             <span className='text-emerald-500'>Triggered</span>
                           </div>
@@ -1414,38 +1620,38 @@ function Step4WebhookTesting({
                   )}
 
                   {selectedApp === 'stripe' && (
-                    <div className='relative w-4/5 max-w-md'>
-                      <div className='bg-blue-900/80 rounded-t-lg p-3'>
+                    <div className='relative w-full max-w-[280px] sm:max-w-[320px] transform scale-[1.2] sm:scale-100'>
+                      <div className='bg-blue-900/80 rounded-t-lg p-2 sm:p-3'>
                         <div className='flex items-center'>
-                          <div className='w-8 h-8 rounded-full bg-blue-950 flex items-center justify-center mr-3'>
+                          <div className='w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-950 flex items-center justify-center mr-2 sm:mr-3'>
                             <svg
                               viewBox='0 0 24 24'
-                              className='w-5 h-5 text-blue-500'
+                              className='w-4 h-4 sm:w-5 sm:h-5 text-blue-500'
                               fill='currentColor'
                             >
                               <path d='M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z' />
                             </svg>
                           </div>
-                          <span className='text-white font-medium'>
+                          <span className='text-white font-medium text-sm sm:text-base'>
                             Stripe Payment
                           </span>
                         </div>
                       </div>
-                      <div className='bg-slate-900 p-4 rounded-b-lg border border-slate-700 border-t-0 shadow-lg'>
-                        <div className='space-y-3'>
-                          <div className='flex justify-between items-center'>
+                      <div className='bg-slate-900 p-3 sm:p-4 rounded-b-lg border border-slate-700 border-t-0 shadow-lg'>
+                        <div className='space-y-2 sm:space-y-3'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>Event:</span>
                             <span className='text-purple-400 font-medium capitalize'>
                               {currentEvent?.replace(/_/g, ' ')}
                             </span>
                           </div>
-                          <div className='flex justify-between items-center'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>
                               Customer:
                             </span>
                             <span className='text-white'>cus_1234567890</span>
                           </div>
-                          <div className='flex justify-between items-center'>
+                          <div className='flex justify-between items-center text-xs sm:text-sm flex-wrap'>
                             <span className='text-purple-200/70'>Status:</span>
                             <span className='text-emerald-500'>Processed</span>
                           </div>
@@ -1467,12 +1673,22 @@ function Step4WebhookTesting({
       </div>
 
       <div className='flex justify-between mt-6'>
-        <Button onClick={goToPreviousStep}>
-          <ArrowLeft className='mr-2 h-4 w-4' /> Previous
+        <Button onClick={goToPreviousStep} size={'sm'} variant={'ghost'}>
+          <ArrowLeft className='h-4 w-4' /> Previous
         </Button>
         <Button
+          size={'sm'}
           className='bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200'
-          onClick={() => window.location.reload()}
+          onClick={() => {
+            setCurrentStep(1);
+            setWebhooks([]);
+            setSelectedWebhook(null);
+            setSelectedApp(null);
+            setSelectedEvents([]);
+            document
+              .getElementById('step-top')
+              ?.scrollIntoView({ behavior: 'smooth' });
+          }}
         >
           Start Over
         </Button>

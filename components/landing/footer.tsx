@@ -9,8 +9,8 @@ export function Footer() {
             <div className='mb-4'>
               <Logo size='text-2xl' />
             </div>
-            <p className='text-white/70'>
-              Building the future of notification webhook infrastructure
+            <p className='text-white/70 text-sm'>
+              Building no-code quick to setup notification system for your apps.
             </p>
           </div>
 
@@ -40,10 +40,10 @@ export function Footer() {
 
         <div className='border-t border-white/5 pt-8'>
           <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
-            <p className='text-white/70'>
-              © 2025 Superhook. All rights reserved.
+            <p className='text-white/70 text-sm'>
+              © 2025 Hookflo. All rights reserved.
             </p>
-            <div className='flex gap-6'>
+            {/* <div className='flex gap-6'>
               <a
                 href='#'
                 className='text-white/70 hover:text-white transition-colors'
@@ -56,7 +56,7 @@ export function Footer() {
               >
                 Terms of Service
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

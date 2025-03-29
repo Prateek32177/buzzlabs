@@ -16,7 +16,7 @@ const GlowingAsterisk = () => (
 
 export default function Introduction() {
   return (
-    <div className='bg-gradient-to-br from-black to-gray-900 text-gray-100 py-24 px-8 lg:px-8 flex items-center justify-center overflow-hidden'>
+    <div className='bg-gradient-to-br from-black to-gray-900 text-gray-100 py-12 px-8 lg:px-8 flex items-center justify-center overflow-hidden'>
       <div className='max-w-3xl mx-auto text-center relative z-10'>
         <motion.div
           className='flex items-center justify-center mb-12'
@@ -26,7 +26,7 @@ export default function Introduction() {
         >
           <GlowingAsterisk />
           <span className='text-purple-300 uppercase text-sm font-bold tracking-[0.2em] ml-3'>
-            Introducing Superhook
+            Introducing Hookflo
           </span>
         </motion.div>
         <motion.h1
@@ -37,7 +37,7 @@ export default function Introduction() {
         >
           <span className='text-white font-medium'>
             Supercharge your database, payment subscriptions, auth event
-            monitoring with Superhook.
+            monitoring with Hookflo.
           </span>{' '}
           <span className='text-gray-400 font-light'>
             The seamless way to stay in sync with your data's pulse.{' '}
@@ -47,9 +47,8 @@ export default function Introduction() {
             just a few clicks.{' '}
           </span>
           <span className='text-white'>
-            Zero complexity, lightning-fast setup, No code library installation
-            and Instant alerts make tracking any change event activity
-            effortless.
+            Zero complexity, lightning-fast setup, No library installation and
+            Instant alerts make tracking any change event activity effortless.
           </span>
         </motion.h1>
       </div>

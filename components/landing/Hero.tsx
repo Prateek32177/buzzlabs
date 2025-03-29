@@ -1,20 +1,11 @@
 'use client';
-import {
-  ArrowRight,
-  Clock,
-  BarChart3,
-  CircleGauge,
-  ArrowUpRight,
-} from 'lucide-react';
+import { BarChart3, CircleGauge } from 'lucide-react';
 import { WaitlistForm } from './Waitlist';
 import { Badge } from '../ui/badge';
 import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Ripple } from '../magicui/ripple';
-import { Play } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
 
 export default function Hero() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

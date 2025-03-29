@@ -1,13 +1,12 @@
 'use client';
 
-import { Doto } from 'next/font/google';
+import { Luckiest_Guy } from 'next/font/google';
 import Link from 'next/link';
 
-const logoFont = Doto({
-  weight: '800',
-  subsets: ['latin'],
+const logoFont = Luckiest_Guy({
+  weight: '400',
   style: 'normal',
-  preload: true,
+  subsets: ['latin'],
 });
 
 interface LogoProps {
@@ -16,21 +15,22 @@ interface LogoProps {
   showAlpha?: boolean;
 }
 
-export function Logo({ variant = 'green', size = 'text-xl' }: LogoProps) {
+export function Logo({ variant = 'green', size = 'text-sm' }: LogoProps) {
+  const text = 'Hookflo';
+
   return (
     <Link href='/' className='cursor-pointer inline-flex items-center gap-1'>
       <h1
         className={`
-                    ${logoFont.className}
-                    ${size}
-
-                     text-2xl  bg-clip-text text-transparent bg-gradient-to-tr from-purple-300 to-purple-600
-                    relative
-                    z-20
-                    transition-all duration-300 ease-in-out
-                `}
+          font-['Boldonse'] font-normal
+          ${size}
+          animate-fade-in
+          relative
+          z-20
+          text-zinc-300
+        `}
       >
-        Hookflo{' '}
+        {text}
       </h1>
     </Link>
   );

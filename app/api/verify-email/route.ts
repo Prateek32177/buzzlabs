@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       },
       body: JSON.stringify({
         email,
-        emailVerified: true
+        emailVerified: true,
       }),
     };
 

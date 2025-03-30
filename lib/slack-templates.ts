@@ -1,35 +1,35 @@
 export type TemplateType =
-  | "basic"
-  | "welcome"
-  | "weeklySummary"
-  | "paymentConfirmation"
-  | "subscriptionRenewal"
-  | "custom"
+  | 'basic'
+  | 'welcome'
+  | 'weeklySummary'
+  | 'paymentConfirmation'
+  | 'subscriptionRenewal'
+  | 'custom';
 
 export const defaultTemplates = {
   basic: {
-    username: "Notification Bot",
-    icon_emoji: ":bell:",
-    text: "You have a new notification!",
+    username: 'Notification Bot',
+    icon_emoji: ':bell:',
+    text: 'You have a new notification!',
     blocks: [
       {
-        type: "section",
+        type: 'section',
         text: {
-          type: "mrkdwn",
-          text: "*New Notification*\nYou have received a new notification from the system.",
+          type: 'mrkdwn',
+          text: '*New Notification*\nYou have received a new notification from the system.',
         },
       },
       {
-        type: "actions",
+        type: 'actions',
         elements: [
           {
-            type: "button",
+            type: 'button',
             text: {
-              type: "plain_text",
-              text: "View Details",
+              type: 'plain_text',
+              text: 'View Details',
             },
-            style: "primary",
-            value: "view_details",
+            style: 'primary',
+            value: 'view_details',
           },
         ],
       },
@@ -37,44 +37,45 @@ export const defaultTemplates = {
   },
 
   welcome: {
-    username: "Welcome Bot",
-    icon_emoji: ":wave:",
-    text: "Welcome to the team!",
+    username: 'Welcome Bot',
+    icon_emoji: ':wave:',
+    text: 'Welcome to the team!',
     blocks: [
       {
-        type: "section",
+        type: 'section',
         text: {
-          type: "mrkdwn",
+          type: 'mrkdwn',
           text: "*Welcome to the team!* :tada:\nWe're excited to have you join us. Here are some resources to help you get started:",
         },
       },
       {
-        type: "section",
+        type: 'section',
         fields: [
           {
-            type: "mrkdwn",
-            text: "*Onboarding Guide:*\n<https://example.com/onboarding|View Guide>",
+            type: 'mrkdwn',
+            text: '*Onboarding Guide:*\n<https://example.com/onboarding|View Guide>',
           },
           {
-            type: "mrkdwn",
-            text: "*Team Calendar:*\n<https://example.com/calendar|View Calendar>",
+            type: 'mrkdwn',
+            text: '*Team Calendar:*\n<https://example.com/calendar|View Calendar>',
           },
         ],
       },
       {
-        type: "divider",
+        type: 'divider',
       },
       {
-        type: "context",
+        type: 'context',
         elements: [
           {
-            type: "image",
-            image_url: "https://api.slack.com/img/blocks/bkb_template_images/placeholder.png",
-            alt_text: "placeholder",
+            type: 'image',
+            image_url:
+              'https://api.slack.com/img/blocks/bkb_template_images/placeholder.png',
+            alt_text: 'placeholder',
           },
           {
-            type: "mrkdwn",
-            text: "Your onboarding buddy is @sarah. Feel free to reach out with any questions!",
+            type: 'mrkdwn',
+            text: 'Your onboarding buddy is @sarah. Feel free to reach out with any questions!',
           },
         ],
       },
@@ -82,66 +83,67 @@ export const defaultTemplates = {
   },
 
   weeklySummary: {
-    username: "Analytics Bot",
-    icon_emoji: ":chart_with_upwards_trend:",
-    text: "Your weekly summary is ready",
+    username: 'Analytics Bot',
+    icon_emoji: ':chart_with_upwards_trend:',
+    text: 'Your weekly summary is ready',
     blocks: [
       {
-        type: "section",
+        type: 'section',
         text: {
-          type: "mrkdwn",
-          text: "*Weekly Summary: March 22-28, 2023*",
+          type: 'mrkdwn',
+          text: '*Weekly Summary: March 22-28, 2023*',
         },
       },
       {
-        type: "section",
+        type: 'section',
         fields: [
           {
-            type: "mrkdwn",
-            text: "*New Users:*\n+125 (↑15%)",
+            type: 'mrkdwn',
+            text: '*New Users:*\n+125 (↑15%)',
           },
           {
-            type: "mrkdwn",
-            text: "*Active Users:*\n1,204 (↑8%)",
+            type: 'mrkdwn',
+            text: '*Active Users:*\n1,204 (↑8%)',
           },
           {
-            type: "mrkdwn",
-            text: "*Revenue:*\n$12,540 (↑23%)",
+            type: 'mrkdwn',
+            text: '*Revenue:*\n$12,540 (↑23%)',
           },
           {
-            type: "mrkdwn",
-            text: "*Churn Rate:*\n2.4% (↓0.5%)",
+            type: 'mrkdwn',
+            text: '*Churn Rate:*\n2.4% (↓0.5%)',
           },
         ],
       },
       {
-        type: "image",
-        image_url: "https://api.slack.com/img/blocks/bkb_template_images/beagle.png",
-        alt_text: "Weekly performance chart",
+        type: 'image',
+        image_url:
+          'https://api.slack.com/img/blocks/bkb_template_images/beagle.png',
+        alt_text: 'Weekly performance chart',
         title: {
-          type: "plain_text",
-          text: "Weekly Performance",
+          type: 'plain_text',
+          text: 'Weekly Performance',
         },
       },
       {
-        type: "actions",
+        type: 'actions',
         elements: [
           {
-            type: "button",
+            type: 'button',
             text: {
-              type: "plain_text",
-              text: "View Full Report",
+              type: 'plain_text',
+              text: 'View Full Report',
             },
-            style: "primary",
-            value: "view_report",
+            style: 'primary',
+            value: 'view_report',
           },
           {
-            type: "button",
+            type: 'button',
             text: {
-              type: "plain_text",
-              text: "Download CSV",
+              type: 'plain_text',
+              text: 'Download CSV',
             },
-            value: "download_csv",
+            value: 'download_csv',
           },
         ],
       },
@@ -149,116 +151,117 @@ export const defaultTemplates = {
   },
 
   paymentConfirmation: {
-    username: "Payments Bot",
-    icon_emoji: ":credit_card:",
-    text: "Payment confirmation",
+    username: 'Payments Bot',
+    icon_emoji: ':credit_card:',
+    text: 'Payment confirmation',
     attachments: [
       {
-        color: "#36a64f",
-        pretext: "Your payment has been processed successfully.",
-        title: "Payment Confirmation",
-        title_link: "https://example.com/payment/123456",
+        color: '#36a64f',
+        pretext: 'Your payment has been processed successfully.',
+        title: 'Payment Confirmation',
+        title_link: 'https://example.com/payment/123456',
         text: "Thank you for your payment. Here's a summary of your transaction:",
         fields: [
           {
-            title: "Amount",
-            value: "$49.99",
+            title: 'Amount',
+            value: '$49.99',
             short: true,
           },
           {
-            title: "Date",
-            value: "March 28, 2023",
+            title: 'Date',
+            value: 'March 28, 2023',
             short: true,
           },
           {
-            title: "Payment Method",
-            value: "Visa ending in 4242",
+            title: 'Payment Method',
+            value: 'Visa ending in 4242',
             short: true,
           },
           {
-            title: "Transaction ID",
-            value: "txn_1234567890",
+            title: 'Transaction ID',
+            value: 'txn_1234567890',
             short: true,
           },
         ],
-        footer: "Example Company",
-        footer_icon: "https://api.slack.com/img/blocks/bkb_template_images/placeholder.png",
+        footer: 'Example Company',
+        footer_icon:
+          'https://api.slack.com/img/blocks/bkb_template_images/placeholder.png',
         ts: 1677628800,
       },
     ],
   },
 
   subscriptionRenewal: {
-    username: "Subscription Bot",
-    icon_emoji: ":calendar:",
-    text: "Subscription renewal notice",
+    username: 'Subscription Bot',
+    icon_emoji: ':calendar:',
+    text: 'Subscription renewal notice',
     blocks: [
       {
-        type: "section",
+        type: 'section',
         text: {
-          type: "mrkdwn",
-          text: "*Subscription Renewal Notice*",
+          type: 'mrkdwn',
+          text: '*Subscription Renewal Notice*',
         },
       },
       {
-        type: "section",
+        type: 'section',
         text: {
-          type: "mrkdwn",
-          text: "Your subscription for *Premium Plan* will renew automatically on *April 15, 2023*. The renewal amount is *$29.99*.",
+          type: 'mrkdwn',
+          text: 'Your subscription for *Premium Plan* will renew automatically on *April 15, 2023*. The renewal amount is *$29.99*.',
         },
       },
       {
-        type: "section",
+        type: 'section',
         fields: [
           {
-            type: "mrkdwn",
-            text: "*Current Plan:*\nPremium ($29.99/month)",
+            type: 'mrkdwn',
+            text: '*Current Plan:*\nPremium ($29.99/month)',
           },
           {
-            type: "mrkdwn",
-            text: "*Renewal Date:*\nApril 15, 2023",
+            type: 'mrkdwn',
+            text: '*Renewal Date:*\nApril 15, 2023',
           },
           {
-            type: "mrkdwn",
-            text: "*Payment Method:*\nVisa ending in 4242",
+            type: 'mrkdwn',
+            text: '*Payment Method:*\nVisa ending in 4242',
           },
           {
-            type: "mrkdwn",
-            text: "*Billing Cycle:*\nMonthly",
-          },
-        ],
-      },
-      {
-        type: "divider",
-      },
-      {
-        type: "actions",
-        elements: [
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Manage Subscription",
-            },
-            style: "primary",
-            value: "manage_subscription",
-          },
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Update Payment Method",
-            },
-            value: "update_payment",
+            type: 'mrkdwn',
+            text: '*Billing Cycle:*\nMonthly',
           },
         ],
       },
       {
-        type: "context",
+        type: 'divider',
+      },
+      {
+        type: 'actions',
         elements: [
           {
-            type: "mrkdwn",
-            text: "If you have any questions, please contact support@example.com",
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: 'Manage Subscription',
+            },
+            style: 'primary',
+            value: 'manage_subscription',
+          },
+          {
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: 'Update Payment Method',
+            },
+            value: 'update_payment',
+          },
+        ],
+      },
+      {
+        type: 'context',
+        elements: [
+          {
+            type: 'mrkdwn',
+            text: 'If you have any questions, please contact support@example.com',
           },
         ],
       },
@@ -266,50 +269,49 @@ export const defaultTemplates = {
   },
 
   custom: {
-    username: "Custom Bot",
-    icon_emoji: ":robot_face:",
-    text: "This is a custom template",
+    username: 'Custom Bot',
+    icon_emoji: ':robot_face:',
+    text: 'This is a custom template',
     blocks: [
       {
-        type: "section",
+        type: 'section',
         text: {
-          type: "mrkdwn",
-          text: "This is a custom template. Edit it to create your own notification format.",
+          type: 'mrkdwn',
+          text: 'This is a custom template. Edit it to create your own notification format.',
         },
       },
       {
-        type: "divider",
+        type: 'divider',
       },
       {
-        type: "section",
+        type: 'section',
         text: {
-          type: "mrkdwn",
-          text: "You can add sections, buttons, images, and more to customize this template.",
+          type: 'mrkdwn',
+          text: 'You can add sections, buttons, images, and more to customize this template.',
         },
       },
       {
-        type: "actions",
+        type: 'actions',
         elements: [
           {
-            type: "button",
+            type: 'button',
             text: {
-              type: "plain_text",
-              text: "Primary Button",
+              type: 'plain_text',
+              text: 'Primary Button',
             },
-            style: "primary",
-            value: "primary_action",
+            style: 'primary',
+            value: 'primary_action',
           },
           {
-            type: "button",
+            type: 'button',
             text: {
-              type: "plain_text",
-              text: "Secondary Button",
+              type: 'plain_text',
+              text: 'Secondary Button',
             },
-            value: "secondary_action",
+            value: 'secondary_action',
           },
         ],
       },
     ],
   },
-}
-
+};

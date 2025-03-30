@@ -29,14 +29,6 @@ export default function Hero() {
     <>
       <div className='fixed inset-0 overflow-hidden ' aria-hidden='true'>
         <div
-          className='absolute inset-0 opacity-70 mix-blend-overlay'
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.3' numOctaves='8' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            backgroundRepeat: 'repeat',
-            backgroundSize: '512px 512px',
-          }}
-        />
-        <div
           className='absolute inset-0 opacity-60 mix-blend-overlay'
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.975' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
@@ -53,28 +45,27 @@ export default function Hero() {
           }}
         />
 
-
         <div className='absolute top-0 left-0 w-full to-transparent h-full'>
-        <div
-             className={`absolute inset-0 bg-gradient-to-b from-purple-300/20 via-rose-500/15 to-transparent`}
-             style={{
-               filter: 'blur(80px)',
-             }}
-           />
- 
-           <div
-             className={`absolute inset-0 bg-gradient-to-b from-purple-400/15 via-yellow-500/10 to-transparent`}
-             style={{
-               filter: 'blur(60px)',
-             }}
-           />
- 
-           <div
-             className={`absolute inset-0 bg-gradient-to-b from-green-500/10 via-purple-500/15 to-transparent`}
-             style={{
-               filter: 'blur(40px)',
-             }}
-           />
+          <div
+            className={`absolute inset-0 bg-gradient-to-b from-purple-300/20 via-purple-500/15 to-transparent`}
+            style={{
+              filter: 'blur(80px)',
+            }}
+          />
+
+          <div
+            className={`absolute inset-0 bg-gradient-to-b from-purple-400/15 via-purple-500/10 to-transparent`}
+            style={{
+              filter: 'blur(60px)',
+            }}
+          />
+
+          <div
+            className={`absolute inset-0 bg-gradient-to-b from-purple-500/10 via-purple-500/5 to-transparent`}
+            style={{
+              filter: 'blur(40px)',
+            }}
+          />
 
           <div
             className='w-full absolute inset-0'

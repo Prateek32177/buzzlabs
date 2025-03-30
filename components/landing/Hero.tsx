@@ -28,6 +28,14 @@ export default function Hero() {
   return (
     <>
       <div className='fixed inset-0 overflow-hidden ' aria-hidden='true'>
+      <div
+          className='absolute inset-0 opacity-70 mix-blend-overlay'
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.3' numOctaves='8' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '512px 512px',
+          }}
+        />
         <div
           className='absolute inset-0 opacity-60 mix-blend-overlay'
           style={{
@@ -46,41 +54,49 @@ export default function Hero() {
         />
 
         <div className='absolute top-0 left-0 w-full to-transparent h-full'>
-          <div
-            className={`absolute inset-0 bg-gradient-to-b from-purple-300/20 via-purple-500/15 to-transparent`}
-            style={{
-              filter: 'blur(80px)',
-            }}
-          />
-
-          <div
-            className={`absolute inset-0 bg-gradient-to-b from-purple-400/15 via-purple-500/10 to-transparent`}
-            style={{
-              filter: 'blur(60px)',
-            }}
-          />
-
-          <div
-            className={`absolute inset-0 bg-gradient-to-b from-purple-500/10 via-purple-500/5 to-transparent`}
-            style={{
-              filter: 'blur(40px)',
-            }}
-          />
+            <div className="absolute top-0 left-0 w-full h-full flex opacity-60">
+            {[
+              'from-purple-500/40 via-pink-500/70',
+              'from-blue-500/40 via-cyan-500/70',
+              'from-orange-500/40 via-amber-500/70',
+              'from-rose-500/40 via-red-500/70',
+              'from-emerald-500/40 via-green-500/70',
+            ].map((gradient, index) => (
+              <div
+              key={index}
+              className={`flex-1 h-full bg-gradient-to-b ${gradient} to-transparent blur-3xl`}
+              style={{
+                animation: `fadeInOut ${8}s ease-in-out ${index * 0.7}s infinite`,
+                opacity: 0.6,
+                mixBlendMode: 'color-dodge'
+              }}
+              />
+            ))}
+            </div>
 
           <div
             className='absolute inset-0'
             style={{
               background: `
-                radial-gradient(
-                  80% 100% at 50% 0%,
-                  transparent 10%,
-                  rgba(0, 0, 0, 0.4) 40%,
-                  rgba(1, 1, 2, 0.8) 60%
-                )
+          radial-gradient(
+            80% 100% at 50% 0%,
+            transparent 10%,
+            rgba(0, 0, 0, 0.4) 40%,
+            rgba(1, 1, 2, 0.8) 60%
+          )
               `,
             }}
           />
         </div>
+
+        <style jsx>{`
+          @keyframes fadeInOut {
+            0% { opacity: 0; }
+            25% { opacity: 1; }
+            75% { opacity: 1; }
+            100% { opacity: 0; }
+          }
+        `}</style>
 
         <div className='absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/60 to-transparent' />
         <div className='absolute inset-0 bg-gradient-to-b from-zinc-900/0 via-zinc-900/10 to-zinc-900/30' />

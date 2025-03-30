@@ -53,30 +53,35 @@ export default function Hero() {
           }}
         />
 
+
         <div className='absolute top-0 left-0 w-full to-transparent h-full'>
-          <div className='absolute top-0 left-0  h-full flex opacity-30'>
-            {[
-              'from-purple-500/20 via-pink-500/40',
-              'from-rose-500/20 via-red-500/40',
-            ].map((gradient, index) => (
-              <div
-                key={index}
-                className={`flex-1 h-full bg-gradient-to-b ${gradient} to-transparent blur-3xl`}
-                style={{
-                  animation: `fadeInOut ${8}s ease-in-out ${index * 0.7}s infinite`,
-                  opacity: 0.3,
-                  mixBlendMode: 'color-dodge',
-                }}
-              />
-            ))}
-          </div>
+        <div
+             className={`absolute inset-0 bg-gradient-to-b from-purple-300/20 via-rose-500/15 to-transparent`}
+             style={{
+               filter: 'blur(80px)',
+             }}
+           />
+ 
+           <div
+             className={`absolute inset-0 bg-gradient-to-b from-purple-400/15 via-yellow-500/10 to-transparent`}
+             style={{
+               filter: 'blur(60px)',
+             }}
+           />
+ 
+           <div
+             className={`absolute inset-0 bg-gradient-to-b from-green-500/10 via-purple-500/15 to-transparent`}
+             style={{
+               filter: 'blur(40px)',
+             }}
+           />
 
           <div
             className='w-full absolute inset-0'
             style={{
               background: `
           radial-gradient(
-            80% 100% at 50% 0%,
+            90% 100% at 50% 0%,
             transparent 10%,
             rgba(0, 0, 0, 0.4) 40%,
             rgba(1, 1, 2, 0.8) 60%

@@ -28,7 +28,7 @@ export default function Hero() {
   return (
     <>
       <div className='fixed inset-0 overflow-hidden ' aria-hidden='true'>
-      <div
+        <div
           className='absolute inset-0 opacity-70 mix-blend-overlay'
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.3' numOctaves='8' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
@@ -54,28 +54,25 @@ export default function Hero() {
         />
 
         <div className='absolute top-0 left-0 w-full to-transparent h-full'>
-            <div className="absolute top-0 left-0 w-full h-full flex opacity-60">
+          <div className='absolute top-0 left-0  h-full flex opacity-30'>
             {[
-              'from-purple-500/40 via-pink-500/70',
-              'from-blue-500/40 via-cyan-500/70',
-              'from-orange-500/40 via-amber-500/70',
-              'from-rose-500/40 via-red-500/70',
-              'from-emerald-500/40 via-green-500/70',
+              'from-purple-500/20 via-pink-500/40',
+              'from-rose-500/20 via-red-500/40',
             ].map((gradient, index) => (
               <div
-              key={index}
-              className={`flex-1 h-full bg-gradient-to-b ${gradient} to-transparent blur-3xl`}
-              style={{
-                animation: `fadeInOut ${8}s ease-in-out ${index * 0.7}s infinite`,
-                opacity: 0.6,
-                mixBlendMode: 'color-dodge'
-              }}
+                key={index}
+                className={`flex-1 h-full bg-gradient-to-b ${gradient} to-transparent blur-3xl`}
+                style={{
+                  animation: `fadeInOut ${8}s ease-in-out ${index * 0.7}s infinite`,
+                  opacity: 0.3,
+                  mixBlendMode: 'color-dodge',
+                }}
               />
             ))}
-            </div>
+          </div>
 
           <div
-            className='absolute inset-0'
+            className='w-full absolute inset-0'
             style={{
               background: `
           radial-gradient(
@@ -91,10 +88,18 @@ export default function Hero() {
 
         <style jsx>{`
           @keyframes fadeInOut {
-            0% { opacity: 0; }
-            25% { opacity: 1; }
-            75% { opacity: 1; }
-            100% { opacity: 0; }
+            0% {
+              opacity: 0;
+            }
+            25% {
+              opacity: 1;
+            }
+            75% {
+              opacity: 1;
+            }
+            100% {
+              opacity: 0;
+            }
           }
         `}</style>
 
@@ -117,7 +122,7 @@ export default function Hero() {
               <span className='hidden sm:inline'>No Code, Just Hook it</span>
               <span className='sm:hidden'>Just Hook it</span>
             </Badge>
-            <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
+            <h1 className='tracking-tight text-5xl md:text-6xl lg:text-7xl'>
               Transform Events into{' '}
               <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200'>
                 Instant Notifications

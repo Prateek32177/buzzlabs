@@ -27,7 +27,9 @@ export function Logo({ variant = 'green', size = 'text-sm' }: LogoProps) {
           animate-fade-in
           relative
           z-20
-          text-zinc-300
+          bg-gradient-to-r from-purple-600 to-rose-300
+          text-transparent
+          bg-clip-text
         `}
       >
         {text}

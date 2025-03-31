@@ -1,4 +1,5 @@
-import { emailTemplates, slackTemplates } from './lib/templates';
+import { emailTemplates } from './lib/templates';
+import { slackTemplates } from './lib/slack-templates';
 
 const EmailTemplateOptions = emailTemplates.map(data => {
   return { id: data.id, name: data.name };

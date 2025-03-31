@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BorderBeam } from '@/components/magicui/border-beam';
+import { Logo } from '@/components/Logo';
 
 export default async function Signup(props: {
   searchParams: Promise<Message>;
@@ -32,6 +33,9 @@ export default async function Signup(props: {
       <form className='flex min-w-64 flex-1 flex-col'>
         <Card className='relative w-[350px] overflow-hidden'>
           <CardHeader>
+            <div className='m-auto mb-6'>
+              <Logo size='2xl' />
+            </div>
             <CardTitle className='text-xl'>Sign Up</CardTitle>
             <CardDescription>
               Enter your credentials to create your account.

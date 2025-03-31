@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { TemplateService } from '@/utils/template-manager';
+import { TemplateService, TemplateType } from '@/utils/template-manager';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -20,7 +20,7 @@ export async function sendEmail({
   const { subject, content } = await templateService.renderTemplate(
     userId,
     templateId,
-    data,
+    TemplateType.EMAIL,
   );
 
   const { data: result, error } = await resend.emails.send({

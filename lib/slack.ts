@@ -1,4 +1,4 @@
-import { getTemplate } from './templates';
+import { getTemplate, TemplateType } from './templates';
 
 export async function sendSlackNotification({
   webhookUrl,
@@ -11,7 +11,7 @@ export async function sendSlackNotification({
   templateId?: string;
   data: any;
 }) {
-  const template = getTemplate(templateId, 'slack');
+  const template = getTemplate(templateId, TemplateType.SLACK);
   const message = template.render(data);
 
   const response = await fetch(webhookUrl, {

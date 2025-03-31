@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import dynamic from 'next/dynamic';
-import { emailTemplates } from '@/lib/templates';
+import { emailTemplates, TemplateType } from '@/lib/templates';
 import { TemplateService } from '@/utils/template-manager';
 import { toast } from 'sonner';
 import { Loader } from 'lucide-react';
@@ -68,6 +68,7 @@ export default function EmailTemplateEditor() {
         const templateData = await templateService.getUserTemplate(
           userId,
           templateId,
+          TemplateType.EMAIL,
         );
 
         if (templateData) {
@@ -120,6 +121,7 @@ export default function EmailTemplateEditor() {
       await templateService.saveUserCustomization(
         userId,
         templateId,
+        TemplateType.EMAIL,
         updatedTemplate,
       );
       setSaveStatus('saved');

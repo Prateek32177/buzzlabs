@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -24,15 +22,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Plus,
   Trash2,
-  MoveVertical,
   ArrowDownUp,
-  Type,
-  ImageIcon,
   Rows,
   Heading,
   ListOrdered,
   MessageSquare,
   Code,
+  RectangleEllipsis,
+  CodeXml,
+  Link,
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Editor } from '@monaco-editor/react';
@@ -122,24 +120,15 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
     });
   };
 
-  const updateHeader = (field: string, value: string) => {
-    const updatedTemplate = {
-      ...currentTemplate,
-      [field]: value,
-    };
-    updateTemplate(updatedTemplate);
-  };
-
   return (
     <div className='h-full w-full'>
-      <Tabs defaultValue='blocks' className='h-full flex flex-col'>
-        <TabsList className='mb-4'>
-          <TabsTrigger value='blocks'>Blocks</TabsTrigger>
-          <TabsTrigger value='header'>Header</TabsTrigger>
+      <Tabs defaultValue='blocks' className='h-full flex flex-col gap-4'>
+        <TabsList className='grid w-full grid-cols-2 '>
           <TabsTrigger value='json'>
             <Code className='h-4 w-4 mr-2' />
             JSON
           </TabsTrigger>
+          <TabsTrigger value='blocks'>Blocks</TabsTrigger>
         </TabsList>
 
         <div className='flex-1 overflow-hidden'>
@@ -180,10 +169,27 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
               <Button
                 size='sm'
                 variant='outline'
-                onClick={() => addBlock('section')}
+                onClick={() => addBlock('header')}
               >
-                <Type className='h-4 w-4 mr-2' />
-                Section
+                <Heading className='h-4 w-4 mr-2' />
+                Header
+              </Button>
+              <Button
+                size='sm'
+                variant='outline'
+                onClick={() => addBlock('links')}
+              >
+                <Link className='h-4 w-4 mr-2' />
+                Links
+              </Button>
+
+              <Button
+                size='sm'
+                variant='outline'
+                onClick={() => addBlock('fields')}
+              >
+                <ListOrdered className='h-4 w-4 mr-2' />
+                Field List
               </Button>
               <Button
                 size='sm'
@@ -196,18 +202,10 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
               <Button
                 size='sm'
                 variant='outline'
-                onClick={() => addBlock('image')}
-              >
-                <ImageIcon className='h-4 w-4 mr-2' />
-                Image
-              </Button>
-              <Button
-                size='sm'
-                variant='outline'
                 onClick={() => addBlock('actions')}
               >
-                <ListOrdered className='h-4 w-4 mr-2' />
-                Actions
+                <RectangleEllipsis className='h-4 w-4 mr-2' />
+                Buttons
               </Button>
               <Button
                 size='sm'
@@ -220,13 +218,12 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
               <Button
                 size='sm'
                 variant='outline'
-                onClick={() => addBlock('header')}
+                onClick={() => addBlock('section')}
               >
-                <Heading className='h-4 w-4 mr-2' />
-                Header
+                <CodeXml className='h-4 w-4 mr-2' />
+                Markdown
               </Button>
             </div>
-
             <div className='flex-1 min-h-0'>
               <ScrollArea className='h-full width-full'>
                 <DragDropContext onDragEnd={handleDragEnd}>
@@ -261,7 +258,9 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
                                           <ArrowDownUp className='h-4 w-4 text-muted-foreground' />
                                         </div>
                                         <span className='font-medium capitalize'>
-                                          {block.type}
+                                          {block.type === 'section'
+                                            ? 'Markdown'
+                                            : block.type}
                                         </span>
                                       </div>
                                       <Button
@@ -301,51 +300,6 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
               </ScrollArea>
             </div>
           </TabsContent>
-
-          <TabsContent
-            value='header'
-            className='h-full mt-0 data-[state=active]:flex data-[state=active]:flex-col'
-          >
-            <ScrollArea className='h-full pr-4'>
-              <Card className='border-0 shadow-none'>
-                <CardContent className='space-y-4 pt-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='username'>Bot Username</Label>
-                    <Input
-                      id='username'
-                      value={currentTemplate.username || ''}
-                      onChange={e => updateHeader('username', e.target.value)}
-                      placeholder='e.g., Notification Bot'
-                    />
-                  </div>
-
-                  <div className='space-y-2'>
-                    <Label htmlFor='icon_emoji'>Icon Emoji</Label>
-                    <Input
-                      id='icon_emoji'
-                      value={currentTemplate.icon_emoji || ''}
-                      onChange={e => updateHeader('icon_emoji', e.target.value)}
-                      placeholder='e.g., :robot_face:'
-                    />
-                    <p className='text-xs text-muted-foreground'>
-                      Use Slack emoji format like :smile: or :warning:
-                    </p>
-                  </div>
-
-                  <div className='space-y-2'>
-                    <Label htmlFor='text'>Text (Fallback)</Label>
-                    <Textarea
-                      id='text'
-                      value={currentTemplate.text || ''}
-                      onChange={e => updateHeader('text', e.target.value)}
-                      placeholder='This text will be shown in notifications and as fallback'
-                      rows={3}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </ScrollArea>
-          </TabsContent>
         </div>
       </Tabs>
     </div>
@@ -363,20 +317,23 @@ function BlockEditor({
   switch (block.type) {
     case 'section':
       return <SectionBlockEditor block={block} onChange={onChange} />;
+    case 'links':
+      return <LinksBlockEditor block={block} onChange={onChange} />;
     case 'divider':
       return (
         <p className='text-sm text-muted-foreground'>
           Divider blocks have no additional properties.
         </p>
       );
-    case 'image':
-      return <ImageBlockEditor block={block} onChange={onChange} />;
     case 'actions':
       return <ActionsBlockEditor block={block} onChange={onChange} />;
     case 'context':
       return <ContextBlockEditor block={block} onChange={onChange} />;
     case 'header':
       return <HeaderBlockEditor block={block} onChange={onChange} />;
+    case 'fields':
+      return <FieldsBlockEditor block={block} onChange={onChange} />;
+
     default:
       return (
         <p className='text-sm text-muted-foreground'>
@@ -404,6 +361,11 @@ function SectionBlockEditor({
     });
   };
 
+  // If block has fields, render FieldsBlockEditor
+  if (block.fields) {
+    return <FieldsBlockEditor block={block} onChange={onChange} />;
+  }
+
   return (
     <div className='space-y-3'>
       <div className='space-y-2'>
@@ -419,58 +381,6 @@ function SectionBlockEditor({
           You can use Slack markdown: *bold*, _italic_, ~strikethrough~, `code`,
           and links like &lt;https://example.com|Example&gt;
         </p>
-      </div>
-    </div>
-  );
-}
-
-// Image block editor
-function ImageBlockEditor({
-  block,
-  onChange,
-}: {
-  block: any;
-  onChange: (block: any) => void;
-}) {
-  const updateField = (field: string, value: string | object) => {
-    onChange({
-      ...block,
-      [field]: value,
-    });
-  };
-
-  return (
-    <div className='space-y-3'>
-      <div className='space-y-2'>
-        <Label htmlFor='image-url'>Image URL</Label>
-        <Input
-          id='image-url'
-          value={block.image_url || ''}
-          onChange={e => updateField('image_url', e.target.value)}
-          placeholder='https://example.com/image.png'
-        />
-      </div>
-
-      <div className='space-y-2'>
-        <Label htmlFor='alt-text'>Alt Text</Label>
-        <Input
-          id='alt-text'
-          value={block.alt_text || ''}
-          onChange={e => updateField('alt_text', e.target.value)}
-          placeholder='Description of the image'
-        />
-      </div>
-
-      <div className='space-y-2'>
-        <Label htmlFor='title-text'>Title (Optional)</Label>
-        <Input
-          id='title-text'
-          value={block.title?.text || ''}
-          onChange={e =>
-            updateField('title', { type: 'plain_text', text: e.target.value })
-          }
-          placeholder='Image title'
-        />
       </div>
     </div>
   );
@@ -576,16 +486,6 @@ function ActionsBlockEditor({
                     </SelectContent>
                   </Select>
                 </div>
-
-                <Button
-                  variant='destructive'
-                  size='sm'
-                  onClick={() => removeButton(index)}
-                  className='mt-2'
-                >
-                  <Trash2 className='h-4 w-4 mr-2' />
-                  Remove Button
-                </Button>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -766,7 +666,6 @@ function HeaderBlockEditor({
   );
 }
 
-// Helper function to create empty blocks
 function createEmptyBlock(type: string) {
   switch (type) {
     case 'section':
@@ -780,12 +679,6 @@ function createEmptyBlock(type: string) {
     case 'divider':
       return {
         type: 'divider',
-      };
-    case 'image':
-      return {
-        type: 'image',
-        image_url: '',
-        alt_text: 'Image description',
       };
     case 'actions':
       return {
@@ -819,9 +712,174 @@ function createEmptyBlock(type: string) {
           text: 'Header text',
         },
       };
+    case 'fields':
+      return {
+        type: 'section',
+        fields: [
+          {
+            type: 'mrkdwn',
+            text: '*Label 1:* Value 1',
+          },
+          {
+            type: 'mrkdwn',
+            text: '*Label 2:* Value 2',
+          },
+        ],
+      };
     default:
       return {
         type,
       };
   }
+}
+
+// Add this new block editor for fields
+function FieldsBlockEditor({
+  block,
+  onChange,
+}: {
+  block: any;
+  onChange: (block: any) => void;
+}) {
+  const addField = () => {
+    const fields = [...(block.fields || [])];
+    fields.push({
+      type: 'mrkdwn',
+      text: '*Label:* Value',
+    });
+    onChange({
+      ...block,
+      fields,
+    });
+  };
+
+  const removeField = (index: number) => {
+    const fields = [...(block.fields || [])];
+    fields.splice(index, 1);
+    onChange({
+      ...block,
+      fields,
+    });
+  };
+
+  const updateField = (index: number, value: string) => {
+    const fields = [...(block.fields || [])];
+    fields[index] = {
+      type: 'mrkdwn',
+      text: value,
+    };
+    onChange({
+      ...block,
+      fields,
+    });
+  };
+
+  return (
+    <div className='space-y-3'>
+      {(block.fields || []).map((field: any, index: number) => (
+        <div key={index} className='flex gap-2'>
+          <Input
+            value={field.text}
+            onChange={e => updateField(index, e.target.value)}
+            placeholder='*Label:* Value'
+          />
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => removeField(index)}
+          >
+            <Trash2 className='h-4 w-4' />
+          </Button>
+        </div>
+      ))}
+      <Button variant='outline' size='sm' onClick={addField} className='w-full'>
+        <Plus className='h-4 w-4 mr-2' />
+        Add Field
+      </Button>
+    </div>
+  );
+}
+
+function LinksBlockEditor({
+  block,
+  onChange,
+}: {
+  block: any;
+  onChange: (block: any) => void;
+}) {
+  const addLink = () => {
+    const links = [...(block.elements || [])];
+    links.push({
+      type: 'mrkdwn',
+      text: '<https://example.com|Link Text>',
+    });
+    onChange({
+      ...block,
+      elements: links,
+    });
+  };
+
+  const removeLink = (index: number) => {
+    const links = [...(block.elements || [])];
+    links.splice(index, 1);
+    onChange({
+      ...block,
+      elements: links,
+    });
+  };
+
+  const updateLink = (index: number, text: string, url: string) => {
+    const links = [...(block.elements || [])];
+    links[index] = {
+      type: 'mrkdwn',
+      text: `<${url}|${text}>`,
+    };
+    onChange({
+      ...block,
+      elements: links,
+    });
+  };
+
+  // Helper function to parse link format
+  const parseLinkText = (mrkdwn: string) => {
+    const match = mrkdwn.match(/<([^|]+)\|(.+)>/);
+    return match
+      ? { url: match[1], text: match[2] }
+      : { url: '', text: mrkdwn };
+  };
+
+  return (
+    <div className='space-y-3'>
+      {(block.elements || []).map((link: any, index: number) => {
+        const { url, text } = parseLinkText(link.text);
+        return (
+          <div key={index} className='flex gap-2'>
+            <Input
+              value={text}
+              onChange={e => updateLink(index, e.target.value, url)}
+              placeholder='Link Text'
+              className='flex-1'
+            />
+            <Input
+              value={url}
+              onChange={e => updateLink(index, text, e.target.value)}
+              placeholder='https://example.com'
+              className='flex-1'
+            />
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={() => removeLink(index)}
+            >
+              <Trash2 className='h-4 w-4' />
+            </Button>
+          </div>
+        );
+      })}
+      <Button variant='outline' size='sm' onClick={addLink} className='w-full'>
+        <Plus className='h-4 w-4 mr-2' />
+        Add Link
+      </Button>
+    </div>
+  );
 }

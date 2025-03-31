@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-
+import { Logo } from '@/components/Logo';
 import { BorderBeam } from '@/components/magicui/border-beam';
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
@@ -23,6 +23,9 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
     <form className='flex min-w-64 flex-1 flex-col'>
       <Card className='relative w-[350px] overflow-hidden'>
         <CardHeader>
+          <div className='m-auto mb-6'>
+            <Logo size='2xl' />
+          </div>
           <CardTitle className='text-xl'>Login</CardTitle>
           <CardDescription>
             Enter your credentials to access your account.

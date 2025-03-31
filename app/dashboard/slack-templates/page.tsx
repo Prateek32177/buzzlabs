@@ -19,112 +19,182 @@ import {
 import { Button } from '@/components/ui/button';
 import { SlackPreview } from './slack-preview';
 import { BlockBuilder } from './block-builder';
-import { defaultTemplates } from '@/lib/slack-templates';
+import { slackTemplates } from '@/lib/slack-templates';
 // import { useToast } from '@/hooks/use-toast';
 import { Save, RefreshCw } from 'lucide-react';
 // const { toast } = useToast();
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TemplateService, TemplateType } from '@/utils/template-manager';
+
+type Template = {
+  id: string;
+  name: string;
+  type: TemplateType;
+  render: (data: any) => any;
+};
 
 export default function SlackTemplateEditor() {
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('basic');
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
+    null,
+  );
   const [templateCode, setTemplateCode] = useState<string>('');
-  const [savedTemplates, setSavedTemplates] = useState<Record<string, any>>({});
+  const [templateId, setTemplateId] = useState<string>('basic');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [saveStatus, setSaveStatus] = useState<
+    'idle' | 'saving' | 'saved' | 'error'
+  >('idle');
 
-  // Load saved templates from localStorage on initial render
+  const templateService = new TemplateService();
+  const userId = 'e14b5e09-6f04-43b5-8328-69548b172a07'; // You might want to get this from your auth context
+
+  // Load template from service on initial render
   useEffect(() => {
-    const savedData = localStorage.getItem('slackTemplates');
-    if (savedData) {
-      setSavedTemplates(JSON.parse(savedData));
+    async function loadTemplate() {
+      if (!userId) return;
+
+      try {
+        setIsLoading(true);
+        const templateData = await templateService.getUserTemplate(
+          userId,
+          templateId,
+          TemplateType.SLACK,
+        );
+
+        if (templateData) {
+          setSelectedTemplate(templateData);
+          setTemplateCode(JSON.stringify(templateData.render({}), null, 2));
+          toast('Template loaded', {
+            description: `Loaded your customized version of the ${templateData.name} template.`,
+          });
+        } else {
+          // Load default template if no customization exists
+          const defaultTemplate = slackTemplates.find(t => t.id === templateId);
+          if (defaultTemplate) {
+            setSelectedTemplate(defaultTemplate);
+            setTemplateCode(
+              JSON.stringify(defaultTemplate.render({}), null, 2),
+            );
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load template:', error);
+        toast.error('Failed to load template');
+      } finally {
+        setIsLoading(false);
+      }
     }
 
-    // Initialize with the first template
-    handleTemplateChange('basic');
+    loadTemplate();
+  }, [templateId]);
 
-    // Set dark mode
-    document.documentElement.classList.add('dark');
-  }, []);
+  const handleTemplateChange = async (newTemplateId: string) => {
+    setTemplateId(newTemplateId);
+    const template = slackTemplates.find(t => t.id === newTemplateId);
+    if (!template) return;
 
-  // Handle template selection change
-  const handleTemplateChange = (value: string) => {
-    setSelectedTemplate(value);
-
-    // Check if we have a saved version of this template
-    if (savedTemplates[value]) {
-      setTemplateCode(JSON.stringify(savedTemplates[value], null, 2));
-      toast('Template loaded', {
-        description: `Loaded your saved version of the ${value} template.`,
-      });
-    } else {
-      // Use the default template
-      setTemplateCode(
-        JSON.stringify(
-          defaultTemplates[value as keyof typeof defaultTemplates],
-          null,
-          2,
-        ),
+    try {
+      const customTemplate = await templateService.getUserTemplate(
+        userId,
+        newTemplateId,
+        TemplateType.SLACK,
       );
-      toast('Default template loaded', {
-        description: `Loaded the default ${value} template.`,
-      });
+
+      if (customTemplate) {
+        setSelectedTemplate(customTemplate);
+        setTemplateCode(JSON.stringify(customTemplate.render({}), null, 2));
+        toast('Template loaded', {
+          description: `Loaded your customized version of the ${template.name} template.`,
+        });
+      } else {
+        setSelectedTemplate(template);
+        setTemplateCode(JSON.stringify(template.render({}), null, 2));
+        toast('Default template loaded', {
+          description: `Loaded the default ${template.name} template.`,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load template:', error);
+      toast.error('Failed to load template');
     }
   };
 
-  // Save the current template
-  const saveTemplate = () => {
+  const resetTemplate = async () => {
+    if (!selectedTemplate || !userId) return;
+
+    try {
+      // Delete the custom template
+      await selectedTemplate.render({});
+
+      // Reset to default template
+      const defaultTemplate = slackTemplates.find(
+        t => t.id === selectedTemplate.id,
+      );
+      if (defaultTemplate) {
+        setSelectedTemplate(defaultTemplate);
+        setTemplateCode(JSON.stringify(defaultTemplate.render({}), null, 2));
+      }
+
+      toast.success('Template reset', {
+        description: `The ${selectedTemplate.name} template has been reset to default.`,
+      });
+    } catch (error) {
+      console.error('Failed to reset template:', error);
+      toast.error('Failed to reset template');
+    }
+  };
+
+  const saveTemplate = async () => {
+    if (!selectedTemplate?.id || !userId) {
+      toast.error('No template selected');
+      return;
+    }
+
     try {
       setIsSaving(true);
+      setSaveStatus('saving');
+
       const parsedTemplate = JSON.parse(templateCode);
-      const updatedTemplates = {
-        ...savedTemplates,
-        [selectedTemplate]: parsedTemplate,
+      const updatedTemplate = {
+        ...selectedTemplate,
+        render: () => parsedTemplate,
       };
 
-      // Save to localStorage
-      localStorage.setItem('slackTemplates', JSON.stringify(updatedTemplates));
-      setSavedTemplates(updatedTemplates);
+      await templateService.saveUserCustomization(
+        userId,
+        selectedTemplate.id,
+        TemplateType.SLACK,
+        updatedTemplate,
+      );
 
-      toast.success('✓ Saved successfully');
+      setSaveStatus('saved');
+      toast.success('Saved successfully!');
+      setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
+      console.error('Failed to save template:', error);
+      setSaveStatus('error');
       toast.error('Failed to save');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Reset the current template to default
-  const resetTemplate = () => {
-    const defaultTemplate =
-      defaultTemplates[selectedTemplate as keyof typeof defaultTemplates];
-    setTemplateCode(JSON.stringify(defaultTemplate, null, 2));
-
-    // Remove from saved templates
-    const updatedTemplates = { ...savedTemplates };
-    delete updatedTemplates[selectedTemplate];
-
-    localStorage.setItem('slackTemplates', JSON.stringify(updatedTemplates));
-    setSavedTemplates(updatedTemplates);
-
-    toast.success('Template reset', {
-      description: `The ${selectedTemplate} template has been reset to default.`,
-    });
-  };
-
   // Update template code from block builder
-  const updateTemplateFromBlockBuilder = (updatedTemplate: any) => {
+  const updateTemplateFromBlockBuilder = (
+    updatedTemplate: Record<string, any>,
+  ) => {
     setTemplateCode(JSON.stringify(updatedTemplate, null, 2));
   };
 
   // Parse the template for preview
-  const getParsedTemplate = () => {
+  const getParsedTemplate = (): Record<string, any> | null => {
     try {
       return JSON.parse(templateCode);
     } catch (error) {
       return null;
     }
   };
-
   return (
     <div className='container mx-auto p-6 space-y-6'>
       <div className='flex flex-col'>
@@ -133,21 +203,19 @@ export default function SlackTemplateEditor() {
         </h1>
 
         <div className='mb-6 flex flex-col md:flex-row items-center justify-between gap-4 w-full'>
-          <Select value={selectedTemplate} onValueChange={handleTemplateChange}>
+          <Select
+            value={selectedTemplate?.id}
+            onValueChange={handleTemplateChange}
+          >
             <SelectTrigger className='w-full md:w-[300px] text-foreground'>
               <SelectValue placeholder='Select a template' />
             </SelectTrigger>
             <SelectContent className='text-foreground'>
-              <SelectItem value='basic'>Basic Notification</SelectItem>
-              <SelectItem value='welcome'>Welcome Notification</SelectItem>
-              <SelectItem value='weeklySummary'>Weekly Summary</SelectItem>
-              <SelectItem value='paymentConfirmation'>
-                Payment Confirmation
-              </SelectItem>
-              <SelectItem value='subscriptionRenewal'>
-                Subscription Renewal
-              </SelectItem>
-              <SelectItem value='custom'>Custom Template</SelectItem>
+              {slackTemplates.map(template => (
+                <SelectItem key={template.id} value={template.id}>
+                  {template.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <div className='flex w-full justify-between md:justify-end gap-2'>

@@ -416,6 +416,7 @@ export default function EmailTemplateEditor() {
             </Dialog>
 
             <Button
+              size={'sm'}
               onClick={saveTemplate}
               disabled={isSaving}
               className='flex items-center gap-2'
@@ -425,6 +426,7 @@ export default function EmailTemplateEditor() {
             </Button>
 
             <Button
+              size={'sm'}
               variant='secondary'
               onClick={resetTemplate}
               className='flex items-center gap-2'

@@ -1,4 +1,6 @@
-export default async function Page() {
+'use client';
+
+export default function DashboardPage() {
   return (
     <main>
       <div className='fixed inset-0 overflow-hidden' aria-hidden='true'>
@@ -24,13 +26,13 @@ export default async function Page() {
             className='absolute inset-0'
             style={{
               background: `
-                radial-gradient(
-                  80% 100% at 50% 0%,
-                  transparent 30%,
-                  rgba(24, 24, 27, 0.4) 50%,
-                  rgba(24, 24, 27, 0.8) 100%
-                )
-              `,
+              radial-gradient(
+                80% 100% at 50% 0%,
+                transparent 30%,
+                rgba(24, 24, 27, 0.4) 50%,
+                rgba(24, 24, 27, 0.8) 100%
+              )
+            `,
             }}
           />
         </div>

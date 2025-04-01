@@ -12,7 +12,7 @@ import {
   Mails,
   SlackIcon,
 } from 'lucide-react';
-
+import { Logo } from '../Logo';
 import { NavMain } from './nav-main';
 import { NavUser } from './nav-user';
 import {
@@ -21,6 +21,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/auth-context';
 
@@ -85,10 +86,28 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
+  const { state } = useSidebar();
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
-        <span className='ml-2 text-lg font-bold'>H</span>
+        <div className='flex justify-center items-left w-full h-full my-4'>
+          {state === 'collapsed' ? (
+            <div
+              className='text-2xl font-bold    animate-fade-in
+          relative
+          z-20
+          bg-gradient-to-r from-purple-600 to-rose-300
+          text-transparent
+          bg-clip-text'
+            >
+              H
+            </div>
+          ) : (
+            <div className='w-full px-2'>
+              <Logo size='2xl' />
+            </div>
+          )}
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

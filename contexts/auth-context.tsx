@@ -9,7 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   userId: string | null;
   userEmail: string | null;
-  profile: any | null; // You can type this based on your user profile structure
+  profile: any | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -33,24 +33,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(user);
       if (user) {
         fetchUserProfile(user.id);
-      }
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchUserProfile(session.user.id);
       } else {
-        setProfile(null);
+        setIsLoading(false);
       }
     });
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   const fetchUserProfile = async (userId: string) => {
@@ -61,11 +47,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .select('*')
         .eq('user_id', userId);
 
-      // Get the first profile if exists
-      const firstProfile = data?.[0] || null;
-
       if (error) throw error;
-      setProfile(firstProfile);
+      setProfile(data?.[0] || null);
     } catch (error) {
       console.error('Error fetching user profile:', error);
     } finally {

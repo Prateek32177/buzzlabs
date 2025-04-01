@@ -414,15 +414,7 @@ export default function EmailTemplateEditor() {
               </DialogContent>
             </Dialog>
 
-            <Button
-              variant='secondary'
-              onClick={resetTemplate}
-              className='flex items-center gap-2'
-              disabled={isSaving}
-            >
-              <RefreshCw className='h-4 w-4' />
-              Reset
-            </Button>
+            
 
             <Button
               onClick={saveTemplate}
@@ -431,6 +423,16 @@ export default function EmailTemplateEditor() {
             >
               <Save className='h-4 w-4' />
               {isSaving ? 'Saving...' : 'Save Template'}
+            </Button>
+
+            <Button
+              variant='secondary'
+              onClick={resetTemplate}
+              className='flex items-center gap-2'
+              disabled={isSaving}
+            >
+              <RefreshCw className='h-4 w-4' />
+              Reset
             </Button>
           </div>
         </div>

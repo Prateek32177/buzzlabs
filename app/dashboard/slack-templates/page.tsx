@@ -316,6 +316,7 @@ export default function SlackTemplateEditor() {
           </Select>
           <div className='flex w-full justify-between md:justify-end gap-2'>
             <Button
+              size={'sm'}
               onClick={saveTemplate}
               className='flex items-center gap-2'
               disabled={isSaving || isLoading}
@@ -324,6 +325,7 @@ export default function SlackTemplateEditor() {
               {isSaving ? 'Saving...' : 'Save Template'}
             </Button>
             <Button
+              size={'sm'}
               variant='secondary'
               onClick={resetTemplate}
               className='flex items-center gap-2'

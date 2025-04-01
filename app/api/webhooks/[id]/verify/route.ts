@@ -19,7 +19,7 @@ export async function POST(
 
     if (error || !webhook) {
       return Response.json(
-        { error: `Webhook not found ${error.message}` },
+        { error: `Webhook not found ${error?.message}` },
         { status: 404 },
       );
     }
@@ -58,6 +58,7 @@ export async function POST(
 
       if (webhook[0].notify_slack) {
         await sendSlackNotification({
+          userId: webhook[0].user_id,
           webhookUrl: webhook[0].slack_config.webhook_url,
           channelName: webhook[0].slack_config.channel_name,
           templateId: webhook[0].slack_config.template_id,

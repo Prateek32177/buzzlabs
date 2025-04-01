@@ -29,12 +29,18 @@ export async function sendEmail({
       throw new Error(`Template not found: ${templateId}`);
     }
 
-    // Render the template with the provided data
-    const rendered = template.render(data);
-
-    // Extract subject and html content from the rendered template
-    // Based on the editor code, the render function should return { subject, html }
-    const { subject, html } = rendered;
+    // If we have customized content, use it directly
+    let subject, html;
+    if (template.content && template.subject) {
+      // Replace variables in the customized content
+      html = replaceVariables(template.content, data);
+      subject = replaceVariables(template.subject, data);
+    } else {
+      // Fall back to render function if no customized content
+      const rendered = template.render(data);
+      html = rendered.html;
+      subject = rendered.subject;
+    }
 
     // Send the email using Resend
     const { data: result, error } = await resend.emails.send({
@@ -50,4 +56,11 @@ export async function sendEmail({
     console.error('Failed to send email:', error);
     throw error;
   }
+}
+
+// Helper function to replace variables in template strings
+function replaceVariables(template: string, data: Record<string, any>): string {
+  return template.replace(/{{([\w.-]+)}}/g, (match, key) => {
+    return data[key] || match; // Keep original placeholder if variable not found
+  });
 }

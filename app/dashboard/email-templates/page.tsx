@@ -30,8 +30,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-
-const userId = 'e14b5e09-6f04-43b5-8328-69548b172a07';
+import { useAuth } from '@/contexts/auth-context';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -63,6 +62,8 @@ export default function EmailTemplateEditor() {
     ServiceTemplate[]
   >([]);
 
+  const { user } = useAuth();
+  const userId = user?.id;
   // Load all available templates
   useEffect(() => {
     async function loadAvailableTemplates() {
@@ -413,8 +414,6 @@ export default function EmailTemplateEditor() {
                 </div>
               </DialogContent>
             </Dialog>
-
-            
 
             <Button
               onClick={saveTemplate}

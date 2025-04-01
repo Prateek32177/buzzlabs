@@ -42,23 +42,34 @@ export class TemplateService {
         .eq('user_id', userId)
         .eq('template_id', templateId)
         .eq('template_type', type)
-        .eq('is_active', true);
+        .eq('is_active', true)
+        .single();
 
-      if (customizationError || !customization || customization.length === 0) {
+      if (customizationError || !customization) {
         return baseTemplate;
       }
 
       // Create a deep copy of the base template
-      const customizedTemplate = JSON.parse(JSON.stringify(baseTemplate));
+      const customizedTemplate = {
+        ...baseTemplate,
+        // Preserve the original render function
+        render: baseTemplate.render,
+      };
 
       // Apply customizations if they exist
-      if (customization[0].customizations) {
-        applyPatch(customizedTemplate, customization[0].customizations);
+      if (customization.customizations) {
+        // Apply the patch to everything except the render function
+        const patchTarget = {
+          ...customizedTemplate,
+          render: undefined,
+        };
+        applyPatch(patchTarget, customization.customizations);
 
-        // Ensure render function is preserved
-        if (!customizedTemplate.render) {
-          customizedTemplate.render = baseTemplate.render;
-        }
+        // Merge back with the render function
+        return {
+          ...patchTarget,
+          render: baseTemplate.render,
+        };
       }
 
       return customizedTemplate;

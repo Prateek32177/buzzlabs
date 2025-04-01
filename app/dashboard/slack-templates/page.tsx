@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TemplateService, TemplateType } from '@/utils/template-manager';
 import { Save, RefreshCw } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function SlackTemplateEditor() {
   const [selectedTemplate, setSelectedTemplate] = useState<any | null>(null);
@@ -36,7 +37,8 @@ export default function SlackTemplateEditor() {
   >('idle');
 
   const templateService = new TemplateService();
-  const userId = 'e14b5e09-6f04-43b5-8328-69548b172a07'; // You might want to get this from your auth context
+  const { user } = useAuth();
+  const userId = user?.id;
 
   // Load template from service on initial render
   useEffect(() => {
@@ -152,6 +154,9 @@ export default function SlackTemplateEditor() {
         render: originalTemplate.render, // Always keep original render function
       };
 
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
       await templateService.saveUserCustomization(
         userId,
         selectedTemplate.id,
@@ -184,7 +189,7 @@ export default function SlackTemplateEditor() {
 
     try {
       const customTemplate = await templateService.getUserTemplate(
-        userId,
+        userId?.toString() || '',
         newTemplateId,
         TemplateType.SLACK,
       );
@@ -243,6 +248,8 @@ export default function SlackTemplateEditor() {
 
   const resetTemplate = async () => {
     if (!selectedTemplate || !userId) return;
+
+    if (!userId) return;
 
     try {
       // Delete user customization

@@ -22,7 +22,7 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
         key: 'webhook_token',
         label: 'x-webhook-token',
         description: 'Set x-webhook-token in header',
-        type: 'secret',
+        type: 'text',
         placeholder: 'webhook secret',
         required: true,
         readOnly: true,

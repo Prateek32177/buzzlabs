@@ -14,8 +14,9 @@ export interface Template {
   id: string;
   name: string;
   type: TemplateType;
-  content?: any;
-  render: (data: any) => any;
+  content?: string;
+  subject?: string;
+  render: (variables: Record<string, any>) => { html: string; subject: string };
 }
 
 // Store templates by type

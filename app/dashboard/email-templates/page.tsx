@@ -133,7 +133,7 @@ export default function EmailTemplateEditor() {
           });
 
           setEditedContent(renderedContent);
-          setEditedSubject(renderedSubject);
+          setEditedSubject(renderedSubject || '');
 
           const vars = extractVariables(renderedContent);
           setVariables(

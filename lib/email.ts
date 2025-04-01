@@ -8,7 +8,7 @@ export async function sendEmail({
   from,
   to,
   templateId = 'template1',
-  data,
+  data = {},
 }: {
   userId: string;
   from: string;
@@ -16,20 +16,38 @@ export async function sendEmail({
   templateId?: string;
   data: any;
 }) {
-  const templateService = new TemplateService();
-  const { subject, content } = await templateService.renderTemplate(
-    userId,
-    templateId,
-    TemplateType.EMAIL,
-  );
+  try {
+    // Get the template using TemplateService
+    const templateService = new TemplateService();
+    const template = await templateService.getUserTemplate(
+      userId,
+      templateId,
+      TemplateType.EMAIL,
+    );
 
-  const { data: result, error } = await resend.emails.send({
-    from,
-    to,
-    subject,
-    html: content,
-  });
+    if (!template) {
+      throw new Error(`Template not found: ${templateId}`);
+    }
 
-  if (error) throw error;
-  return result;
+    // Render the template with the provided data
+    const rendered = template.render(data);
+
+    // Extract subject and html content from the rendered template
+    // Based on the editor code, the render function should return { subject, html }
+    const { subject, html } = rendered;
+
+    // Send the email using Resend
+    const { data: result, error } = await resend.emails.send({
+      from,
+      to,
+      subject,
+      html,
+    });
+
+    if (error) throw error;
+    return result;
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    throw error;
+  }
 }

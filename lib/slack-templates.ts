@@ -7,6 +7,7 @@ type Template = {
   id: string;
   name: string;
   type: TemplateType;
+  content?: any;
   render: (data: any) => any;
 };
 
@@ -130,16 +131,6 @@ export const slackTemplates: Template[] = [
               text: '*Churn Rate:*\n2.4% (↓0.5%)',
             },
           ],
-        },
-        {
-          type: 'image',
-          image_url:
-            'https://api.slack.com/img/blocks/bkb_template_images/beagle.png',
-          alt_text: 'Weekly performance chart',
-          title: {
-            type: 'plain_text',
-            text: 'Weekly Performance',
-          },
         },
         {
           type: 'actions',

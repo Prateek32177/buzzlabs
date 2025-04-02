@@ -16,6 +16,7 @@ import {
 } from 'recharts';
 import { Mail, Slack, Clock, TrendingUp } from 'lucide-react';
 import { Value } from '@radix-ui/react-select';
+import EmailSlackCharts from './EmailSlackCharts';
 
 // Sample data for charts
 const emailData = [
@@ -53,18 +54,18 @@ const maxWebhook = 100;
 const currentWebhook = 75;
 const webhookLimitPercentage = (currentWebhook / maxWebhook) * 100;
 const webhookLimitColor =
-  webhookLimitPercentage < 80 ? 'bg-green-500' : 'bg-red-500';
+  webhookLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
 // notifications
 const maxNotification = 1000;
 const currentNotiCount = 950;
 const notificationLimitPercentage = (currentNotiCount / maxNotification) * 100;
 const NotificationLimitColor =
-  notificationLimitPercentage < 80 ? 'bg-green-500' : 'bg-red-500';
+  notificationLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
 const UsageTab = () => {
   return (
     <div className='space-y-6 animate-fade-in'>
       {/* Consumption Summary */}
-      <Card className='p-6 glass'>
+      <Card className='p-6 bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40'>
         <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6'>
           <div>
             <h3 className='text-lg font-medium text-white'>
@@ -126,8 +127,8 @@ const UsageTab = () => {
       </Card>
 
       {/* Channel Metrics */}
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        {/* Email notifications */}
+      {/* <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+  
         <Card className='p-6 glass'>
           <div className='flex items-center gap-2 mb-4'>
             <Mail className='h-5 w-5 text-hookflo-accent' />
@@ -196,7 +197,7 @@ const UsageTab = () => {
           </div>
         </Card>
 
-        {/* Slack notifications */}
+        
         <Card className='p-6 glass'>
           <div className='flex items-center gap-2 mb-4'>
             <Slack className='h-5 w-5 text-hookflo-accent' />
@@ -264,10 +265,11 @@ const UsageTab = () => {
             <span>Trending up by 12.1% this week</span>
           </div>
         </Card>
-      </div>
-
+        
+      </div> */}
+      <EmailSlackCharts />
       {/* Webhook Usage */}
-      <Card className='p-6 glass'>
+      <Card className='p-6 bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40'>
         <h3 className='text-lg font-medium text-white mb-4'>Webhook Usage</h3>
         <div className='h-[250px]'>
           <ResponsiveContainer width='100%' height='100%'>

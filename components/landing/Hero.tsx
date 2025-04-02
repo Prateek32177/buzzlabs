@@ -68,19 +68,36 @@ export default function Hero() {
           />
 
           <div
-            className='absolute inset-0'
+            className='w-full absolute inset-0'
             style={{
               background: `
-                radial-gradient(
-                  80% 100% at 50% 0%,
-                  transparent 10%,
-                  rgba(0, 0, 0, 0.4) 40%,
-                  rgba(1, 1, 2, 0.8) 60%
-                )
+          radial-gradient(
+            90% 100% at 50% 0%,
+            transparent 10%,
+            rgba(0, 0, 0, 0.4) 40%,
+            rgba(1, 1, 2, 0.8) 60%
+          )
               `,
             }}
           />
         </div>
+
+        <style jsx>{`
+          @keyframes fadeInOut {
+            0% {
+              opacity: 0;
+            }
+            25% {
+              opacity: 1;
+            }
+            75% {
+              opacity: 1;
+            }
+            100% {
+              opacity: 0;
+            }
+          }
+        `}</style>
 
         <div className='absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/60 to-transparent' />
         <div className='absolute inset-0 bg-gradient-to-b from-zinc-900/0 via-zinc-900/10 to-zinc-900/30' />
@@ -101,7 +118,7 @@ export default function Hero() {
               <span className='hidden sm:inline'>No Code, Just Hook it</span>
               <span className='sm:hidden'>Just Hook it</span>
             </Badge>
-            <h1 className='tracking-tight text-4xl md:text-6xl lg:text-7xl'>
+            <h1 className='tracking-tight text-5xl md:text-6xl lg:text-7xl'>
               Transform Events into{' '}
               <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200'>
                 Instant Notifications

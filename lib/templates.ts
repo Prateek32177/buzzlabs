@@ -1,15 +1,21 @@
+export enum TemplateType {
+  EMAIL = 'email',
+  SLACK = 'slack',
+}
+
 type Template = {
   id: string;
   name: string;
-  type: 'email' | 'slack';
+  type: TemplateType;
   render: (data: any) => any;
 };
+import { slackTemplates } from './slack-templates';
 
 export const emailTemplates: Template[] = [
   {
     id: 'template1',
     name: 'Basic Notification',
-    type: 'email',
+    type: TemplateType.EMAIL,
     render: data => ({
       subject: 'New Notification',
       html: `
@@ -30,7 +36,7 @@ export const emailTemplates: Template[] = [
   {
     id: 'template2',
     name: 'Welcome Email',
-    type: 'email',
+    type: TemplateType.EMAIL,
     render: data => ({
       subject: 'Welcome to Our Service',
       html: `
@@ -51,7 +57,7 @@ export const emailTemplates: Template[] = [
   {
     id: 'template3',
     name: 'Weekly Summary',
-    type: 'email',
+    type: TemplateType.EMAIL,
     render: data => ({
       subject: 'Your Weekly Summary',
       html: `
@@ -74,7 +80,7 @@ export const emailTemplates: Template[] = [
   {
     id: 'template4',
     name: 'Payment Confirmation',
-    type: 'email',
+    type: TemplateType.EMAIL,
     render: data => ({
       subject: 'Payment Confirmation',
       html: `
@@ -95,7 +101,7 @@ export const emailTemplates: Template[] = [
   {
     id: 'template5',
     name: 'Subscription Renewal',
-    type: 'email',
+    type: TemplateType.EMAIL,
     render: data => ({
       subject: 'Subscription Renewal',
       html: `
@@ -116,7 +122,7 @@ export const emailTemplates: Template[] = [
   {
     id: 'template6',
     name: 'Custom Template',
-    type: 'email',
+    type: TemplateType.EMAIL,
     render: data => ({
       subject: 'Custom build',
       html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -225,194 +231,12 @@ export const emailTemplates: Template[] = [
   },
 ];
 
-export const slackTemplates: Template[] = [
-  {
-    id: 'alert-critical',
-    name: 'Critical Alert',
-    type: 'slack',
-    render: data => ({
-      text: '🚨 Critical Alert',
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: '🚨 Critical Alert',
-            emoji: true,
-          },
-        },
-        {
-          type: 'divider',
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*Service:*\n${data.service}`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Environment:*\n${data.environment}`,
-            },
-          ],
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Error Message:*\n${data.message}`,
-          },
-        },
-        {
-          type: 'context',
-          elements: [
-            {
-              type: 'mrkdwn',
-              text: `🕐 Occurred at: ${data.timestamp}`,
-            },
-          ],
-        },
-      ],
-    }),
-  },
-  {
-    id: 'performance-alert',
-    name: 'Performance Alert',
-    type: 'slack',
-    render: data => ({
-      text: '📊 Performance Alert',
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: '📊 Performance Alert',
-            emoji: true,
-          },
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*Metric:*\n${data.metric}`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Current Value:*\n${data.value}`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Threshold:*\n${data.threshold}`,
-            },
-          ],
-        },
-      ],
-    }),
-  },
-  {
-    id: 'deployment-notification',
-    name: 'Deployment Status',
-    type: 'slack',
-    render: data => ({
-      text: '🚀 Deployment Update',
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: `🚀 Deployment ${data.status}`,
-            emoji: true,
-          },
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*Version:*\n${data.version}`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Environment:*\n${data.environment}`,
-            },
-          ],
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Changes:*\n${data.changes}`,
-          },
-        },
-      ],
-    }),
-  },
-  {
-    id: 'security-alert',
-    name: 'Security Alert',
-    type: 'slack',
-    render: data => ({
-      text: '🔒 Security Alert',
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: '🔒 Security Alert',
-            emoji: true,
-          },
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*Alert Type:* ${data.type}\n*Severity:* ${data.severity}\n*Details:* ${data.details}`,
-          },
-        },
-      ],
-    }),
-  },
-  {
-    id: 'system-health',
-    name: 'System Health Report',
-    type: 'slack',
-    render: data => ({
-      text: '💻 System Health Report',
-      blocks: [
-        {
-          type: 'header',
-          text: {
-            type: 'plain_text',
-            text: '💻 System Health Report',
-            emoji: true,
-          },
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: `*CPU Usage:*\n${data.cpu}%`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Memory:*\n${data.memory}%`,
-            },
-            {
-              type: 'mrkdwn',
-              text: `*Disk:*\n${data.disk}%`,
-            },
-          ],
-        },
-      ],
-    }),
-  },
-];
-
-export function getTemplate(id: string, type: 'email' | 'slack'): Template {
-  const templates = type === 'email' ? emailTemplates : slackTemplates;
+export function getTemplate(
+  id: string,
+  type: TemplateType.EMAIL | TemplateType.SLACK,
+): Template {
+  const templates =
+    type === TemplateType.EMAIL ? emailTemplates : slackTemplates;
   const template = templates.find(t => t.id === id);
   if (!template) throw new Error(`Template ${id} not found`);
   return template;

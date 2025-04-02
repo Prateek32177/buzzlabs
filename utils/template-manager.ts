@@ -1,135 +1,161 @@
-import { applyPatch, createPatch } from 'rfc6902'; // JSON Patch library
-import { emailTemplates } from '@/lib/templates'; // Import your existing templates
+import { applyPatch, createPatch } from 'rfc6902';
+import { emailTemplates } from '@/lib/templates';
 import { createClient } from './supabase/client';
-// Create combined templates array from all template types
-const allTemplates = [...emailTemplates];
+import { slackTemplates } from '@/lib/slack-templates';
 
-export interface TemplateCustomization {
-  templateId: string;
-  userId: string;
-  customizations: any;
+// Define template types
+export enum TemplateType {
+  EMAIL = 'email',
+  SLACK = 'slack',
 }
 
+// Template interface
+export interface Template {
+  id: string;
+  name: string;
+  type: TemplateType;
+  content?: string;
+  subject?: string;
+  render: (variables: Record<string, any>) => { html: string; subject: string };
+}
+
+// Store templates by type
+const templateRegistry: Record<TemplateType, Template[]> = {
+  [TemplateType.EMAIL]: emailTemplates,
+  [TemplateType.SLACK]: slackTemplates,
+};
+
 export class TemplateService {
-  /**
-   * Get a template for a user, combining base template with user customizations
-   */
-  async getUserTemplate(userId: string, templateId: string): Promise<any> {
-    // 1. Get base template
-    const baseTemplate = this.getBaseTemplate(templateId);
-    if (!baseTemplate) throw new Error(`Template not found: ${templateId}`);
-    const supabase = await createClient();
-    // 2. Get user customizations if any
-    const { data: customization, error: customizationError } = await supabase
-      .from('user_template_customizations')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .eq('is_active', true)
-      .single();
+  async getUserTemplate(
+    userId: string,
+    templateId: string,
+    type: TemplateType,
+  ): Promise<Template | null> {
+    const baseTemplate = this.getBaseTemplate(templateId, type);
+    if (!baseTemplate) return null;
 
-    // If no customization or error, return base template
-    if (customizationError || !customization) return baseTemplate;
+    try {
+      const supabase = await createClient();
+      const { data: customization, error: customizationError } = await supabase
+        .from('user_template_customizations')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('template_id', templateId)
+        .eq('template_type', type)
+        .eq('is_active', true)
+        .single();
 
-    // 3. Apply user customizations to base template
-    const customizedTemplate = JSON.parse(JSON.stringify(baseTemplate)); // Clone
-    applyPatch(customizedTemplate, customization.customizations);
+      if (customizationError || !customization) {
+        return baseTemplate;
+      }
 
-    return customizedTemplate;
+      // Create a deep copy of the base template
+      const customizedTemplate = {
+        ...baseTemplate,
+        // Preserve the original render function
+        render: baseTemplate.render,
+      };
+
+      // Apply customizations if they exist
+      if (customization.customizations) {
+        // Apply the patch to everything except the render function
+        const patchTarget = {
+          ...customizedTemplate,
+          render: undefined,
+        };
+        applyPatch(patchTarget, customization.customizations);
+
+        // Merge back with the render function
+        return {
+          ...patchTarget,
+          render: baseTemplate.render,
+        };
+      }
+
+      return customizedTemplate;
+    } catch (error) {
+      console.error('Error getting user template:', error);
+      return baseTemplate;
+    }
   }
 
-  /**
-   * Save user customizations of a template
-   */
   async saveUserCustomization(
     userId: string,
     templateId: string,
+    type: TemplateType,
     customizedTemplate: any,
   ): Promise<void> {
-    // 1. Get base template
-    const baseTemplate = this.getBaseTemplate(templateId);
+    const baseTemplate = this.getBaseTemplate(templateId, type);
     if (!baseTemplate) throw new Error(`Template not found: ${templateId}`);
 
-    // 2. Calculate differences (patch) between base and customized template
-    const patch = createPatch(baseTemplate, customizedTemplate);
+    // Create a deep copy of customized template for patching
+    const templateForPatch = {
+      ...customizedTemplate,
+      // Exclude the render function from patching
+      render: undefined,
+    };
+
+    // Create a base template copy without render function for proper patching
+    const baseForPatch = {
+      ...JSON.parse(JSON.stringify(baseTemplate)),
+      render: undefined,
+    };
+
+    const patch = createPatch(baseForPatch, templateForPatch);
     const supabase = await createClient();
-    // 3. Check if this user already has a customization for this template
-    const { data: existingCustomization } = await supabase
+
+    const { data: existingCustomization, error } = await supabase
       .from('user_template_customizations')
       .select('*')
       .eq('user_id', userId)
       .eq('template_id', templateId)
-      .single();
+      .eq('template_type', type);
 
-    if (existingCustomization) {
-      // Update existing customization
+    if (existingCustomization && existingCustomization.length > 0) {
       await supabase
         .from('user_template_customizations')
         .update({
           customizations: patch,
           updated_at: new Date(),
+          is_active: true,
         })
-        .eq('id', existingCustomization.id);
+        .eq('id', existingCustomization[0].id);
     } else {
-      // Create new customization
       await supabase.from('user_template_customizations').insert({
         user_id: userId,
         template_id: templateId,
+        template_type: type,
         customizations: patch,
+        is_active: true,
       });
     }
   }
 
-  /**
-   * Render a template with provided data
-   */
-  async renderTemplate(
+  async deleteUserCustomization(
     userId: string,
     templateId: string,
-    data: any,
-  ): Promise<any> {
-    const template = await this.getUserTemplate(userId, templateId);
-    return template;
-  }
-
-  /**
-   * Get all available templates
-   */
-  async getAllTemplates(): Promise<any[]> {
-    return allTemplates.map(template => ({
-      id: template.id,
-      name: template.name,
-      type: template.type,
-    }));
-  }
-
-  /**
-   * Get base template from the templates array
-   */
-  private getBaseTemplate(templateId: string): any {
-    return allTemplates.find(template => template.id === templateId);
-  }
-
-  /**
-   * Handle large template storage if needed
-   */
-  async storeCustomHtmlTemplate(
-    templateId: string,
-    html: string,
+    type: TemplateType,
   ): Promise<void> {
-    // Only store if template HTML is very large
-    if (html.length > 100000) {
-      // In real implementation, you'd compress the HTML
-      const compressedContent = Buffer.from(html);
-      const supabase = await createClient();
-      await supabase.from('large_template_contents').upsert(
-        {
-          template_id: templateId,
-          content_compressed: compressedContent,
-          original_size: html.length,
-        },
-        { onConflict: 'template_id' },
-      );
+    const supabase = await createClient();
+    await supabase
+      .from('user_template_customizations')
+      .update({ is_active: false })
+      .eq('user_id', userId)
+      .eq('template_id', templateId)
+      .eq('template_type', type);
+  }
+
+  async getAllTemplates(type?: TemplateType): Promise<Template[]> {
+    if (type) {
+      return templateRegistry[type] || [];
     }
+    return Object.values(templateRegistry).flat();
+  }
+
+  private getBaseTemplate(
+    templateId: string,
+    type: TemplateType,
+  ): Template | undefined {
+    return templateRegistry[type]?.find(template => template.id === templateId);
   }
 }

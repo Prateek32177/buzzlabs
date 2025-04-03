@@ -6,6 +6,7 @@ import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Ripple } from '../magicui/ripple';
+import { NoiseGradientBackground } from '@/components/ui/noise-gradient-background';
 
 export default function Hero() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -27,82 +28,13 @@ export default function Hero() {
   }, []);
   return (
     <>
-      <div className='fixed inset-0 overflow-hidden ' aria-hidden='true'>
-        <div
-          className='absolute inset-0 opacity-60 mix-blend-overlay'
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.975' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            backgroundRepeat: 'repeat',
-            backgroundSize: '256px 256px',
-          }}
-        />
-        <div
-          className='absolute inset-0 opacity-40 mix-blend-soft-light'
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='microNoiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23microNoiseFilter)'/%3E%3C/svg%3E")`,
-            backgroundRepeat: 'repeat',
-            backgroundSize: '128px 128px',
-          }}
-        />
-
-        <div className='absolute top-0 left-0 w-full to-transparent h-full'>
-          <div
-            className={`absolute inset-0 bg-gradient-to-b from-purple-300/20 via-purple-500/15 to-transparent`}
-            style={{
-              filter: 'blur(80px)',
-            }}
-          />
-
-          <div
-            className={`absolute inset-0 bg-gradient-to-b from-purple-400/15 via-purple-500/10 to-transparent`}
-            style={{
-              filter: 'blur(60px)',
-            }}
-          />
-
-          <div
-            className={`absolute inset-0 bg-gradient-to-b from-purple-500/10 via-purple-500/5 to-transparent`}
-            style={{
-              filter: 'blur(40px)',
-            }}
-          />
-
-          <div
-            className='w-full absolute inset-0'
-            style={{
-              background: `
-          radial-gradient(
-            90% 100% at 50% 0%,
-            transparent 10%,
-            rgba(0, 0, 0, 0.4) 40%,
-            rgba(1, 1, 2, 0.8) 60%
-          )
-              `,
-            }}
-          />
-        </div>
-
-        <style jsx>{`
-          @keyframes fadeInOut {
-            0% {
-              opacity: 0;
-            }
-            25% {
-              opacity: 1;
-            }
-            75% {
-              opacity: 1;
-            }
-            100% {
-              opacity: 0;
-            }
-          }
-        `}</style>
-
-        <div className='absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/60 to-transparent' />
-        <div className='absolute inset-0 bg-gradient-to-b from-zinc-900/0 via-zinc-900/10 to-zinc-900/30' />
-      </div>
-
+      <NoiseGradientBackground
+        primaryColor='rgba(200, 70, 50, 0.2)'
+        secondaryColor='rgba(255, 30, 100, 0.15)'
+        tertiaryColor='rgba(40, 80, 255, 0.1)'
+        primaryBlur={100}
+        microNoiseSize={64}
+      />
       <section className='pt-52 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
         <div className='absolute inset-0 z-0'>
           <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />

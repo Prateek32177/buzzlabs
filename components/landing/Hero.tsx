@@ -44,7 +44,7 @@ export default function Hero() {
         <div className='absolute inset-0 z-0'>
           <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
         </div>
-        <div className='px-2   max-w-6xl relative'>
+        <div className='px-2 m-auto   max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
             <Badge
               variant={'default'}

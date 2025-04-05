@@ -86,7 +86,7 @@ const PlansTab = () => {
   return (
     <div className='space-y-6 animate-fade-in'>
       {/* Current Plan */}
-      <Card className='p-6 bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40'>
+      <Card className='p-6  glass-card rounded-lg  h-full mt-6 '>
         <h3 className='text-lg font-medium text-white mb-4'>Current Plan</h3>
 
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6'>
@@ -112,7 +112,7 @@ const PlansTab = () => {
             <Card
               key={plan.id}
               className={cn(
-                'p-6 bg-black glass-card rounded-lg  mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40 relative overflow-hidden flex flex-col justify-between',
+                'p-6 glass-card rounded-lg  mt-6  relative overflow-hidden flex flex-col justify-between',
                 plan.current && 'border-hookflo-blue',
               )}
             >
@@ -155,7 +155,7 @@ const PlansTab = () => {
       </div>
 
       {/* Payment Method */}
-      <Card className='p-6 bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40'>
+      <Card className='p-6 glass-card rounded-lg  h-full mt-6 '>
         <h3 className='text-lg font-medium text-white mb-4'>Payment Method</h3>
 
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
@@ -174,7 +174,7 @@ const PlansTab = () => {
       </Card>
 
       {/* Billing History */}
-      <Card className='p-6 bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40'>
+      <Card className='p-6 glass-card rounded-lg  h-full mt-6 '>
         <h3 className='text-lg font-medium text-white mb-4'>Billing History</h3>
 
         <div className='overflow-x-auto'>

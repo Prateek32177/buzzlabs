@@ -63,9 +63,9 @@ const NotificationLimitColor =
   notificationLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
 const UsageTab = () => {
   return (
-    <div className='space-y-6 animate-fade-in'>
+    <div className='space-y-6 animate-fade-in mb-16'>
       {/* Consumption Summary */}
-      <Card className='p-6 bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40'>
+      <Card className='p-6  glass-card rounded-lg  h-full mt-6 '>
         <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6'>
           <div>
             <h3 className='text-lg font-medium text-white'>
@@ -125,58 +125,63 @@ const UsageTab = () => {
           </div>
         </div>
       </Card>
-      {/* Email and Slack Usage */}
-      <EmailSlackCharts />
-      {/* Webhook Usage */}
-      <Card className='p-6 bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40'>
-        <h3 className='text-lg font-medium text-white mb-4'>Webhook Usage</h3>
-        <div className='h-[250px]'>
-          <ResponsiveContainer width='100%' height='100%'>
-            <LineChart
-              data={webhookData}
-              margin={{
-                top: 5,
-                right: 20,
-                left: 0,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid
-                strokeDasharray='3 3'
-                stroke='#333333'
-                vertical={false}
-              />
-              <XAxis
-                dataKey='name'
-                tick={{ fill: '#999' }}
-                axisLine={{ stroke: '#333333' }}
-              />
-              <YAxis tick={{ fill: '#999' }} axisLine={{ stroke: '#333333' }} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1E1E1E',
-                  borderColor: '#333333',
-                  borderRadius: '8px',
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
+        {/* Email and Slack Usage */}
+        <EmailSlackCharts />
+        {/* Webhook Usage */}
+        <Card className='p-6 glass-card rounded-lg  h-full mt-6'>
+          <h3 className='text-lg font-medium text-white mb-4'>Webhook Usage</h3>
+          <div className='h-[250px]'>
+            <ResponsiveContainer width='100%' height='100%'>
+              <LineChart
+                data={webhookData}
+                margin={{
+                  top: 5,
+                  right: 20,
+                  left: 0,
+                  bottom: 5,
                 }}
-                itemStyle={{ color: '#fff' }}
-                labelStyle={{ color: '#999' }}
-              />
-              <Line
-                type='monotone'
-                dataKey='value'
-                stroke='#0D66D0'
-                strokeWidth={2}
-                dot={{ r: 4, fill: '#0D66D0', strokeWidth: 0 }}
-                activeDot={{ r: 6, fill: '#0D66D0', strokeWidth: 0 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        <div className='mt-3 text-sm text-hookflo-green flex items-center'>
-          <TrendingUp className='h-4 w-4 mr-1' />
-          <span>Trending up by 5.2% this month</span>
-        </div>
-      </Card>
+              >
+                <CartesianGrid
+                  strokeDasharray='3 3'
+                  stroke='#333333'
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey='name'
+                  tick={{ fill: '#999' }}
+                  axisLine={{ stroke: '#333333' }}
+                />
+                <YAxis
+                  tick={{ fill: '#999' }}
+                  axisLine={{ stroke: '#333333' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1E1E1E',
+                    borderColor: '#333333',
+                    borderRadius: '8px',
+                  }}
+                  itemStyle={{ color: '#fff' }}
+                  labelStyle={{ color: '#999' }}
+                />
+                <Line
+                  type='monotone'
+                  dataKey='value'
+                  stroke='#9F7AEA'
+                  strokeWidth={2}
+                  dot={{ r: 4, fill: '#9F7AEA', strokeWidth: 0 }}
+                  activeDot={{ r: 6, fill: '#9F7AEA', strokeWidth: 0 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className='mt-3 text-sm text-hookflo-green flex items-center'>
+            <TrendingUp className='h-4 w-4 mr-1' />
+            <span>Trending up by 5.2% this month</span>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -107,7 +107,7 @@ export default function Hero() {
         <div className='absolute inset-0 z-0'>
           <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
         </div>
-        <div className='container   max-w-6xl relative'>
+        <div className='px-2   max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
             <Badge
               variant={'default'}
@@ -118,7 +118,7 @@ export default function Hero() {
               <span className='hidden sm:inline'>No Code, Just Hook it</span>
               <span className='sm:hidden'>Just Hook it</span>
             </Badge>
-            <h1 className='tracking-tight text-5xl md:text-6xl lg:text-7xl'>
+            <h1 className='tracking-tight text-3xl md:text-6xl lg:text-7xl'>
               Transform Events into{' '}
               <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200'>
                 Instant Notifications

@@ -13,7 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/charts';
-
+import { Card } from '@/components/ui/card';
 // Enhanced data with more points for a smoother curve
 const data = [
   { date: 'Apr 3', Email: 140, Slack: 120 },
@@ -37,7 +37,7 @@ const data = [
 
 const EmailSlackCharts = () => {
   return (
-    <div className='bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40 p-6'>
+    <Card className='glass-card rounded-lg  h-full mt-6 p-6'>
       <div className='flex items-center justify-between mb-6'>
         <h3 className='text-lg font-medium text-white'>Apr 6</h3>
         <div className='flex items-center space-x-6'>
@@ -116,7 +116,7 @@ const EmailSlackCharts = () => {
           </LineChart>
         </ChartContainer>
       </div>
-    </div>
+    </Card>
   );
 };
 

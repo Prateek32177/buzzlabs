@@ -16,6 +16,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Save, RefreshCw, Shield, Check } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import Link from 'next/link';
 
 const TIMEZONES = [
   { value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
@@ -66,22 +67,22 @@ const ProfileTab = () => {
 
   return (
     <div className='space-y-6 animate-fade-in '>
-      <Card className='p-6 bg-black glass-card rounded-lg  h-full mt-6 transition-all duration-300 shadow-[0_0px_30px_rgba(139,92,246,0.2)] border-violet-500/40 '>
+      <Card className='p-6  glass-card rounded-lg  h-full mt-6'>
         <div className='space-y-8'>
           {/* Avatar Section */}
           <div className='flex flex-col sm:flex-row gap-6 items-start sm:items-center'>
-            <div>
+            <div className='relative'>
               <img
                 src={avatar}
                 alt='Profile Avatar'
-                className='w-24 h-24 rounded-lg bg-gray-800 border border-hookflo-dark-border'
+                className='w-32 h-32 rounded-lg bg-gray-800 border border-hookflo-dark-border'
               />
-            </div>
-            <div>
-              <Button variant='ghost' onClick={handleGenerateAvatar}>
-                <RefreshCw className='h-4 w-4 mr-2' />
-                Generate Random Avatar
-              </Button>
+              <button
+                onClick={handleGenerateAvatar}
+                className='absolute bottom-0 left-0 right-0 flex items-center justify-center bg-black bg-opacity-50 py-2 rounded-b-lg'
+              >
+                <span className='text-xs text-white'>Change Avatar</span>
+              </button>
             </div>
           </div>
 
@@ -121,15 +122,6 @@ const ProfileTab = () => {
                   )}
                 </div>
               </div>
-
-              <div>
-                <Button
-                  variant='link'
-                  className='h-auto p-0 text-hookflo-accent'
-                >
-                  Reset password
-                </Button>
-              </div>
             </div>
           </div>
 
@@ -155,7 +147,7 @@ const ProfileTab = () => {
           </div>
 
           {/* Save Button */}
-          <div className='flex justify-start'>
+          <div className='flex justify-start gap-4'>
             <Button
               variant={'default'}
               onClick={handleSave}
@@ -163,15 +155,22 @@ const ProfileTab = () => {
             >
               {isLoading ? (
                 <>
-                  <RefreshCw className='h-4 w-4 mr-2 animate-spin' />
+                  <RefreshCw className='h-4 w-4 animate-spin' />
                   Saving...
                 </>
               ) : (
                 <>
-                  <Save className='h-4 w-4 mr-2' />
+                  <Save className='h-4 w-4' />
                   Save Changes
                 </>
               )}
+            </Button>
+            <Button
+              variant='link'
+              className='h-auto p-0 text-hookflo-accent'
+              asChild
+            >
+              <Link href='/protected/reset-password'>Reset password</Link>
             </Button>
           </div>
         </div>

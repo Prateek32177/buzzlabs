@@ -6,7 +6,7 @@ import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Ripple } from '../magicui/ripple';
-import { NoiseGradientBackground } from '@/components/ui/noise-gradient-background';
+import { NoiseGradientBackground } from 'noise-gradient-bg';
 
 export default function Hero() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -34,6 +34,11 @@ export default function Hero() {
         tertiaryColor='rgba(40, 80, 255, 0.1)'
         primaryBlur={100}
         microNoiseSize={64}
+        noiseSize={256}
+        theme='purple'
+        noiseOpacity={60}
+        microNoiseOpacity={40}
+        vignetteIntensity='strong'
       />
       <section className='pt-52 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
         <div className='absolute inset-0 z-0'>

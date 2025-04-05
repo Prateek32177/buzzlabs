@@ -169,7 +169,7 @@ export default function NoiseGradientShowcase() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showThemeInfo, setShowThemeInfo] = useState(true);
   const [autoplayEnabled, setAutoplayEnabled] = useState(true);
-
+ const [isCopied, setIsCopied] = useState(false);
   useEffect(() => {
     if (!autoplayEnabled) return;
     const interval = setInterval(() => {
@@ -178,7 +178,7 @@ export default function NoiseGradientShowcase() {
         setCurrentThemeIndex(prevIndex => (prevIndex + 1) % themes.length);
         setIsTransitioning(false);
       }, 1000);
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [autoplayEnabled]);
 
@@ -195,37 +195,94 @@ export default function NoiseGradientShowcase() {
   };
 
   const currentTheme = themes[currentThemeIndex];
+  const [selectedPackageManager, setSelectedPackageManager] = useState<'npm' | 'yarn' | 'pnpm'>('npm');
+  const commands: Record<'npm' | 'yarn' | 'pnpm', string> = {
+    npm: 'npm i noise-gradient-bg',
+    yarn: 'yarn add noise-gradient-bg',
+    pnpm: 'pnpm add noise-gradient-bg'
+  };
 
   return (
     <div className='relative min-h-screen overflow-hidden'>
       <NoiseGradientBackground {...currentTheme.props} />
 
       <div
-        className={`relative z-10 min-h-screen flex flex-col items-center justify-center transition-opacity duration-1000 ${
-          isTransitioning ? 'opacity-0' : 'opacity-100'
-        }`}
+        className={`relative z-10 min-h-screen flex flex-col items-center justify-center transition-opacity duration-2000`}
       >
-        <div className='text-center max-w-3xl mx-auto px-6'>
-          <h1 className='text-6xl font-bold text-white mb-6'>Noise Gradient</h1>
-          <p className='text-2xl text-white/80 mb-12'>
+        <div className='text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <h1 className='text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6'>
+            Noise Gradient
+          </h1>
+          <p className='text-xl sm:text-2xl text-white/80 mb-8 sm:mb-12'>
             Beautiful, customizable background effects for your next project
           </p>
 
-          <div className='mb-12'>
-            <h2 className='text-4xl font-semibold text-white mb-2'>
+            <div className='mb-8 sm:mb-12'>
+            <div className='bg-black/20 backdrop-blur-sm rounded-lg p-4 mb-6 mx-auto max-w-lg'>
+          
+                <div className='flex space-x-4 mb-4 px-2'>
+                <button 
+                  className={`${selectedPackageManager === 'npm' ? 'text-white' : 'text-white/70'} hover:text-white`}
+                  onClick={() => setSelectedPackageManager('npm')}
+                >
+                  npm
+                </button>
+                <button 
+                  className={`${selectedPackageManager === 'yarn' ? 'text-white' : 'text-white/70'} hover:text-white`}
+                  onClick={() => setSelectedPackageManager('yarn')}
+                >
+                  yarn
+                </button>
+                <button 
+                  className={`${selectedPackageManager === 'pnpm' ? 'text-white' : 'text-white/70'} hover:text-white`}
+                  onClick={() => setSelectedPackageManager('pnpm')}
+                >
+                  pnpm
+                </button>
+                </div>
+                <div className='bg-white/10 text-white px-4 py-2 rounded-md flex items-center justify-between'>
+                <pre>{commands[selectedPackageManager]}</pre>
+              <button 
+                onClick={async () => {
+                await navigator.clipboard.writeText(commands[selectedPackageManager]);
+                // Show toast or tooltip here
+                setIsCopied(true);
+                setTimeout(() => setIsCopied(false), 3000);
+                }}
+                className='hover:text-white/70'
+              >
+                {isCopied?"Copied":
+                (<svg
+                className='w-4 h-4'
+                fill='none' 
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+                >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round' 
+                  strokeWidth={2}
+                  d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'
+                />
+                </svg>)}
+              </button>
+              </div>
+            </div>
+
+            <h2 className='text-3xl sm:text-4xl font-semibold text-white mb-2'>
               {currentTheme.name}
             </h2>
             {showThemeInfo && (
-              <p className='text-xl text-white/70 mb-8'>
+              <p className='text-lg sm:text-xl text-white/70 mb-6'>
                 {currentTheme.description}
               </p>
             )}
-            <div className='flex flex-wrap justify-center gap-2 mb-8'>
+            <div className='flex flex-wrap justify-center gap-2 mb-6'>
               {themes.map((theme, index) => (
                 <button
                   key={index}
                   onClick={() => goToTheme(index)}
-                  className={`h-3 w-12 rounded-full transition-all duration-300 ${
+                  className={`h-2 sm:h-3 w-8 sm:w-12 rounded-full transition-all duration-300 ${
                     index === currentThemeIndex
                       ? 'bg-white scale-110'
                       : 'bg-white/30 scale-100 hover:bg-white/50'
@@ -236,55 +293,55 @@ export default function NoiseGradientShowcase() {
             </div>
           </div>
 
-          <div className='flex flex-wrap justify-center gap-4'>
+          <div className='flex flex-wrap justify-center gap-3'>
             <button
               onClick={toggleThemeInfo}
-              className='px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md'
+              className='px-4 sm:px-6 py-2 sm:py-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md text-sm '
             >
               {showThemeInfo ? 'Hide Info' : 'Show Info'}
             </button>
             <button
               onClick={toggleAutoplay}
-              className='px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md'
+              className='px-4 sm:px-6 py-2 sm:py-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md text-sm '
             >
               {autoplayEnabled ? 'Pause Autoplay' : 'Resume Autoplay'}
             </button>
             <a
               href='#code-examples'
-                           className='px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md'
+              className='px-4 sm:px-6 py-2 sm:py-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md text-sm '
             >
               View Code Examples
             </a>
           </div>
-          </div>
+        </div>
 
-          {showThemeInfo && (
-            <div className='fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:bottom-6 md:w-96 bg-black/30 backdrop-blur-md p-6 rounded-xl border border-white/10 transition-all duration-500 animate-fadeIn'>
-              <h3 className='text-xl font-semibold text-white mb-2'>
-                Current Theme Configuration
+        {showThemeInfo && (
+          <div className='fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:w-96 bg-black/30 backdrop-blur-md p-4 sm:p-6 rounded-xl border border-white/10 transition-all duration-500 animate-fadeIn'>
+            <h3 className='text-lg sm:text-xl font-semibold text-white mb-2'>
+              Current Theme Configuration
+            </h3>
+            <pre className='overflow-auto text-xs sm:text-sm text-white/80 p-3 bg-black/20 rounded-lg max-h-60'>
+              {`// ${currentTheme.name}\n${JSON.stringify(currentTheme.props, null, 2)}`}
+            </pre>
+          </div>
+        )}
+      </div>
+
+      <div
+        id='code-examples'
+        className='relative z-10 bg-black/50 backdrop-blur-md min-h-screen py-12 sm:py-16'
+      >
+        <div className='max-w-5xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <h2 className='text-3xl sm:text-4xl font-bold text-white mb-6 sm:mb-8'>
+            Implementation Examples
+          </h2>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8'>
+            <div className='bg-black/30 rounded-xl p-6 border border-white/10'>
+              <h3 className='text-xl font-semibold text-white mb-4'>
+                Basic Usage
               </h3>
-              <pre className='overflow-auto text-sm text-white/80 p-3 bg-black/20 rounded-lg max-h-60'>
-                {`// ${currentTheme.name}\n${JSON.stringify(currentTheme.props, null, 2)}`}
-              </pre>
-            </div>
-          )}
-          </div>
-
-          <div
-            id='code-examples'
-            className='relative z-10 bg-black/50 backdrop-blur-md min-h-screen py-16'
-          >
-            <div className='max-w-5xl mx-auto px-6'>
-              <h2 className='text-4xl font-bold text-white mb-8'>
-                Implementation Examples
-              </h2>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-                <div className='bg-black/30 rounded-xl p-6 border border-white/10'>
-                  <h3 className='text-xl font-semibold text-white mb-4'>
-                    Basic Usage
-                  </h3>
-                  <pre className='overflow-auto text-sm text-white/80 p-4 bg-black/20 rounded-lg'>
-                    {`import { NoiseGradientBackground } from 
+              <pre className='overflow-auto text-sm text-white/80 p-4 bg-black/20 rounded-lg'>
+                {`import { NoiseGradientBackground } from 
             "@/components/ui/noise-gradient-background";
 
           export default function Page() {
@@ -299,30 +356,30 @@ export default function NoiseGradientShowcase() {
               </div>
             );
           }`}
-                  </pre>
-                </div>
+              </pre>
+            </div>
 
-                <div className='bg-black/30 rounded-xl p-6 border border-white/10'>
-                  <h3 className='text-xl font-semibold text-white mb-4'>
-                    Custom Colors
-                  </h3>
-                  <pre className='overflow-auto text-sm text-white/80 p-4 bg-black/20 rounded-lg'>
-                    {`<NoiseGradientBackground 
+            <div className='bg-black/30 rounded-xl p-6 border border-white/10'>
+              <h3 className='text-xl font-semibold text-white mb-4'>
+                Custom Colors
+              </h3>
+              <pre className='overflow-auto text-sm text-white/80 p-4 bg-black/20 rounded-lg'>
+                {`<NoiseGradientBackground 
             primaryColor="blue-300/20"
             secondaryColor="rgba(123, 31, 162, 0.2)"
             tertiaryColor="#4a1d9e20"
             noiseOpacity={50}
             vignetteIntensity="strong"
           />`}
-                  </pre>
-                </div>
+              </pre>
+            </div>
 
-                <div className='bg-black/30 rounded-xl p-6 border border-white/10'>
-                  <h3 className='text-xl font-semibold text-white mb-4'>
-                    With Animation
-                  </h3>
-                  <pre className='overflow-auto text-sm text-white/80 p-4 bg-black/20 rounded-lg'>
-                    {`const [theme, setTheme] = useState({
+            <div className='bg-black/30 rounded-xl p-6 border border-white/10'>
+              <h3 className='text-xl font-semibold text-white mb-4'>
+                With Animation
+              </h3>
+              <pre className='overflow-auto text-sm text-white/80 p-4 bg-black/20 rounded-lg'>
+                {`const [theme, setTheme] = useState({
             primaryColor: "purple-300/20",
             secondaryColor: "purple-500/15"
           });
@@ -341,15 +398,15 @@ export default function NoiseGradientShowcase() {
               </button>
             </div>
           );`}
-                  </pre>
-                </div>
+              </pre>
+            </div>
 
-                <div className='bg-black/30 rounded-xl p-6 border border-white/10'>
-                  <h3 className='text-xl font-semibold text-white mb-4'>
-                    All Properties
-                  </h3>
-                  <pre className='overflow-auto text-sm text-white/80 p-4 bg-black/20 rounded-lg'>
-                    {`<NoiseGradientBackground 
+            <div className='bg-black/30 rounded-xl p-6 border border-white/10'>
+              <h3 className='text-xl font-semibold text-white mb-4'>
+                All Properties
+              </h3>
+              <pre className='overflow-auto text-sm text-white/80 p-4 bg-black/20 rounded-lg'>
+                {`<NoiseGradientBackground 
             primaryColor="yellow-300/30"
             secondaryColor="amber-500/20"
             tertiaryColor="orange-500/15"
@@ -362,11 +419,11 @@ export default function NoiseGradientShowcase() {
             tertiaryBlur={40}
             vignetteIntensity="medium"
           />`}
-                  </pre>
-                </div>
-              </div>
+              </pre>
             </div>
           </div>
         </div>
+      </div>
+    </div>
   );
 }

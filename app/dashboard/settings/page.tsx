@@ -19,7 +19,6 @@ const SettingsLayout = () => {
         </header>
 
         <Tabs defaultValue='profile' className='w-full animate-fade-in'>
-          {/* <TabsList className="bg-hookflo-dark-card border border-hookflo-dark-border mb-6"> */}
           <TabsList className='bg-hookflo-dark-card mb-6 flex gap-2'>
             <TabsTrigger
               value='profile'

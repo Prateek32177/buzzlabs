@@ -145,12 +145,6 @@ const PlansTab = () => {
                   variant={'default'}
                   onClick={() => handleUpgrade(plan.id)}
                   disabled={plan.current}
-                  // className={cn(
-                  //   "w-full",
-                  //   plan.current
-                  //     ? "bg-gray-700 text-gray-400 hover:bg-gray-700 cursor-not-allowed"
-                  //     : "bg-hookflo-blue hover:bg-hookflo-blue/90 text-white"
-                  // )}
                 >
                   {plan.current ? 'Current Plan' : 'Upgrade'}
                 </Button>
@@ -175,12 +169,7 @@ const PlansTab = () => {
             </div>
           </div>
 
-          <Button
-            variant='default'
-            // className='bg-hookflo-dark-card border-gray-700 text-white hover:bg-gray-800'
-          >
-            Add Payment Method
-          </Button>
+          <Button variant='default'>Add Payment Method</Button>
         </div>
       </Card>
 

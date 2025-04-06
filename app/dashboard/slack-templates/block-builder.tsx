@@ -38,9 +38,16 @@ import { Editor } from '@monaco-editor/react';
 interface BlockBuilderProps {
   template: any;
   onUpdate: (template: any) => void;
+  jsonError: string | null;
+  setJsonError: (error: string | null) => void;
 }
 
-export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
+export function BlockBuilder({
+  template,
+  onUpdate,
+  jsonError,
+  setJsonError,
+}: BlockBuilderProps) {
   const [currentTemplate, setCurrentTemplate] = useState<any>(
     template || {
       username: 'Custom Bot',
@@ -50,12 +57,14 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
     },
   );
   const [jsonValue, setJsonValue] = useState<string>('');
-  const [jsonError, setJsonError] = useState<string | null>(null);
+  // const [jsonError, setJsonError] = useState<string | null>(null);
+  const [lineCount, setLineCount] = useState<number>(0);
 
   useEffect(() => {
     if (template) {
       setCurrentTemplate(template);
       setJsonValue(JSON.stringify(template, null, 2));
+      setLineCount(jsonValue.split('\n').length);
     }
   }, [template]);
 
@@ -65,16 +74,24 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
     onUpdate(updatedTemplate);
   };
 
+  const MAX_LINES = 100;
+  let isOverLimit = lineCount > MAX_LINES;
   const handleJsonChange = (value: string | undefined) => {
-    setJsonValue(value || '');
+    const safeValue = value || '';
+    setLineCount(safeValue.split('\n').length);
+
+    if (lineCount > MAX_LINES) {
+      setJsonError(`Line limit exceeded: Max ${MAX_LINES} lines allowed.`);
+      return;
+    }
+
+    setJsonValue(safeValue);
     setJsonError(null);
 
     try {
-      if (value) {
-        const parsed = JSON.parse(value);
-        setCurrentTemplate(parsed);
-        onUpdate(parsed);
-      }
+      const parsed = JSON.parse(safeValue);
+      setCurrentTemplate(parsed);
+      onUpdate(parsed);
     } catch (error) {
       setJsonError('Invalid JSON format');
     }
@@ -124,11 +141,11 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
     <div className='h-full w-full'>
       <Tabs defaultValue='blocks' className='h-full flex flex-col gap-4'>
         <TabsList className='grid w-full grid-cols-2 '>
+          <TabsTrigger value='blocks'>Blocks</TabsTrigger>
           <TabsTrigger value='json'>
             <Code className='h-4 w-4 mr-2' />
             JSON
           </TabsTrigger>
-          <TabsTrigger value='blocks'>Blocks</TabsTrigger>
         </TabsList>
 
         <div className='flex-1 overflow-hidden'>
@@ -145,9 +162,11 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
                 <p className='text-sm text-destructive mt-1'>{jsonError}</p>
               )}
             </div>
-            <div className='flex-1 min-h-0'>
+            <div
+              className={`flex-1 min-h-0 flex flex-col ${jsonError ? 'border-red-500 border-2' : ''}`}
+            >
               <Editor
-                height='100%'
+                // height='100%'
                 defaultLanguage='json'
                 value={jsonValue}
                 onChange={handleJsonChange}
@@ -157,7 +176,13 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
                   fontSize: 14,
                   theme: 'vs-dark',
                 }}
+                className='flex-1'
               />
+            </div>
+            <div
+              className={`my-2 text-sm ${isOverLimit ? 'text-red-500' : 'text-gray-400'} flex w-full justify-end`}
+            >
+              {lineCount} / {MAX_LINES}
             </div>
           </TabsContent>
 
@@ -882,4 +907,7 @@ function LinksBlockEditor({
       </Button>
     </div>
   );
+}
+function setJsonError(arg0: string | null) {
+  throw new Error('Function not implemented.');
 }

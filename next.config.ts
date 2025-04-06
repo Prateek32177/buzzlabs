@@ -20,43 +20,43 @@ module.exports = {
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: '/(.*)',
         headers: [
           {
-            key: "Content-Security-Policy",
-            value: cspHeader.replace(/\n/g, ""),
+            key: 'Content-Security-Policy',
+            value: cspHeader.replace(/\n/g, ''),
           },
           {
-            key: "Cache-Control",
-            value: "public, max-age=0, must-revalidate",
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
           },
         ],
       },
       {
-        source: "/_next/static/:path*",
+        source: '/_next/static/:path*',
         headers: [
           {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
       {
-        source: "/static/:path*",
+        source: '/static/:path*',
         headers: [
           {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
       {
-        source: "/:all*(svg|jpg|png|webp|avif|gif|ico)",
+        source: '/:all*(svg|jpg|png|webp|avif|gif|ico)',
         locale: false,
         headers: [
           {
-            key: "Cache-Control",
-            value: "public, max-age=3600, stale-while-revalidate=59",
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, stale-while-revalidate=59',
           },
         ],
       },

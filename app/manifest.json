@@ -24,7 +24,7 @@
   "background_color": "#000",
   "theme_color": "#a855f7",
   "orientation": "any",
-  "categories": ["business", "productivity", "devtool","saas"],
+  "categories": ["business", "productivity", "devtool", "saas"],
   "lang": "en",
   "dir": "ltr",
   "scope": "/",

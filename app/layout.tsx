@@ -51,6 +51,17 @@ export const metadata = {
     creator: '@Prateek53788134',
     site: '@Prateek53788134',
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 export default function RootLayout({
   children,

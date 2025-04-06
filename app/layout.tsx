@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 import { Open_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
-import { AuthProvider } from '@/contexts/auth-context';
 
 const openSans = Open_Sans({ subsets: ['latin'] });
 
@@ -106,19 +105,17 @@ export default function RootLayout({
           openSans.className,
         )}
       >
-        <AuthProvider>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
-            <main className='flex min-h-screen flex-col flex-1 gap-20  items-center '>
-              {children}
-            </main>
-            <Toaster richColors />
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main className='flex min-h-screen flex-col flex-1 gap-20  items-center '>
+            {children}
+          </main>
+          <Toaster richColors />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

@@ -18,7 +18,6 @@ import { emailTemplates, TemplateType } from '@/lib/templates';
 import {
   TemplateService,
   Template as ServiceTemplate,
-  Template,
 } from '@/utils/template-manager';
 import { toast } from 'sonner';
 import { Loader, Save, RefreshCw, HelpCircle } from 'lucide-react';
@@ -30,7 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useAuth } from '@/contexts/auth-context';
+import { getUser } from '@/hooks/user-auth';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -52,38 +51,23 @@ export default function EmailTemplateEditor() {
 
   const [templateId, setTemplateId] = useState<string>('template1');
   const [isSaving, setIsSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<
-    'idle' | 'saving' | 'saved' | 'error'
-  >('idle');
-
   const templateService = new TemplateService();
   const [isLoading, setIsLoading] = useState(true);
-  const [availableTemplates, setAvailableTemplates] = useState<
-    ServiceTemplate[]
-  >([]);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [userid, setUserId] = useState('');
 
-  const { user } = useAuth();
-  const userId = user?.id;
-  // Load all available templates
   useEffect(() => {
-    async function loadAvailableTemplates() {
-      try {
-        const templates = await templateService.getAllTemplates(
-          TemplateType.EMAIL,
-        );
-        setAvailableTemplates(templates);
-      } catch (error) {
-        console.error('Failed to load templates:', error);
-      }
-    }
-
-    loadAvailableTemplates();
+    const fetchUser = async () => {
+      setIsPageLoading(true);
+      const { userId } = await getUser();
+      setUserId(userId || '');
+      setIsPageLoading(false);
+    };
+    fetchUser();
   }, []);
 
-  // Load the selected template
-  useEffect(() => {
-    loadTemplate();
-  }, [templateId]);
+  const userId = userid;
+  // Load all available templates
 
   const loadTemplate = async () => {
     if (!userId || !templateId) return;
@@ -200,6 +184,10 @@ export default function EmailTemplateEditor() {
     }
   };
 
+  useEffect(() => {
+    loadTemplate();
+  }, [templateId, userId]);
+
   // Enhanced variable extraction function
   const extractVariables = (content: string): string[] => {
     const regex = /{{([\w.-]+)}}/g;
@@ -232,7 +220,6 @@ export default function EmailTemplateEditor() {
 
     try {
       setIsSaving(true);
-      setSaveStatus('saving');
 
       const originalTemplate = emailTemplates.find(
         t => t.id === selectedTemplate.id,
@@ -259,13 +246,10 @@ export default function EmailTemplateEditor() {
         updatedTemplate,
       );
 
-      setSaveStatus('saved');
-      toast.success('Template saved successfully');
-
       await loadTemplate();
+      toast.success('Saved successfully!');
     } catch (error) {
       console.error('Save error:', error);
-      setSaveStatus('error');
       toast.error('Failed to save template');
     } finally {
       setIsSaving(false);
@@ -344,6 +328,14 @@ export default function EmailTemplateEditor() {
     return preview;
   };
 
+  if (isPageLoading) {
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <Loader className='w-10 h-10 text-center animate-spin' />
+      </div>
+    );
+  }
+
   return (
     <div className='container mx-auto p-6 space-y-6'>
       <div className='flex flex-col gap-6'>
@@ -354,7 +346,7 @@ export default function EmailTemplateEditor() {
               <SelectValue placeholder='Select a template' />
             </SelectTrigger>
             <SelectContent>
-              {availableTemplates.map(template => (
+              {emailTemplates.map(template => (
                 <SelectItem key={template.id} value={template.id}>
                   {template.name}
                 </SelectItem>
@@ -438,7 +430,7 @@ export default function EmailTemplateEditor() {
           </div>
         </div>
 
-        {selectedTemplate && !isLoading ? (
+        {selectedTemplate && (
           <>
             {/* Mobile View */}
             <div className='md:hidden'>
@@ -484,10 +476,6 @@ export default function EmailTemplateEditor() {
               />
             </div>
           </>
-        ) : (
-          <div className='flex justify-center items-center h-64'>
-            <Loader className='w-10 h-10 text-center animate-spin' />
-          </div>
         )}
       </div>
     </div>

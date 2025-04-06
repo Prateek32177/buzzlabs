@@ -169,7 +169,7 @@ export default function NoiseGradientShowcase() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showThemeInfo, setShowThemeInfo] = useState(true);
   const [autoplayEnabled, setAutoplayEnabled] = useState(true);
- const [isCopied, setIsCopied] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   useEffect(() => {
     if (!autoplayEnabled) return;
     const interval = setInterval(() => {
@@ -195,11 +195,13 @@ export default function NoiseGradientShowcase() {
   };
 
   const currentTheme = themes[currentThemeIndex];
-  const [selectedPackageManager, setSelectedPackageManager] = useState<'npm' | 'yarn' | 'pnpm'>('npm');
+  const [selectedPackageManager, setSelectedPackageManager] = useState<
+    'npm' | 'yarn' | 'pnpm'
+  >('npm');
   const commands: Record<'npm' | 'yarn' | 'pnpm', string> = {
     npm: 'npm i noise-gradient-bg',
     yarn: 'yarn add noise-gradient-bg',
-    pnpm: 'pnpm add noise-gradient-bg'
+    pnpm: 'pnpm add noise-gradient-bg',
   };
 
   return (
@@ -217,55 +219,59 @@ export default function NoiseGradientShowcase() {
             Beautiful, customizable background effects for your next project
           </p>
 
-            <div className='mb-8 sm:mb-12'>
+          <div className='mb-8 sm:mb-12'>
             <div className='bg-black/20 backdrop-blur-sm rounded-lg p-4 mb-6 mx-auto max-w-lg'>
-          
-                <div className='flex space-x-4 mb-4 px-2'>
-                <button 
+              <div className='flex space-x-4 mb-4 px-2'>
+                <button
                   className={`${selectedPackageManager === 'npm' ? 'text-white' : 'text-white/70'} hover:text-white`}
                   onClick={() => setSelectedPackageManager('npm')}
                 >
                   npm
                 </button>
-                <button 
+                <button
                   className={`${selectedPackageManager === 'yarn' ? 'text-white' : 'text-white/70'} hover:text-white`}
                   onClick={() => setSelectedPackageManager('yarn')}
                 >
                   yarn
                 </button>
-                <button 
+                <button
                   className={`${selectedPackageManager === 'pnpm' ? 'text-white' : 'text-white/70'} hover:text-white`}
                   onClick={() => setSelectedPackageManager('pnpm')}
                 >
                   pnpm
                 </button>
-                </div>
-                <div className='bg-white/10 text-white px-4 py-2 rounded-md flex items-center justify-between'>
+              </div>
+              <div className='bg-white/10 text-white px-4 py-2 rounded-md flex items-center justify-between'>
                 <pre>{commands[selectedPackageManager]}</pre>
-              <button 
-                onClick={async () => {
-                await navigator.clipboard.writeText(commands[selectedPackageManager]);
-                // Show toast or tooltip here
-                setIsCopied(true);
-                setTimeout(() => setIsCopied(false), 3000);
-                }}
-                className='hover:text-white/70'
-              >
-                {isCopied?"Copied":
-                (<svg
-                className='w-4 h-4'
-                fill='none' 
-                stroke='currentColor'
-                viewBox='0 0 24 24'
+                <button
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(
+                      commands[selectedPackageManager],
+                    );
+                    // Show toast or tooltip here
+                    setIsCopied(true);
+                    setTimeout(() => setIsCopied(false), 3000);
+                  }}
+                  className='hover:text-white/70'
                 >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round' 
-                  strokeWidth={2}
-                  d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'
-                />
-                </svg>)}
-              </button>
+                  {isCopied ? (
+                    'Copied'
+                  ) : (
+                    <svg
+                      className='w-4 h-4'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'
+                      />
+                    </svg>
+                  )}
+                </button>
               </div>
             </div>
 

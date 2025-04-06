@@ -74,26 +74,28 @@ export function BlockBuilder({
     onUpdate(updatedTemplate);
   };
 
-  const MAX_LINES = 100;
-  let isOverLimit = lineCount > MAX_LINES;
   const handleJsonChange = (value: string | undefined) => {
     const safeValue = value || '';
-    setLineCount(safeValue.split('\n').length);
+    const newLineCount = safeValue.split('\n').length;
 
-    if (lineCount > MAX_LINES) {
-      setJsonError(`Line limit exceeded: Max ${MAX_LINES} lines allowed.`);
+    setLineCount(newLineCount); // Still keep it in state if you're displaying it elsewhere
+    setJsonValue(safeValue); // ✅ Always update the editor content
+
+    if (newLineCount > 100) {
+      setJsonError(`Line limit exceeded: Max 100 lines allowed.`);
+      
       return;
     }
-
-    setJsonValue(safeValue);
-    setJsonError(null);
 
     try {
       const parsed = JSON.parse(safeValue);
       setCurrentTemplate(parsed);
       onUpdate(parsed);
+      setJsonValue(safeValue);
+      setJsonError(null);
+      
     } catch (error) {
-      setJsonError('Invalid JSON format');
+      setJsonError('Invalid JSON format.');
     }
   };
 
@@ -180,9 +182,9 @@ export function BlockBuilder({
               />
             </div>
             <div
-              className={`my-2 text-sm ${isOverLimit ? 'text-red-500' : 'text-gray-400'} flex w-full justify-end`}
+              className={`my-2 text-sm ${lineCount > 100 ? 'text-red-500' : 'text-gray-400'} flex w-full justify-end`}
             >
-              {lineCount} / {MAX_LINES}
+              {lineCount} / 100
             </div>
           </TabsContent>
 

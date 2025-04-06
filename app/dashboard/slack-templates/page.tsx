@@ -385,7 +385,7 @@ export default function SlackTemplateEditor() {
                 <CardContent className='flex-1 overflow-auto bg-[#222529] rounded-md p-4'>
                   {jsonError ? (
                     <div className='flex items-center justify-center h-full text-red-500 text-sm'>
-                      Failed to load preview due to JSON error.
+                      <p>`Failed to load preview due to {jsonError}`</p>
                     </div>
                   ) : (
                     <SlackPreview
@@ -437,7 +437,7 @@ export default function SlackTemplateEditor() {
             <CardContent className='flex-1 overflow-auto bg-[#222529] rounded-md p-4'>
               {jsonError ? (
                 <div className='flex items-center justify-center h-full text-red-500 text-sm'>
-                  Failed to load preview due to JSON error.
+                  <p>Failed to load preview due to {jsonError}</p>
                 </div>
               ) : (
                 <SlackPreview

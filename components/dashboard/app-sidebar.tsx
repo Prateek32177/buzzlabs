@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AudioWaveform,
   BookOpen,
@@ -23,7 +23,7 @@ import {
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useAuth } from '@/contexts/auth-context';
+import { getUser } from '@/hooks/user-auth';
 
 // This is sample data.
 const data = {
@@ -85,7 +85,16 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { userEmail } = await getUser();
+      setEmail(userEmail || '');
+    };
+    fetchUser();
+  }, []);
+
   const { state } = useSidebar();
   return (
     <Sidebar collapsible='icon' {...props}>
@@ -113,11 +122,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        {user && (
+        {email && (
           <NavUser
             user={{
-              name: user.email?.split('@')[0] || '',
-              email: user.email || '',
+              name: email?.split('@')[0] || '',
+              email: email || '',
               avatar:
                 'https://api.dicebear.com/9.x/adventurer/svg?seed=Brian&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede',
             }}

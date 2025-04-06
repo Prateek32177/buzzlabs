@@ -84,7 +84,6 @@ export default function SlackTemplateEditor() {
 
             setSelectedTemplate(customTemplate);
             setTemplateCode(JSON.stringify(renderedContent, null, 2));
-            toast('Custom template loaded');
           } catch (renderError) {
             console.error('Error rendering custom template:', renderError);
 

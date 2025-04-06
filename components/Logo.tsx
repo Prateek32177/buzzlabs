@@ -22,8 +22,8 @@ export function Logo({ variant = 'green', size = 'text-sm' }: LogoProps) {
     <Link href='/' className='cursor-pointer inline-flex items-center gap-1'>
       <h1
         className={`
-          font-['Boldonse'] font-normal
-          ${size}
+          font-['Boldonse']
+          text-base
           animate-fade-in
           relative
           z-20

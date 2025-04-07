@@ -86,11 +86,14 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [email, setEmail] = useState('');
-
+  const [username, setUsername] = useState('');
+  const [avatarSeed, setAvatarSeed] = useState('');
   useEffect(() => {
     const fetchUser = async () => {
-      const { userEmail } = await getUser();
+      const { userEmail, username, avatar_seed } = await getUser();
       setEmail(userEmail || '');
+      setUsername(username || '');
+      setAvatarSeed(avatar_seed || '');
     };
     fetchUser();
   }, []);
@@ -125,10 +128,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {email && (
           <NavUser
             user={{
-              name: email?.split('@')[0] || '',
+              name: username || '',
               email: email || '',
-              avatar:
-                'https://api.dicebear.com/9.x/adventurer/svg?seed=Brian&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede',
+              avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${avatarSeed}&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede`,
             }}
           />
         )}

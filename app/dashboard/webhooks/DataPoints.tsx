@@ -13,11 +13,9 @@ export function DataPoints() {
     <div className='space-y-6'>
       <div className='flex flex-col gap-2'>
         <h1 className='text-3xl font-bold tracking-tight'>Welcome back</h1>
-        <p className='text-zinc-400'>
-          Here's an overview of your webhook activity
-        </p>
-      </div>
 
+      </div>
+{/* 
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
         <Card className='glass'>
           <CardHeader className='flex flex-row items-center justify-between pb-2 space-y-0'>
@@ -76,7 +74,7 @@ export function DataPoints() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* <div className="grid gap-4 md:grid-cols-7">
             <Card className="md:col-span-4 glass">

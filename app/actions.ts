@@ -8,8 +8,10 @@ import { redirect } from 'next/navigation';
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString();
   const password = formData.get('password')?.toString();
+  const username = formData.get('username')?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get('origin');
+  const seed = Math.random().toString(36).substring(7);
 
   if (!email || !password) {
     return encodedRedirect(
@@ -23,6 +25,11 @@ export const signUpAction = async (formData: FormData) => {
     email,
     password,
     options: {
+      data: {
+        username,
+        avatar_seed: seed,
+      },
+
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });
@@ -132,3 +139,31 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect('/');
 };
+
+export async function updateUser(formdata: FormData) {
+  const supabase = await createClient();
+
+  const username = formdata.get('username') as string;
+  const avatar_seed = formdata.get('avatar_seed') as string;
+
+  if (!username) {
+    return encodedRedirect('error', '/profile', 'Username is required');
+  }
+  const { error } = await supabase.auth.updateUser({
+    data: {
+      username,
+      avatar_seed,
+    },
+  });
+
+  if (error) {
+    return {
+      error: true,
+      message: 'Profile update failed!',
+    };
+  }
+  return {
+    error: false,
+    message: 'Profile updated successfully!',
+  };
+}

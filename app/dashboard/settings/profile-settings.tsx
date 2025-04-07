@@ -9,22 +9,33 @@ import { Save, RefreshCw, Shield, Loader } from 'lucide-react';
 import Link from 'next/link';
 import { getUser } from '@/hooks/user-auth';
 import { toast } from 'sonner';
+import { updateUser } from '@/app/actions';
 
 const ProfileTab = () => {
+  const [userData, setUserData] = useState({
+    username: '',
+    email: '',
+    avatar_seed: '',
+    isEmailVerified: true,
+  });
   const [avatar, setAvatar] = useState(
-    'https://api.dicebear.com/9.x/adventurer/svg?seed=Brian&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede',
+    `https://api.dicebear.com/9.x/adventurer/svg?seed=${userData.avatar_seed}&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede`,
   );
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [isEmailVerified, setIsEmailVerified] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-
   useEffect(() => {
     const fetchUser = async () => {
       setIsLoading(true);
-      const { userEmail } = await getUser();
-      setName(userEmail?.split('@')[0] || '');
-      setEmail(userEmail || '');
+      const { userEmail, username, avatar_seed } = await getUser();
+
+      setUserData({
+        username: username || '',
+        email: userEmail || '',
+        avatar_seed: avatar_seed || '',
+        isEmailVerified: true,
+      });
+      setAvatar(
+        `https://api.dicebear.com/9.x/adventurer/svg?seed=${avatar_seed}&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede`,
+      );
       setIsLoading(false);
     };
     fetchUser();
@@ -36,18 +47,38 @@ const ProfileTab = () => {
     setAvatar(
       `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede`,
     );
+    setUserData({ ...userData, avatar_seed: seed });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success('Profile updated', {
-        description: 'Your profile has been updated successfully.',
+    const formData = new FormData();
+    formData.append('username', userData.username);
+    formData.append('avatar_seed', userData.avatar_seed);
+    try {
+      const result = await updateUser(formData);
+
+      if (result.error) {
+        toast.error('Update Failed', {
+          description:
+            result.message ||
+            'Something went wrong while updating your profile.',
+        });
+      } else {
+        toast.success('Profile Updated', {
+          description:
+            result.message || 'Your profile has been updated successfully.',
+        });
+      }
+    } catch (error) {
+      toast.error('Update Failed', {
+        description:
+          'An unexpected error occurred while updating your profile.',
       });
-    }, 1000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isLoading) {
@@ -89,8 +120,10 @@ const ProfileTab = () => {
                 <Label htmlFor='name'>Name</Label>
                 <Input
                   id='name'
-                  value={name}
-                  onChange={e => setName(e.target.value)}
+                  value={userData.username || ''}
+                  onChange={e =>
+                    setUserData({ ...userData, username: e.target.value })
+                  }
                   className='bg-hookflo-dark border-hookflo-dark-border text-white'
                 />
               </div>
@@ -101,12 +134,14 @@ const ProfileTab = () => {
                   <Input
                     id='email'
                     type='email'
-                    value={email || ''}
+                    value={userData.email || ''}
                     disabled={true}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={e =>
+                      setUserData({ ...userData, email: e.target.value })
+                    }
                     className='bg-hookflo-dark border-hookflo-dark-border text-white'
                   />
-                  {isEmailVerified && (
+                  {userData.isEmailVerified && (
                     <div className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-xs text-green-500'>
                       <Shield className='h-4 w-4 mr-1' />
                       Verified

@@ -24,6 +24,8 @@ export async function getUser() {
       isAuthenticated: !!user,
       userEmail: user?.email ?? null,
       userId: user?.id ?? null,
+      username: user?.user_metadata?.username ?? null,
+      avatar_seed: user?.user_metadata?.avatar_seed ?? null,
       error: null,
     };
   } catch (error) {

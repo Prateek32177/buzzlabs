@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 import { Open_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
-import { AuthProvider } from '@/contexts/auth-context';
 
 const openSans = Open_Sans({ subsets: ['latin'] });
 
@@ -32,7 +31,7 @@ export const metadata = {
     locale: 'en_US',
     url: 'https://www.hookflo.com/',
     siteName: 'Hookflo',
-    title: 'Hookflo - Quick to setup alerting system for web apps',
+    title: 'Hookflo - Quick to setup event tracking system for web apps',
     description: 'No Code Notification Webhook Infrastructure',
     images: [
       {
@@ -45,11 +44,22 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Hookflo - Quick to setup alerting system for web apps',
+    title: 'Hookflo - Quick to setup event tracking system for web apps',
     description: 'No Code Notification Webhook Infrastructure',
     images: ['/og-image.png'],
     creator: '@Prateek53788134',
     site: '@Prateek53788134',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 export default function RootLayout({
@@ -95,19 +105,17 @@ export default function RootLayout({
           openSans.className,
         )}
       >
-        <AuthProvider>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
-            <main className='flex min-h-screen flex-col flex-1 gap-20  items-center '>
-              {children}
-            </main>
-            <Toaster richColors />
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main className='flex min-h-screen flex-col flex-1 gap-20  items-center '>
+            {children}
+          </main>
+          <Toaster richColors />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

@@ -23,8 +23,8 @@ import { slackTemplates } from '@/lib/slack-templates';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TemplateService, TemplateType } from '@/utils/template-manager';
-import { Save, RefreshCw } from 'lucide-react';
-import { useAuth } from '@/contexts/auth-context';
+import { Save, RefreshCw, Loader } from 'lucide-react';
+import { getUser } from '@/hooks/user-auth';
 
 export default function SlackTemplateEditor() {
   const [selectedTemplate, setSelectedTemplate] = useState<any | null>(null);
@@ -32,14 +32,26 @@ export default function SlackTemplateEditor() {
   const [templateId, setTemplateId] = useState<string>('basic');
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<
     'idle' | 'saving' | 'saved' | 'error'
   >('idle');
   const [jsonError, setJsonError] = useState<string | null>(null);
 
   const templateService = new TemplateService();
-  const { user } = useAuth();
-  const userId = user?.id;
+  const [userid, setUserId] = useState('');
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      setIsPageLoading(true);
+      const { userId } = await getUser();
+      setUserId(userId || '');
+      setIsPageLoading(false);
+    };
+    fetchUser();
+  }, []);
+
+  const userId = userid;
 
   // Load template from service on initial render
   useEffect(() => {
@@ -296,6 +308,14 @@ export default function SlackTemplateEditor() {
       return null;
     }
   };
+
+  if (isPageLoading) {
+    return (
+      <div className='h-[50vh] flex items-center justify-center'>
+        <Loader className='h-8 w-8 animate-spin text-white' />
+      </div>
+    );
+  }
 
   return (
     <div className='container mx-auto p-6 space-y-6'>

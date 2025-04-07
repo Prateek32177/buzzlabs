@@ -158,51 +158,6 @@ export const slackTemplates: Template[] = [
     }),
   },
   {
-    id: 'payment-confirmation',
-    name: 'Payment Confirmation',
-    type: TemplateType.SLACK,
-    render: data => ({
-      username: 'Payments Bot',
-      icon_emoji: ':credit_card:',
-      text: 'Payment confirmation',
-      attachments: [
-        {
-          color: '#36a64f',
-          pretext: 'Your payment has been processed successfully.',
-          title: 'Payment Confirmation',
-          title_link: 'https://example.com/payment/123456',
-          text: "Thank you for your payment. Here's a summary of your transaction:",
-          fields: [
-            {
-              title: 'Amount',
-              value: '$49.99',
-              short: true,
-            },
-            {
-              title: 'Date',
-              value: 'March 28, 2023',
-              short: true,
-            },
-            {
-              title: 'Payment Method',
-              value: 'Visa ending in 4242',
-              short: true,
-            },
-            {
-              title: 'Transaction ID',
-              value: 'txn_1234567890',
-              short: true,
-            },
-          ],
-          footer: 'Example Company',
-          footer_icon:
-            'https://api.slack.com/img/blocks/bkb_template_images/placeholder.png',
-          ts: 1677628800,
-        },
-      ],
-    }),
-  },
-  {
     id: 'subscription-renewal',
     name: 'Subscription Renewal',
     type: TemplateType.SLACK,

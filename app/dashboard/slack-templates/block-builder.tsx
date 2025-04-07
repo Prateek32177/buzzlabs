@@ -59,7 +59,7 @@ export function BlockBuilder({
     },
   );
   const [jsonValue, setJsonValue] = useState<string>('');
-  const [lineCount, setLineCount] = useState<number>(0);
+  const [charCount, setCharCount] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<string>('blocks');
   const [combinedElements, setCombinedElements] = useState<any[]>([]);
 
@@ -67,9 +67,8 @@ export function BlockBuilder({
     if (template) {
       setCurrentTemplate(template);
       setJsonValue(JSON.stringify(template, null, 2));
-      setLineCount(jsonValue.length);
+      setCharCount(jsonValue.length);
     }
-
   }, [template]);
 
   useEffect(() => {
@@ -88,8 +87,8 @@ export function BlockBuilder({
         attachment: attachment,
       }),
     );
-    setLineCount(jsonValue.length);
-    if (lineCount > 1700) {
+    setCharCount(jsonValue.length);
+    if (charCount > 1700) {
       setJsonError(`Character limit exceeded: Max 1700 characters allowed.`);
       handleJsonChange(jsonValue);
       return;
@@ -98,20 +97,31 @@ export function BlockBuilder({
   }, [currentTemplate.blocks]);
 
   const updateTemplate = (updatedTemplate: any) => {
+    const updatedJson = JSON.stringify(updatedTemplate, null, 2);
+    const newCharCount = updatedJson.length;
+
+    if (newCharCount > 1700) {
+      setJsonError('Character limit exceeded: Max 1700 characters allowed.');
+      setCharCount(newCharCount);
+      return;
+    }
+
     setCurrentTemplate(updatedTemplate);
-    setJsonValue(JSON.stringify(updatedTemplate, null, 2));
+    setJsonValue(updatedJson);
+    setCharCount(newCharCount);
+    setJsonError(null);
     onUpdate(updatedTemplate);
   };
-// edit jsonValue state when the template changes
+
+  // edit jsonValue state when the template changes
   const handleJsonChange = (value: string | undefined) => {
     const safeValue = value || '';
-    const charCount = safeValue.length;
-    console.log('charCount', charCount);
-    setLineCount(charCount); // you can rename this to setCharCount if you want
-    // setJsonValue(safeValue);
+    const newCount = safeValue.length;
+    setCharCount(newCount);
 
     if (charCount > 1700) {
       setJsonError(`Character limit exceeded: Max 1700 characters allowed.`);
+      setCharCount(newCount);
       return;
     }
 
@@ -119,9 +129,12 @@ export function BlockBuilder({
       const parsed = JSON.parse(safeValue);
       setCurrentTemplate(parsed);
       onUpdate(parsed);
+      updateTemplate(parsed);
       setJsonValue(safeValue);
+      setCharCount(newCount);
       setJsonError(null);
     } catch (error) {
+      setCharCount(newCount);
       setJsonError('Invalid JSON format.');
     }
   };
@@ -140,18 +153,6 @@ export function BlockBuilder({
     const updatedTemplate = {
       ...currentTemplate,
       blocks: [...(currentTemplate.blocks || []), newBlock],
-    };
-
-    updateTemplate(updatedTemplate);
-  };
-
-  // Handle adding an attachment to the combined list
-  const addAttachment = () => {
-    const newAttachment = createEmptyAttachment();
-
-    const updatedTemplate = {
-      ...currentTemplate,
-      attachments: [...(currentTemplate.attachments || []), newAttachment],
     };
 
     updateTemplate(updatedTemplate);
@@ -176,22 +177,6 @@ export function BlockBuilder({
         updateTemplate({
           ...currentTemplate,
           blocks: updatedBlocks,
-        });
-      }
-    } else if (element.elementType === 'attachment') {
-      // Find the corresponding index in the attachments array
-      const attachmentIndex = currentTemplate.attachments.findIndex(
-        (attachment: any) =>
-          JSON.stringify(attachment) === JSON.stringify(element.attachment),
-      );
-
-      if (attachmentIndex !== -1) {
-        const updatedAttachments = [...(currentTemplate.attachments || [])];
-        updatedAttachments.splice(attachmentIndex, 1);
-
-        updateTemplate({
-          ...currentTemplate,
-          attachments: updatedAttachments,
         });
       }
     }
@@ -288,24 +273,22 @@ export function BlockBuilder({
                   minimap: { enabled: false },
                   scrollBeyondLastLine: false,
                   fontSize: 14,
-                  theme: 'vs-dark',
                 }}
                 className='flex-1'
               />
-            </div>
-            <div
-              className={`my-2 text-sm ${
-                lineCount > 1700 ? 'text-red-500' : 'text-gray-400'
-              } flex w-full justify-end`}
-            >
-              {lineCount} / 1700
             </div>
           </TabsContent>
 
           <TabsContent
             value='blocks'
-            className='h-full mt-0 data-[state=active]:flex data-[state=active]:flex-col'
+            className={`h-full ${jsonError ? 'border-2 border-red-500 rounded-md p-2' : ''} mt-0 data-[state=active]:flex data-[state=active]:flex-col`}
           >
+            <p className='text-sm text-muted-foreground my-2'>
+              Changes will be reflected in the JSON as Well.
+            </p>
+            {jsonError && (
+              <p className='text-sm text-destructive mb-2'>{jsonError}</p>
+            )}
             <div className='flex gap-2 mb-4 flex-wrap'>
               <Button
                 size='sm'
@@ -438,6 +421,13 @@ export function BlockBuilder({
               </ScrollArea>
             </div>
           </TabsContent>
+        </div>
+        <div
+          className={`my-2 text-sm ${
+            charCount > 1700 ? 'text-red-500' : 'text-gray-400'
+          } flex w-full justify-end`}
+        >
+          {charCount} / 1700
         </div>
       </Tabs>
     </div>
@@ -701,7 +691,7 @@ function ContextBlockEditor({
   };
 
   return (
-    <div className='space-y-3'>
+    <div className='space-y-3 '>
       <div className='space-y-2'>
         {(block.elements || []).map((element: any, index: number) => (
           <div key={index} className='border rounded-md p-2 space-y-2'>

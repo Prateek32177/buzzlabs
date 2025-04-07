@@ -1,7 +1,7 @@
 {
   "name": "Hookflo",
   "short_name": "Hookflo",
-  "description": "Quickest and Simplest alerting system for your Web App!",
+  "description": "Quickest and Simplest event tracking system for your Saas!",
   "icons": [
     {
       "src": "/icon-48x48.png",

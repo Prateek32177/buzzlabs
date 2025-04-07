@@ -31,7 +31,7 @@ export const metadata = {
     locale: 'en_US',
     url: 'https://www.hookflo.com/',
     siteName: 'Hookflo',
-    title: 'Hookflo - Quick to setup alerting system for web apps',
+    title: 'Hookflo - Quick to setup event tracking system for web apps',
     description: 'No Code Notification Webhook Infrastructure',
     images: [
       {
@@ -44,7 +44,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Hookflo - Quick to setup alerting system for web apps',
+    title: 'Hookflo - Quick to setup event tracking system for web apps',
     description: 'No Code Notification Webhook Infrastructure',
     images: ['/og-image.png'],
     creator: '@Prateek53788134',

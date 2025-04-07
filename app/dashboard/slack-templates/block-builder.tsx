@@ -67,8 +67,9 @@ export function BlockBuilder({
     if (template) {
       setCurrentTemplate(template);
       setJsonValue(JSON.stringify(template, null, 2));
-
+      setLineCount(jsonValue.length);
     }
+
   }, [template]);
 
   useEffect(() => {
@@ -77,8 +78,7 @@ export function BlockBuilder({
     const blocks = (currentTemplate.blocks || []).map((block: any) => ({
       ...block,
       elementType: 'block',
-    }
-  ));
+    }));
 
     // If attachments exist, convert them to a format that can be displayed alongside blocks
     const attachments = (currentTemplate.attachments || []).map(
@@ -88,29 +88,30 @@ export function BlockBuilder({
         attachment: attachment,
       }),
     );
-    setLineCount(jsonValue.split('\n').length);
-    if (lineCount > 100) {
-      setJsonError(`Line limit exceeded: Max 100 lines allowed.`);
+    setLineCount(jsonValue.length);
+    if (lineCount > 1700) {
+      setJsonError(`Character limit exceeded: Max 1700 characters allowed.`);
       handleJsonChange(jsonValue);
       return;
     }
     setCombinedElements([...blocks, ...attachments]);
-  }, [currentTemplate.blocks, currentTemplate.attachments]);
+  }, [currentTemplate.blocks]);
 
   const updateTemplate = (updatedTemplate: any) => {
     setCurrentTemplate(updatedTemplate);
     setJsonValue(JSON.stringify(updatedTemplate, null, 2));
     onUpdate(updatedTemplate);
   };
-
+// edit jsonValue state when the template changes
   const handleJsonChange = (value: string | undefined) => {
     const safeValue = value || '';
-    let newLineCount = safeValue.split('\n').length;
-    setLineCount(newLineCount);
-    setJsonValue(safeValue);
+    const charCount = safeValue.length;
+    console.log('charCount', charCount);
+    setLineCount(charCount); // you can rename this to setCharCount if you want
+    // setJsonValue(safeValue);
 
-    if (newLineCount > 100) {
-      setJsonError(`Line limit exceeded: Max 100 lines allowed.`);
+    if (charCount > 1700) {
+      setJsonError(`Character limit exceeded: Max 1700 characters allowed.`);
       return;
     }
 
@@ -220,29 +221,6 @@ export function BlockBuilder({
     }
   };
 
-  // Handle updating an attachment
-  const updateAttachment = (index: number, updatedAttachment: any) => {
-    const element = combinedElements[index];
-
-    if (element.elementType === 'attachment') {
-      // Find the corresponding index in the attachments array
-      const attachmentIndex = currentTemplate.attachments.findIndex(
-        (attachment: any) =>
-          JSON.stringify(attachment) === JSON.stringify(element.attachment),
-      );
-
-      if (attachmentIndex !== -1) {
-        const updatedAttachments = [...(currentTemplate.attachments || [])];
-        updatedAttachments[attachmentIndex] = updatedAttachment;
-
-        updateTemplate({
-          ...currentTemplate,
-          attachments: updatedAttachments,
-        });
-      }
-    }
-  };
-
   // Handle drag and drop reordering of elements
   const handleElementDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -317,10 +295,10 @@ export function BlockBuilder({
             </div>
             <div
               className={`my-2 text-sm ${
-                lineCount > 100 ? 'text-red-500' : 'text-gray-400'
+                lineCount > 1700 ? 'text-red-500' : 'text-gray-400'
               } flex w-full justify-end`}
             >
-              {lineCount} / 100
+              {lineCount} / 1700
             </div>
           </TabsContent>
 
@@ -385,15 +363,6 @@ export function BlockBuilder({
                 <CodeXml className='h-4 w-4 mr-2' />
                 Markdown
               </Button>
-              <Button
-                size='sm'
-                variant='outline'
-                onClick={addAttachment}
-                className='ml-2'
-              >
-                <Paperclip className='h-4 w-4 mr-2' />
-                Attachment
-              </Button>
             </div>
             <div className='flex-1 min-h-0'>
               <ScrollArea className='h-full width-full'>
@@ -406,8 +375,9 @@ export function BlockBuilder({
                         className='space-y-3 pb-4'
                       >
                         {combinedElements.length > 0 ? (
-                          combinedElements.map(
-                            (element: any, index: number) => (
+                          combinedElements
+                            .filter(element => element.elementType === 'block')
+                            .map((element: any, index: number) => (
                               <Draggable
                                 key={`element-${index}`}
                                 draggableId={`element-${index}`}
@@ -427,29 +397,11 @@ export function BlockBuilder({
                                         >
                                           <ArrowDownUp className='h-4 w-4 text-muted-foreground' />
                                         </div>
-                                        {element.elementType ===
-                                        'attachment' ? (
-                                          <span
-                                            className='font-medium'
-                                            style={{
-                                              borderLeft: `4px solid ${
-                                                element.attachment.color ||
-                                                '#DDDDDD'
-                                              }`,
-                                              paddingLeft: '8px',
-                                            }}
-                                          >
-                                            Attachment:{' '}
-                                            {element.attachment.title ||
-                                              'Untitled Attachment'}
-                                          </span>
-                                        ) : (
-                                          <span className='font-medium capitalize'>
-                                            {element.type === 'section'
-                                              ? 'Markdown'
-                                              : element.type}
-                                          </span>
-                                        )}
+                                        <span className='font-medium capitalize'>
+                                          {element.type === 'section'
+                                            ? 'Markdown'
+                                            : element.type}
+                                        </span>
                                       </div>
                                       <Button
                                         variant='ghost'
@@ -460,36 +412,21 @@ export function BlockBuilder({
                                         <Trash2 className='h-4 w-4' />
                                       </Button>
                                     </div>
-
-                                    {element.elementType === 'attachment' ? (
-                                      
-                                      <AttachmentEditor
-                                        attachment={element.attachment}
-                                        onChange={updatedAttachment =>
-                                          updateAttachment(
-                                            index,
-                                            updatedAttachment,
-                                          )
-                                        }
-                                      />
-                                    ) : (
-                                      <BlockEditor
-                                        block={element}
-                                        onChange={updatedBlock =>
-                                          updateBlock(index, updatedBlock)
-                                        }
-                                      />
-                                    )}
+                                    <BlockEditor
+                                      block={element}
+                                      onChange={updatedBlock =>
+                                        updateBlock(index, updatedBlock)
+                                      }
+                                    />
                                   </div>
                                 )}
                               </Draggable>
-                            ),
-                          )
+                            ))
                         ) : (
                           <div className='text-center py-8 text-muted-foreground'>
                             <p>
-                              No elements added yet. Use the buttons above to
-                              add blocks or attachments.
+                              No blocks added yet. Use the buttons above to add
+                              blocks.
                             </p>
                           </div>
                         )}
@@ -545,289 +482,6 @@ function BlockEditor({
         </p>
       );
   }
-}
-
-// Component to edit attachments
-function AttachmentEditor({
-  attachment,
-  onChange,
-}: {
-  attachment: any;
-  onChange: (attachment: any) => void;
-}) {
-  const updateAttachmentField = (field: string, value: any) => {
-    onChange({
-      ...attachment,
-      [field]: value,
-    });
-  };
-
-  const addField = () => {
-    const fields = [...(attachment.fields || [])];
-    fields.push({
-      title: 'Field Title',
-      value: 'Field Value',
-      short: true,
-    });
-    onChange({
-      ...attachment,
-      fields,
-    });
-  };
-
-  const removeField = (index: number) => {
-    const fields = [...(attachment.fields || [])];
-    fields.splice(index, 1);
-    onChange({
-      ...attachment,
-      fields,
-    });
-  };
-
-  const updateField = (index: number, field: string, value: any) => {
-    const fields = [...(attachment.fields || [])];
-    fields[index] = {
-      ...fields[index],
-      [field]: value,
-    };
-    onChange({
-      ...attachment,
-      fields,
-    });
-  };
-
-  const toggleShort = (index: number) => {
-    const fields = [...(attachment.fields || [])];
-    fields[index] = {
-      ...fields[index],
-      short: !fields[index].short,
-    };
-    onChange({
-      ...attachment,
-      fields,
-    });
-  };
-
-  return (
-    <Accordion type='single' collapsible className='w-full'>
-      <AccordionItem value='attachment'>
-        <AccordionTrigger className='text-sm '>Attachment</AccordionTrigger>
-        <AccordionContent className='space-y-3 pt-2'>
-          <div className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='attachment-color'>Color</Label>
-              <div className='flex gap-2 items-center'>
-                <div
-                  className='w-8 h-8 rounded-md border cursor-pointer'
-                  style={{ backgroundColor: attachment.color || '#DDDDDD' }}
-                  onClick={() => {
-                    // Open color picker or toggle between preset colors
-                    const colors = [
-                      '#36a64f',
-                      '#ff0000',
-                      '#0000ff',
-                      '#ffff00',
-                      '#DDDDDD',
-                    ];
-                    const currentIndex = colors.indexOf(attachment.color);
-                    const nextIndex = (currentIndex + 1) % colors.length;
-                    updateAttachmentField('color', colors[nextIndex]);
-                  }}
-                />
-                <Input
-                  id='attachment-color'
-                  value={attachment.color || ''}
-                  onChange={e => updateAttachmentField('color', e.target.value)}
-                  placeholder='#36a64f'
-                />
-              </div>
-            </div>
-
-            <div className='space-y-2'>
-              <Label htmlFor='attachment-pretext'>Pretext</Label>
-              <Input
-                id='attachment-pretext'
-                value={attachment.pretext || ''}
-                onChange={e => updateAttachmentField('pretext', e.target.value)}
-                placeholder='Text that appears above the attachment block'
-              />
-            </div>
-
-            <div className='space-y-2'>
-              <Label htmlFor='attachment-title'>Title</Label>
-              <Input
-                id='attachment-title'
-                value={attachment.title || ''}
-                onChange={e => updateAttachmentField('title', e.target.value)}
-                placeholder='Attachment title'
-              />
-            </div>
-
-            <div className='space-y-2'>
-              <Label htmlFor='attachment-title-link'>Title Link</Label>
-              <Input
-                id='attachment-title-link'
-                value={attachment.title_link || ''}
-                onChange={e =>
-                  updateAttachmentField('title_link', e.target.value)
-                }
-                placeholder='https://example.com'
-              />
-            </div>
-
-            <div className='space-y-2'>
-              <Label htmlFor='attachment-text'>Text</Label>
-              <Textarea
-                id='attachment-text'
-                value={attachment.text || ''}
-                onChange={e => updateAttachmentField('text', e.target.value)}
-                placeholder='Main text of the attachment'
-                rows={3}
-              />
-              <p className='text-xs text-muted-foreground'>
-                You can use Slack markdown: *bold*, _italic_, ~strikethrough~,
-                `code`, and links like &lt;https://example.com|Example&gt;
-              </p>
-            </div>
-
-            <Accordion
-              type='single'
-              collapsible
-              defaultValue='fields'
-              className='w-full'
-            >
-              <AccordionItem value='fields'>
-                <AccordionTrigger>Fields</AccordionTrigger>
-                <AccordionContent className='space-y-3'>
-                  {(attachment.fields || []).map(
-                    (field: any, index: number) => (
-                      <div
-                        key={index}
-                        className='border rounded-md p-3 space-y-2'
-                      >
-                        <div className='flex justify-between items-center'>
-                          <span className='text-sm font-medium'>
-                            Field {index + 1}
-                          </span>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            onClick={() => removeField(index)}
-                            className='h-6 w-6'
-                          >
-                            <Trash2 className='h-4 w-4' />
-                          </Button>
-                        </div>
-
-                        <div className='space-y-2'>
-                          <Label htmlFor={`field-title-${index}`}>Title</Label>
-                          <Input
-                            id={`field-title-${index}`}
-                            value={field.title || ''}
-                            onChange={e =>
-                              updateField(index, 'title', e.target.value)
-                            }
-                            placeholder='Field title'
-                          />
-                        </div>
-
-                        <div className='space-y-2'>
-                          <Label htmlFor={`field-value-${index}`}>Value</Label>
-                          <Input
-                            id={`field-value-${index}`}
-                            value={field.value || ''}
-                            onChange={e =>
-                              updateField(index, 'value', e.target.value)
-                            }
-                            placeholder='Field value'
-                          />
-                        </div>
-
-                        <div className='flex items-center space-x-2'>
-                          <input
-                            type='checkbox'
-                            id={`field-short-${index}`}
-                            checked={field.short === true}
-                            onChange={() => toggleShort(index)}
-                          />
-                          <Label
-                            htmlFor={`field-short-${index}`}
-                            className='text-sm'
-                          >
-                            Short field (50% width)
-                          </Label>
-                        </div>
-                      </div>
-                    ),
-                  )}
-
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={addField}
-                    className='w-full'
-                  >
-                    <Plus className='h-4 w-4 mr-2' />
-                    Add Field
-                  </Button>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Accordion type='single' collapsible className='w-full'>
-              <AccordionItem value='footer'>
-                <AccordionTrigger>Footer</AccordionTrigger>
-                <AccordionContent className='space-y-3'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='attachment-footer'>Footer Text</Label>
-                    <Input
-                      id='attachment-footer'
-                      value={attachment.footer || ''}
-                      onChange={e =>
-                        updateAttachmentField('footer', e.target.value)
-                      }
-                      placeholder='Footer text'
-                    />
-                  </div>
-
-                  <div className='space-y-2'>
-                    <Label htmlFor='attachment-footer-icon'>
-                      Footer Icon URL
-                    </Label>
-                    <Input
-                      id='attachment-footer-icon'
-                      value={attachment.footer_icon || ''}
-                      onChange={e =>
-                        updateAttachmentField('footer_icon', e.target.value)
-                      }
-                      placeholder='https://example.com/icon.png'
-                    />
-                  </div>
-
-                  <div className='space-y-2'>
-                    <Label htmlFor='attachment-ts'>Timestamp</Label>
-                    <Input
-                      id='attachment-ts'
-                      value={attachment.ts || ''}
-                      onChange={e => {
-                        const value = e.target.value;
-                        const numValue = value === '' ? '' : Number(value);
-                        updateAttachmentField('ts', numValue);
-                      }}
-                      placeholder='Unix timestamp (e.g., 1677628800)'
-                    />
-                    <p className='text-xs text-muted-foreground'>
-                      Unix timestamp for the footer timestamp.
-                    </p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  );
 }
 
 // Section block editor

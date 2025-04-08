@@ -215,10 +215,12 @@ export function NotificationLogs() {
           <div className='flex flex-col items-center gap-4'>
             <AlertCircle className='h-10 w-10 text-zinc-300' />
             <div className='text-center align-middle flex flex-col items-center'>
-              <p className='text-zinc-300 font-medium mb-4'>
-              {error}
-              </p>
-              <Button size={"sm"} onClick={fetchLogs} className='flex items-center gap-2'>
+              <p className='text-zinc-300 font-medium mb-4'>{error}</p>
+              <Button
+                size={'sm'}
+                onClick={fetchLogs}
+                className='flex items-center gap-2'
+              >
                 <RefreshCw className='h-4 w-4' />
                 Try again
               </Button>

@@ -16,7 +16,6 @@ export async function POST(
   try {
     const supabase = createClient();
     data = await req.json();
-
     // Get webhook config from database
     const { data: webhook, error } = await (await supabase)
       .from('webhooks')
@@ -52,7 +51,7 @@ export async function POST(
         processed_at: new Date(),
       };
 
-      await fetch(`/api/logs`, {
+      await fetch(`${process.env.PROD_URL}/api/logs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(log),
@@ -131,7 +130,7 @@ export async function POST(
       processed_at: new Date(),
     };
 
-    await fetch(`api/logs`, {
+    await fetch(`${process.env.PROD_URL}/api/logs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(log),
@@ -154,7 +153,7 @@ export async function POST(
       error_message: `Failed to process webhook: ${err.message}`,
       processed_at: new Date(),
     };
-    await fetch(`/api/logs`, {
+    await fetch(`${process.env.PROD_URL}/api/logs`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(log),

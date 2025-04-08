@@ -18,8 +18,8 @@ class PlatformDetector {
     if (headers.get('x-hub-signature') && !headers.get('x-github-event')) return 'facebook';
     
     // Supabase webhook headers
-    if (headers.get('x-webhook-token') || headers.get('x-webhook-id')) return 'supabase';
-    
+    if (headers.get('x-webhook-token')) return 'supabase';
+    if(headers.get('x-webhook-id')) return 'supabase';
     // Vercel webhook headers
     if (headers.get('x-vercel-signature')) return 'vercel';
     
@@ -157,7 +157,7 @@ export async function POST(
           status = 'failed';
         }
       }
-    }
+    
 
     const log = {
       id: logId,
@@ -184,7 +184,8 @@ export async function POST(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(log),
     });
-
+    }
+    
     return Response.json({
       success: true,
       message: 'Webhook processed successfully',

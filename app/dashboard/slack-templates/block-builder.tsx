@@ -67,67 +67,74 @@ export function BlockBuilder({
     if (template) {
       setCurrentTemplate(template);
       setJsonValue(JSON.stringify(template, null, 2));
-      setCharCount(JSON.stringify(template, null, 2).length);
+      setCharCount(jsonValue.length);
     }
   }, [template]);
 
   useEffect(() => {
-    // Only deal with blocks, no attachments
+    // Combine blocks and attachments into a single array for the visual editor
+    // Each element has a type property indicating if it's a block or attachment
     const blocks = (currentTemplate.blocks || []).map((block: any) => ({
       ...block,
       elementType: 'block',
     }));
 
-    // Always calculate character count from jsonValue
+    // If attachments exist, convert them to a format that can be displayed alongside blocks
+    const attachments = (currentTemplate.attachments || []).map(
+      (attachment: any) => ({
+        type: 'attachment',
+        elementType: 'attachment',
+        attachment: attachment,
+      }),
+    );
     setCharCount(jsonValue.length);
-
-    // Always update combinedElements
-    setCombinedElements(blocks);
-  }, [currentTemplate, jsonValue]); // Include both dependencies
-
-  // The key issue is in the updateTemplate function
-  const updateTemplate = (updatedTemplate: any) => {
-    // Calculate the new JSON value and character count
-    const newJsonValue = JSON.stringify(updatedTemplate, null, 2);
-
-    // Always update these state values in a consistent order
-    setJsonValue(newJsonValue);
-    setCharCount(newJsonValue.length);
-    setCurrentTemplate(updatedTemplate);
-
-    // Only call onUpdate if within character limit
-    if (newJsonValue.length <= 1700) {
-      setJsonError(null);
-      onUpdate(updatedTemplate);
-    } else {
-      setJsonError('Character limit exceeded: Max 1700 characters allowed.');
+    if (charCount > 1700) {
+      setJsonError(`Character limit exceeded: Max 1700 characters allowed.`);
+      handleJsonChange(jsonValue);
+      return;
     }
+    setCombinedElements([...blocks, ...attachments]);
+  }, [currentTemplate.blocks]);
+
+  const updateTemplate = (updatedTemplate: any) => {
+    const updatedJson = JSON.stringify(updatedTemplate, null, 2);
+    const newCharCount = updatedJson.length;
+
+    if (newCharCount > 1700) {
+      setJsonError('Character limit exceeded: Max 1700 characters allowed.');
+      setCharCount(newCharCount);
+      return;
+    }
+
+    setCurrentTemplate(updatedTemplate);
+    setJsonValue(updatedJson);
+    setCharCount(newCharCount);
+    setJsonError(null);
+    onUpdate(updatedTemplate);
   };
 
   // edit jsonValue state when the template changes
   const handleJsonChange = (value: string | undefined) => {
     const safeValue = value || '';
+    const newCount = safeValue.length;
+    setCharCount(newCount);
 
-    // Always update character count and JSON value
-    setCharCount(safeValue.length);
-    setJsonValue(safeValue);
+    if (charCount > 1700) {
+      setJsonError(`Character limit exceeded: Max 1700 characters allowed.`);
+      setCharCount(newCount);
+      return;
+    }
 
     try {
-      // Try to parse JSON
       const parsed = JSON.parse(safeValue);
-
-      // Always update current template if JSON is valid
       setCurrentTemplate(parsed);
-
-      // Only call onUpdate if within character limit
-      if (safeValue.length <= 1700) {
-        setJsonError(null);
-        onUpdate(parsed);
-      } else {
-        setJsonError('Character limit exceeded: Max 1700 characters allowed.');
-      }
+      onUpdate(parsed);
+      updateTemplate(parsed);
+      setJsonValue(safeValue);
+      setCharCount(newCount);
+      setJsonError(null);
     } catch (error) {
-      // JSON is invalid
+      setCharCount(newCount);
       setJsonError('Invalid JSON format.');
     }
   };
@@ -136,64 +143,41 @@ export function BlockBuilder({
   const addBlock = (blockType: string) => {
     const newBlock = createEmptyBlock(blockType);
 
-    // First check if adding this block would exceed limit
+    // Add the elementType property to identify it as a block
+    const blockWithType = {
+      ...newBlock,
+      elementType: 'block',
+    };
+
+    // Update the blocks array in the template
     const updatedTemplate = {
       ...currentTemplate,
       blocks: [...(currentTemplate.blocks || []), newBlock],
     };
-    const newJsonValue = JSON.stringify(updatedTemplate, null, 2);
 
-    // Update character count regardless
-    setCharCount(newJsonValue.length);
-
-    if (newJsonValue.length > 1700) {
-      // Don't add the block if it would exceed limit
-      setJsonError('Character limit exceeded: Max 1700 characters allowed.');
-      return;
-    }
-
-    // Otherwise proceed with the update
-    setCurrentTemplate(updatedTemplate);
-    setJsonValue(newJsonValue);
-    setJsonError(null);
-    onUpdate(updatedTemplate);
+    updateTemplate(updatedTemplate);
   };
+
   // Handle removing an element (block or attachment)
   const removeElement = (index: number) => {
     const element = combinedElements[index];
 
-    // Find the corresponding index in the blocks array
-    const blockIndex = currentTemplate.blocks.findIndex(
-      (block: any) =>
-        JSON.stringify(block) ===
-        JSON.stringify({ ...element, elementType: undefined }),
-    );
+    if (element.elementType === 'block') {
+      // Find the corresponding index in the blocks array
+      const blockIndex = currentTemplate.blocks.findIndex(
+        (block: any) =>
+          JSON.stringify(block) ===
+          JSON.stringify({ ...element, elementType: undefined }),
+      );
 
-    if (blockIndex !== -1) {
-      // Create a new blocks array with the element removed
-      const updatedBlocks = [...currentTemplate.blocks];
-      updatedBlocks.splice(blockIndex, 1);
+      if (blockIndex !== -1) {
+        const updatedBlocks = [...currentTemplate.blocks];
+        updatedBlocks.splice(blockIndex, 1);
 
-      // Create new template with updated blocks
-      const updatedTemplate = {
-        ...currentTemplate,
-        blocks: updatedBlocks,
-      };
-
-      // Calculate the new JSON and character count
-      const newJsonValue = JSON.stringify(updatedTemplate, null, 2);
-
-      // Update all state in a consistent order
-      setJsonValue(newJsonValue);
-      setCharCount(newJsonValue.length);
-      setCurrentTemplate(updatedTemplate);
-
-      // Only call onUpdate if within character limit
-      if (newJsonValue.length <= 1700) {
-        setJsonError(null);
-        onUpdate(updatedTemplate);
-      } else {
-        setJsonError('Character limit exceeded: Max 1700 characters allowed.');
+        updateTemplate({
+          ...currentTemplate,
+          blocks: updatedBlocks,
+        });
       }
     }
   };
@@ -234,31 +218,21 @@ export function BlockBuilder({
     const [movedElement] = reorderedElements.splice(sourceIndex, 1);
     reorderedElements.splice(destinationIndex, 0, movedElement);
 
-    // Convert elements back to blocks (no attachments)
-    const blocks = reorderedElements.map(element => ({
-      ...element,
-      elementType: undefined,
-    }));
+    // Separate the reordered elements back into blocks and attachments
+    const blocks = reorderedElements
+      .filter(element => element.elementType === 'block')
+      .map(element => ({ ...element, elementType: undefined }));
 
-    // Update the template with the reordered blocks
-    const updatedTemplate = {
+    const attachments = reorderedElements
+      .filter(element => element.elementType === 'attachment')
+      .map(element => element.attachment);
+
+    // Update the template with the reordered blocks and attachments
+    updateTemplate({
       ...currentTemplate,
       blocks,
-    };
-
-    // Calculate the new JSON and update state
-    const newJsonValue = JSON.stringify(updatedTemplate, null, 2);
-    setJsonValue(newJsonValue);
-    setCharCount(newJsonValue.length);
-    setCurrentTemplate(updatedTemplate);
-
-    // Only call onUpdate if within character limit
-    if (newJsonValue.length <= 1700) {
-      setJsonError(null);
-      onUpdate(updatedTemplate);
-    } else {
-      setJsonError('Character limit exceeded: Max 1700 characters allowed.');
-    }
+      attachments,
+    });
   };
 
   return (
@@ -383,9 +357,10 @@ export function BlockBuilder({
                         ref={provided.innerRef}
                         className='space-y-3 pb-4'
                       >
-                        {currentTemplate.blocks.length > 0 ? (
-                          currentTemplate.blocks.map(
-                            (block: any, index: number) => (
+                        {combinedElements.length > 0 ? (
+                          combinedElements
+                            .filter(element => element.elementType === 'block')
+                            .map((element: any, index: number) => (
                               <Draggable
                                 key={`element-${index}`}
                                 draggableId={`element-${index}`}
@@ -406,9 +381,9 @@ export function BlockBuilder({
                                           <ArrowDownUp className='h-4 w-4 text-muted-foreground' />
                                         </div>
                                         <span className='font-medium capitalize'>
-                                          {block.type === 'section'
+                                          {element.type === 'section'
                                             ? 'Markdown'
-                                            : block.type}
+                                            : element.type}
                                         </span>
                                       </div>
                                       <Button
@@ -421,7 +396,7 @@ export function BlockBuilder({
                                       </Button>
                                     </div>
                                     <BlockEditor
-                                      block={block}
+                                      block={element}
                                       onChange={updatedBlock =>
                                         updateBlock(index, updatedBlock)
                                       }
@@ -429,8 +404,7 @@ export function BlockBuilder({
                                   </div>
                                 )}
                               </Draggable>
-                            ),
-                          )
+                            ))
                         ) : (
                           <div className='text-center py-8 text-muted-foreground'>
                             <p>
@@ -887,6 +861,26 @@ function createEmptyBlock(type: string) {
         type,
       };
   }
+}
+
+// Create an empty attachment template
+function createEmptyAttachment() {
+  return {
+    color: '#36a64f',
+    pretext: 'Optional pretext',
+    title: 'Attachment Title',
+    title_link: '',
+    text: 'Main attachment text',
+    fields: [
+      {
+        title: 'Field Title',
+        value: 'Field Value',
+        short: true,
+      },
+    ],
+    footer: '',
+    footer_icon: '',
+  };
 }
 
 // Add this new block editor for fields

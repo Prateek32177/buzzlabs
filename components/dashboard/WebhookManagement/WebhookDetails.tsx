@@ -87,7 +87,7 @@ export function WebhookDetails({
   };
 
   return (
-    <div className='grid gap-6 py-4'>
+    <div className='grid gap-6'>
       <div className='grid gap-2'>
         <Label>Name</Label>
         <div className='flex gap-2'>
@@ -228,6 +228,7 @@ export function WebhookDetails({
                     }}
                   />
                   <Button
+                  variant={"secondary"}
                     onClick={() => {
                       const textToCopy = currentValues?.[field.key] || '';
                       navigator.clipboard

@@ -2,11 +2,34 @@
 import { BarChart3, CircleGauge } from 'lucide-react';
 import { WaitlistForm } from './Waitlist';
 import { Badge } from '../ui/badge';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Ripple } from '../magicui/ripple';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
+import localFont from 'next/font/local';
+
+// Using local fonts for a more unique typography
+const satoshi = localFont({
+  src: [
+    {
+      path: './fonts/Satoshi-Light.woff2',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Satoshi-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/Satoshi-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-satoshi',
+});
 
 export default function Hero() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -55,17 +78,44 @@ export default function Hero() {
               <span className='hidden sm:inline'>No Code, Just Hook it</span>
               <span className='sm:hidden'>Just Hook it</span>
             </Badge>
-            <h1 className='tracking-tight text-3xl md:text-6xl lg:text-7xl'>
-              Transform Events into{' '}
-              <span className='text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200'>
-                Instant Notifications
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className='text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] leading-[1.2] tracking-[-0.02em] font-light'
+            >
+              <span className='text-white'>Transform</span>
+              <span className='relative mx-2 text-purple-400'>
+                events
+                <svg
+                  className='absolute -bottom-1 left-0 w-full'
+                  height='4'
+                  viewBox='0 0 300 4'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path
+                    d='M1 2C75 1 225 3 299 2'
+                    stroke='#a855f7'
+                    strokeWidth='2'
+                    strokeLinecap='round'
+                  />
+                </svg>
               </span>
-            </h1>
-            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500 max-w-2xl mx-auto'>
+              <div className='flex items-center justify-center gap-3 my-2'>
+                <span className='text-white'>into</span>
+                <ArrowRight className='w-8 h-8 text-purple-400' />
+                <span className='text-purple-400'>real-time</span>
+              </div>
+              <span className='text-white block mt-1'>notifications</span>
+            </motion.h1>
+
+            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-400 max-w-md sm:max-w-2xl mx-auto'>
               Capture events from multiple platforms and instantly relay
               notifications across various channels with our robust webhook
               infrastructure.
             </p>
+
             <WaitlistForm />
             {/* <div className='flex items-center justify-center gap-4 mt-8'>
               <Button

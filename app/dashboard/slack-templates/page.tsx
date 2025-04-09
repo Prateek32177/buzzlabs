@@ -264,12 +264,6 @@ export default function SlackTemplateEditor() {
     if (!userId) return;
 
     try {
-      // Delete user customization
-      await templateService.deleteUserCustomization(
-        userId,
-        selectedTemplate.id,
-        TemplateType.SLACK,
-      );
 
       // Reset to default template
       const defaultTemplate = slackTemplates.find(

@@ -83,16 +83,17 @@ export function WebhookManagement() {
         const webhook = await response.json();
         setWebhooks([...webhooks, webhook]);
         setNewWebhookName('');
-        setIsLoading(false);
+        await fetchWebhooks();
         toast.success('Webhook Created', {
           description: `New webhook ${newWebhookName} has been created.`,
         });
       } catch (error) {
-        setIsLoading(false);
         toast.error('Error', {
           description:
             error instanceof Error ? error.message : 'Failed to create webhook',
         });
+      } finally {
+        setIsLoading(false);
       }
     }
   };

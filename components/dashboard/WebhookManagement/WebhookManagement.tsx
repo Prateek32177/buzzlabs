@@ -210,15 +210,14 @@ export function WebhookManagement() {
   ) => {
     const webhook = webhooks.find(w => w.id === id);
     if (!webhook) return;
-    
-    const isCurrentlyEnabled = field === 'notifyEmail' 
-      ? webhook.notify_email 
-      : webhook.notify_slack;
-    
+
+    const isCurrentlyEnabled =
+      field === 'notifyEmail' ? webhook.notify_email : webhook.notify_slack;
+
     // If already enabled and trying to disable, proceed with toggle
     if (isCurrentlyEnabled) {
       await toggleWebhook(id, field);
-    } 
+    }
     // If disabled and trying to enable, show config first
     else {
       if (field === 'notifyEmail') {

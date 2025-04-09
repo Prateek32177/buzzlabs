@@ -228,7 +228,7 @@ export function WebhookDetails({
                     }}
                   />
                   <Button
-                  variant={"secondary"}
+                    variant={'secondary'}
                     onClick={() => {
                       const textToCopy = currentValues?.[field.key] || '';
                       navigator.clipboard

@@ -210,18 +210,22 @@ export function WebhookManagement() {
   ) => {
     const webhook = webhooks.find(w => w.id === id);
     if (!webhook) return;
-    // If trying to enable, show config first
-    else if (!webhook[field as keyof Webhook]) {
+
+    const isCurrentlyEnabled =
+      field === 'notifyEmail' ? webhook.notify_email : webhook.notify_slack;
+
+    // If already enabled and trying to disable, proceed with toggle
+    if (isCurrentlyEnabled) {
+      await toggleWebhook(id, field);
+    }
+    // If disabled and trying to enable, show config first
+    else {
       if (field === 'notifyEmail') {
         setShowEmailConfig(id);
       } else {
         setShowSlackConfig(id);
       }
-      return;
     }
-
-    // If disabling, proceed with toggle
-    else await toggleWebhook(id, field);
   };
 
   const contextValue = {

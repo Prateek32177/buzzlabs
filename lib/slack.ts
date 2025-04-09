@@ -45,11 +45,14 @@ export async function sendSlackNotification({
       }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Slack notification failed: ${await response.text()}`);
+    if (response.status !== 200) {
+      throw new Error(
+        `Slack notification failed with status ${response.status}: ${await response.text()}`,
+      );
     }
 
-    return response.json();
+    const text = await response.text();
+    return text === 'ok' ? { ok: true } : JSON.parse(text);
   } catch (error) {
     console.error('Failed to send Slack notification:', error);
     throw error;

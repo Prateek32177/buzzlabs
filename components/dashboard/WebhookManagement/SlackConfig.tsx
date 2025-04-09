@@ -1,7 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Webhook } from './types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -14,6 +14,7 @@ import { DialogFooter } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { SlackTemplateOptions } from '@/const';
+import { randomSlackChannelName } from '@/lib/utils';
 
 export function SlackConfig({
   webhook,
@@ -33,6 +34,16 @@ export function SlackConfig({
       template_id: '',
     },
   );
+
+  useEffect(() => {
+    if (!slackConfig.channel_name) {
+      const randomChannelName = randomSlackChannelName();
+      setSlackConfig(prev => ({
+        ...prev,
+        channel_name: randomChannelName,
+      }));
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +74,10 @@ export function SlackConfig({
           />
         </div>
         <div className='grid w-full gap-2'>
-          <Label htmlFor='slackChannel'>Channel</Label>
+          <Label htmlFor='slackChannel' className='flex items-center gap-2'>
+            Channel Name{' '}
+            <span className='text-sm text-muted-foreground'>(optional)</span>
+          </Label>
           <Input
             id='slackChannel'
             placeholder='Enter channel name'
@@ -76,12 +90,15 @@ export function SlackConfig({
             }
             disabled={isLoading}
           />
+          <p className='text-sm text-muted-foreground'>
+            Random channel name. Edit as per your choice.
+          </p>
         </div>
         <div className='grid w-full gap-2'>
           <Label htmlFor='slackTemplate'>Template</Label>
           <Select
             disabled={isLoading}
-            value={slackConfig.template_id}
+            value={slackConfig.template_id || SlackTemplateOptions[0].id}
             onValueChange={value =>
               setSlackConfig({
                 ...slackConfig,

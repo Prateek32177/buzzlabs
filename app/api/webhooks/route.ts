@@ -48,7 +48,6 @@ export async function GET(req: Request) {
         };
       }),
     );
-    console.log('webhook rs', webhooks);
     return NextResponse.json(formattedWebhooks);
   } catch (error) {
     return NextResponse.json(

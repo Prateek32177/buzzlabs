@@ -264,7 +264,6 @@ export default function SlackTemplateEditor() {
     if (!userId) return;
 
     try {
-
       // Reset to default template
       const defaultTemplate = slackTemplates.find(
         t => t.id === selectedTemplate.id,

@@ -31,6 +31,8 @@ import {
   RectangleEllipsis,
   CodeXml,
   Link,
+  Paperclip,
+  Palette,
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Editor } from '@monaco-editor/react';
@@ -38,9 +40,16 @@ import { Editor } from '@monaco-editor/react';
 interface BlockBuilderProps {
   template: any;
   onUpdate: (template: any) => void;
+  jsonError: string | null;
+  setJsonError: (error: string | null) => void;
 }
 
-export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
+export function BlockBuilder({
+  template,
+  onUpdate,
+  jsonError,
+  setJsonError,
+}: BlockBuilderProps) {
   const [currentTemplate, setCurrentTemplate] = useState<any>(
     template || {
       username: 'Custom Bot',
@@ -50,85 +59,191 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
     },
   );
   const [jsonValue, setJsonValue] = useState<string>('');
-  const [jsonError, setJsonError] = useState<string | null>(null);
+  const [charCount, setCharCount] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<string>('blocks');
+  const [combinedElements, setCombinedElements] = useState<any[]>([]);
 
   useEffect(() => {
     if (template) {
       setCurrentTemplate(template);
       setJsonValue(JSON.stringify(template, null, 2));
+      setCharCount(jsonValue.length);
     }
   }, [template]);
 
+  useEffect(() => {
+    // Combine blocks and attachments into a single array for the visual editor
+    // Each element has a type property indicating if it's a block or attachment
+    const blocks = (currentTemplate.blocks || []).map((block: any) => ({
+      ...block,
+      elementType: 'block',
+    }));
+
+    // If attachments exist, convert them to a format that can be displayed alongside blocks
+    const attachments = (currentTemplate.attachments || []).map(
+      (attachment: any) => ({
+        type: 'attachment',
+        elementType: 'attachment',
+        attachment: attachment,
+      }),
+    );
+    setCharCount(jsonValue.length);
+    if (charCount > 1700) {
+      setJsonError(`Character limit exceeded: Max 1700 characters allowed.`);
+      handleJsonChange(jsonValue);
+      return;
+    }
+    setCombinedElements([...blocks, ...attachments]);
+  }, [currentTemplate.blocks]);
+
   const updateTemplate = (updatedTemplate: any) => {
+    const updatedJson = JSON.stringify(updatedTemplate, null, 2);
+    const newCharCount = updatedJson.length;
+
+    if (newCharCount > 1700) {
+      setJsonError('Character limit exceeded: Max 1700 characters allowed.');
+      setCharCount(newCharCount);
+      return;
+    }
+
     setCurrentTemplate(updatedTemplate);
-    setJsonValue(JSON.stringify(updatedTemplate, null, 2));
+    setJsonValue(updatedJson);
+    setCharCount(newCharCount);
+    setJsonError(null);
     onUpdate(updatedTemplate);
   };
 
+  // edit jsonValue state when the template changes
   const handleJsonChange = (value: string | undefined) => {
-    setJsonValue(value || '');
-    setJsonError(null);
+    const safeValue = value || '';
+    const newCount = safeValue.length;
+    setCharCount(newCount);
+
+    if (charCount > 1700) {
+      setJsonError(`Character limit exceeded: Max 1700 characters allowed.`);
+      setCharCount(newCount);
+      return;
+    }
 
     try {
-      if (value) {
-        const parsed = JSON.parse(value);
-        setCurrentTemplate(parsed);
-        onUpdate(parsed);
-      }
+      const parsed = JSON.parse(safeValue);
+      setCurrentTemplate(parsed);
+      onUpdate(parsed);
+      updateTemplate(parsed);
+      setJsonValue(safeValue);
+      setCharCount(newCount);
+      setJsonError(null);
     } catch (error) {
-      setJsonError('Invalid JSON format');
+      setCharCount(newCount);
+      setJsonError('Invalid JSON format.');
     }
   };
 
+  // Handle adding a block to the combined list
   const addBlock = (blockType: string) => {
     const newBlock = createEmptyBlock(blockType);
+
+    // Add the elementType property to identify it as a block
+    const blockWithType = {
+      ...newBlock,
+      elementType: 'block',
+    };
+
+    // Update the blocks array in the template
     const updatedTemplate = {
       ...currentTemplate,
       blocks: [...(currentTemplate.blocks || []), newBlock],
     };
+
     updateTemplate(updatedTemplate);
   };
 
-  const removeBlock = (index: number) => {
-    const updatedBlocks = [...(currentTemplate.blocks || [])];
-    updatedBlocks.splice(index, 1);
-    updateTemplate({
-      ...currentTemplate,
-      blocks: updatedBlocks,
-    });
+  // Handle removing an element (block or attachment)
+  const removeElement = (index: number) => {
+    const element = combinedElements[index];
+
+    if (element.elementType === 'block') {
+      // Find the corresponding index in the blocks array
+      const blockIndex = currentTemplate.blocks.findIndex(
+        (block: any) =>
+          JSON.stringify(block) ===
+          JSON.stringify({ ...element, elementType: undefined }),
+      );
+
+      if (blockIndex !== -1) {
+        const updatedBlocks = [...currentTemplate.blocks];
+        updatedBlocks.splice(blockIndex, 1);
+
+        updateTemplate({
+          ...currentTemplate,
+          blocks: updatedBlocks,
+        });
+      }
+    }
   };
 
+  // Handle updating a block
   const updateBlock = (index: number, updatedBlock: any) => {
-    const updatedBlocks = [...(currentTemplate.blocks || [])];
-    updatedBlocks[index] = updatedBlock;
-    updateTemplate({
-      ...currentTemplate,
-      blocks: updatedBlocks,
-    });
+    const element = combinedElements[index];
+
+    if (element.elementType === 'block') {
+      // Find the corresponding index in the blocks array
+      const blockIndex = currentTemplate.blocks.findIndex(
+        (block: any) =>
+          JSON.stringify(block) ===
+          JSON.stringify({ ...element, elementType: undefined }),
+      );
+
+      if (blockIndex !== -1) {
+        const updatedBlocks = [...currentTemplate.blocks];
+        updatedBlocks[blockIndex] = updatedBlock;
+
+        updateTemplate({
+          ...currentTemplate,
+          blocks: updatedBlocks,
+        });
+      }
+    }
   };
 
-  const handleDragEnd = (result: any) => {
+  // Handle drag and drop reordering of elements
+  const handleElementDragEnd = (result: any) => {
     if (!result.destination) return;
 
-    const blocks = [...(currentTemplate.blocks || [])];
-    const [reorderedItem] = blocks.splice(result.source.index, 1);
-    blocks.splice(result.destination.index, 0, reorderedItem);
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
 
+    // Create a copy of the combined elements array
+    const reorderedElements = [...combinedElements];
+    const [movedElement] = reorderedElements.splice(sourceIndex, 1);
+    reorderedElements.splice(destinationIndex, 0, movedElement);
+
+    // Separate the reordered elements back into blocks and attachments
+    const blocks = reorderedElements
+      .filter(element => element.elementType === 'block')
+      .map(element => ({ ...element, elementType: undefined }));
+
+    const attachments = reorderedElements
+      .filter(element => element.elementType === 'attachment')
+      .map(element => element.attachment);
+
+    // Update the template with the reordered blocks and attachments
     updateTemplate({
       ...currentTemplate,
-      blocks: blocks,
+      blocks,
+      attachments,
     });
   };
 
   return (
     <div className='h-full w-full'>
       <Tabs defaultValue='blocks' className='h-full flex flex-col gap-4'>
-        <TabsList className='grid w-full grid-cols-2 '>
+        <TabsList className='grid w-full grid-cols-2'>
+          <TabsTrigger value='blocks'>Visual Builder</TabsTrigger>
           <TabsTrigger value='json'>
             <Code className='h-4 w-4 mr-2' />
             JSON
           </TabsTrigger>
-          <TabsTrigger value='blocks'>Blocks</TabsTrigger>
         </TabsList>
 
         <div className='flex-1 overflow-hidden'>
@@ -145,9 +260,12 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
                 <p className='text-sm text-destructive mt-1'>{jsonError}</p>
               )}
             </div>
-            <div className='flex-1 min-h-0'>
+            <div
+              className={`flex-1 min-h-0 flex flex-col ${
+                jsonError ? 'border-red-500 border-2' : ''
+              }`}
+            >
               <Editor
-                height='100%'
                 defaultLanguage='json'
                 value={jsonValue}
                 onChange={handleJsonChange}
@@ -155,16 +273,22 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
                   minimap: { enabled: false },
                   scrollBeyondLastLine: false,
                   fontSize: 14,
-                  theme: 'vs-dark',
                 }}
+                className='flex-1'
               />
             </div>
           </TabsContent>
 
           <TabsContent
             value='blocks'
-            className='h-full mt-0 data-[state=active]:flex data-[state=active]:flex-col'
+            className={`h-full ${jsonError ? 'border-2 border-red-500 rounded-md p-2' : ''} mt-0 data-[state=active]:flex data-[state=active]:flex-col`}
           >
+            <p className='text-sm text-muted-foreground my-2'>
+              Changes will be reflected in the JSON as Well.
+            </p>
+            {jsonError && (
+              <p className='text-sm text-destructive mb-2'>{jsonError}</p>
+            )}
             <div className='flex gap-2 mb-4 flex-wrap'>
               <Button
                 size='sm'
@@ -182,7 +306,6 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
                 <Link className='h-4 w-4 mr-2' />
                 Links
               </Button>
-
               <Button
                 size='sm'
                 variant='outline'
@@ -226,21 +349,21 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
             </div>
             <div className='flex-1 min-h-0'>
               <ScrollArea className='h-full width-full'>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <Droppable droppableId='blocks'>
+                <DragDropContext onDragEnd={handleElementDragEnd}>
+                  <Droppable droppableId='elements'>
                     {provided => (
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                         className='space-y-3 pb-4'
                       >
-                        {currentTemplate.blocks &&
-                        currentTemplate.blocks.length > 0 ? (
-                          currentTemplate.blocks.map(
-                            (block: any, index: number) => (
+                        {combinedElements.length > 0 ? (
+                          combinedElements
+                            .filter(element => element.elementType === 'block')
+                            .map((element: any, index: number) => (
                               <Draggable
-                                key={index}
-                                draggableId={`block-${index}`}
+                                key={`element-${index}`}
+                                draggableId={`element-${index}`}
                                 index={index}
                               >
                                 {provided => (
@@ -258,23 +381,22 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
                                           <ArrowDownUp className='h-4 w-4 text-muted-foreground' />
                                         </div>
                                         <span className='font-medium capitalize'>
-                                          {block.type === 'section'
+                                          {element.type === 'section'
                                             ? 'Markdown'
-                                            : block.type}
+                                            : element.type}
                                         </span>
                                       </div>
                                       <Button
                                         variant='ghost'
                                         size='icon'
-                                        onClick={() => removeBlock(index)}
+                                        onClick={() => removeElement(index)}
                                         className='h-6 w-6'
                                       >
                                         <Trash2 className='h-4 w-4' />
                                       </Button>
                                     </div>
-
                                     <BlockEditor
-                                      block={block}
+                                      block={element}
                                       onChange={updatedBlock =>
                                         updateBlock(index, updatedBlock)
                                       }
@@ -282,8 +404,7 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
                                   </div>
                                 )}
                               </Draggable>
-                            ),
-                          )
+                            ))
                         ) : (
                           <div className='text-center py-8 text-muted-foreground'>
                             <p>
@@ -301,6 +422,13 @@ export function BlockBuilder({ template, onUpdate }: BlockBuilderProps) {
             </div>
           </TabsContent>
         </div>
+        <div
+          className={`my-2 text-sm ${
+            charCount > 1700 ? 'text-red-500' : 'text-gray-400'
+          } flex w-full justify-end`}
+        >
+          {charCount} / 1700
+        </div>
       </Tabs>
     </div>
   );
@@ -314,11 +442,15 @@ function BlockEditor({
   block: any;
   onChange: (block: any) => void;
 }) {
-  switch (block.type) {
+  // Remove elementType before passing to child components
+  const cleanBlock = { ...block };
+  delete cleanBlock.elementType;
+
+  switch (cleanBlock.type) {
     case 'section':
-      return <SectionBlockEditor block={block} onChange={onChange} />;
+      return <SectionBlockEditor block={cleanBlock} onChange={onChange} />;
     case 'links':
-      return <LinksBlockEditor block={block} onChange={onChange} />;
+      return <LinksBlockEditor block={cleanBlock} onChange={onChange} />;
     case 'divider':
       return (
         <p className='text-sm text-muted-foreground'>
@@ -326,14 +458,13 @@ function BlockEditor({
         </p>
       );
     case 'actions':
-      return <ActionsBlockEditor block={block} onChange={onChange} />;
+      return <ActionsBlockEditor block={cleanBlock} onChange={onChange} />;
     case 'context':
-      return <ContextBlockEditor block={block} onChange={onChange} />;
+      return <ContextBlockEditor block={cleanBlock} onChange={onChange} />;
     case 'header':
-      return <HeaderBlockEditor block={block} onChange={onChange} />;
+      return <HeaderBlockEditor block={cleanBlock} onChange={onChange} />;
     case 'fields':
-      return <FieldsBlockEditor block={block} onChange={onChange} />;
-
+      return <FieldsBlockEditor block={cleanBlock} onChange={onChange} />;
     default:
       return (
         <p className='text-sm text-muted-foreground'>
@@ -504,7 +635,6 @@ function ActionsBlockEditor({
     </div>
   );
 }
-
 // Context block editor
 function ContextBlockEditor({
   block,
@@ -561,7 +691,7 @@ function ContextBlockEditor({
   };
 
   return (
-    <div className='space-y-3'>
+    <div className='space-y-3 '>
       <div className='space-y-2'>
         {(block.elements || []).map((element: any, index: number) => (
           <div key={index} className='border rounded-md p-2 space-y-2'>
@@ -733,6 +863,26 @@ function createEmptyBlock(type: string) {
   }
 }
 
+// Create an empty attachment template
+function createEmptyAttachment() {
+  return {
+    color: '#36a64f',
+    pretext: 'Optional pretext',
+    title: 'Attachment Title',
+    title_link: '',
+    text: 'Main attachment text',
+    fields: [
+      {
+        title: 'Field Title',
+        value: 'Field Value',
+        short: true,
+      },
+    ],
+    footer: '',
+    footer_icon: '',
+  };
+}
+
 // Add this new block editor for fields
 function FieldsBlockEditor({
   block,
@@ -882,4 +1032,8 @@ function LinksBlockEditor({
       </Button>
     </div>
   );
+}
+
+function setJsonError(arg0: string | null) {
+  throw new Error('Function not implemented.');
 }

@@ -8,9 +8,10 @@ import { cn } from '@/lib/utils';
 
 interface SlackPreviewProps {
   template: any;
+  jsonError?: string | null;
 }
 
-export function SlackPreview({ template }: SlackPreviewProps) {
+export function SlackPreview({ template, jsonError }: SlackPreviewProps) {
   const [expandedImages, setExpandedImages] = useState<Record<string, boolean>>(
     {},
   );

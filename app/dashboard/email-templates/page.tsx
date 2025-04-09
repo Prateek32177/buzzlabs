@@ -264,13 +264,6 @@ export default function EmailTemplateEditor() {
     if (!selectedTemplate || !userId) return;
 
     try {
-      // Delete user customization
-      await templateService.deleteUserCustomization(
-        userId,
-        selectedTemplate.id,
-        TemplateType.EMAIL,
-      );
-
       // Reset to default template
       const defaultTemplate = emailTemplates.find(
         t => t.id === selectedTemplate.id,

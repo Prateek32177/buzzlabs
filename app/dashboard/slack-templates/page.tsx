@@ -36,6 +36,7 @@ export default function SlackTemplateEditor() {
   const [saveStatus, setSaveStatus] = useState<
     'idle' | 'saving' | 'saved' | 'error'
   >('idle');
+  const [jsonError, setJsonError] = useState<string | null>(null);
 
   const templateService = new TemplateService();
   const [userid, setUserId] = useState('');
@@ -96,7 +97,6 @@ export default function SlackTemplateEditor() {
 
             setSelectedTemplate(customTemplate);
             setTemplateCode(JSON.stringify(renderedContent, null, 2));
-            toast('Custom template loaded');
           } catch (renderError) {
             console.error('Error rendering custom template:', renderError);
 
@@ -264,13 +264,6 @@ export default function SlackTemplateEditor() {
     if (!userId) return;
 
     try {
-      // Delete user customization
-      await templateService.deleteUserCustomization(
-        userId,
-        selectedTemplate.id,
-        TemplateType.SLACK,
-      );
-
       // Reset to default template
       const defaultTemplate = slackTemplates.find(
         t => t.id === selectedTemplate.id,
@@ -280,7 +273,7 @@ export default function SlackTemplateEditor() {
         const rendered = defaultTemplate.render({});
         setSelectedTemplate(defaultTemplate);
         setTemplateCode(JSON.stringify(rendered, null, 2));
-
+        setJsonError(null); // Reset JSON error state
         toast.success('Template reset', {
           description: `The ${selectedTemplate.name} template has been reset to default.`,
         });
@@ -346,7 +339,9 @@ export default function SlackTemplateEditor() {
               size={'sm'}
               onClick={saveTemplate}
               className='flex items-center gap-2'
-              disabled={isSaving || isLoading}
+              disabled={
+                isSaving || isLoading || !templateCode || jsonError !== null
+              }
             >
               <Save className='h-4 w-4' />
               {isSaving ? 'Saving...' : 'Save Template'}
@@ -385,6 +380,8 @@ export default function SlackTemplateEditor() {
                   <BlockBuilder
                     template={getParsedTemplate()}
                     onUpdate={updateTemplateFromBlockBuilder}
+                    jsonError={jsonError}
+                    setJsonError={setJsonError}
                   />
                 </CardContent>
               </Card>
@@ -399,7 +396,16 @@ export default function SlackTemplateEditor() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className='flex-1 overflow-auto bg-[#222529] rounded-md p-4'>
-                  <SlackPreview template={getParsedTemplate()} />
+                  {jsonError ? (
+                    <div className='flex items-center justify-center h-full text-red-500 text-sm'>
+                      <p>`Failed to load preview due to {jsonError}`</p>
+                    </div>
+                  ) : (
+                    <SlackPreview
+                      jsonError={jsonError}
+                      template={getParsedTemplate()}
+                    />
+                  )}
                 </CardContent>
                 <CardFooter className='border-t p-4'>
                   <p className='text-sm text-muted-foreground'>
@@ -427,6 +433,8 @@ export default function SlackTemplateEditor() {
               <BlockBuilder
                 template={getParsedTemplate()}
                 onUpdate={updateTemplateFromBlockBuilder}
+                jsonError={jsonError}
+                setJsonError={setJsonError}
               />
             </CardContent>
           </Card>
@@ -440,7 +448,16 @@ export default function SlackTemplateEditor() {
               </CardDescription>
             </CardHeader>
             <CardContent className='flex-1 overflow-auto bg-[#222529] rounded-md p-4'>
-              <SlackPreview template={getParsedTemplate()} />
+              {jsonError ? (
+                <div className='flex items-center justify-center h-full text-red-500 text-sm'>
+                  <p>Failed to load preview due to {jsonError}</p>
+                </div>
+              ) : (
+                <SlackPreview
+                  jsonError={jsonError}
+                  template={getParsedTemplate()}
+                />
+              )}
             </CardContent>
             <CardFooter className='border-t p-4'>
               <p className='text-sm text-muted-foreground'>

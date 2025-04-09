@@ -6,7 +6,7 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
-  Sparkles,
+  User2Icon,
 } from 'lucide-react';
 import { signOutAction } from '@/app/actions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -70,24 +70,21 @@ export function NavUser({
             align='end'
             sideOffset={4}
           >
-            <DropdownMenuLabel className='p-0 font-normal' asChild>
+            <DropdownMenuItem asChild>
               <Link
                 href='/dashboard/settings'
-                className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'
+                className='flex w-full items-center cursor-pointer '
               >
-                <Avatar className='h-8 w-8 rounded-lg'>
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
-                </Avatar>
-                <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-semibold'>{user.name}</span>
-                  <span className='truncate text-xs'>{user.email}</span>
-                </div>
+                <User2Icon className='w-5 h-5 mr-2' />
+                Profile
               </Link>
-            </DropdownMenuLabel>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={signOutAction}>
-              <LogOut className='w-5 h-5 mr-4' />
+            <DropdownMenuItem
+              onClick={signOutAction}
+              className='flex w-full items-center cursor-pointer '
+            >
+              <LogOut className='w-5 h-5 mr-2' />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

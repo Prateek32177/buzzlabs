@@ -15,17 +15,18 @@ class PlatformDetector {
     if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk'; // Clerk uses Svix
     if (headers.get('twilio-signature')) return 'twilio';
     if (headers.get('x-twitter-webhooks-signature')) return 'twitter';
-    if (headers.get('x-hub-signature') && !headers.get('x-github-event')) return 'facebook';
-    
+    if (headers.get('x-hub-signature') && !headers.get('x-github-event'))
+      return 'facebook';
+
     // Supabase webhook headers
     if (headers.get('x-webhook-token')) return 'supabase';
-    if(headers.get('x-webhook-id')) return 'supabase';
+    if (headers.get('x-webhook-id')) return 'supabase';
     // Vercel webhook headers
     if (headers.get('x-vercel-signature')) return 'vercel';
-    
+
     // Polar webhook headers
     if (headers.get('x-polar-signature')) return 'polar';
-    
+
     return null;
   }
 
@@ -33,10 +34,10 @@ class PlatformDetector {
     // Check URL patterns
     const urlObj = new URL(url);
     const pathParts = urlObj.pathname.split('/');
-    
+
     // Some platforms might embed their name in the URL
     const lastPathPart = pathParts[pathParts.length - 1].toLowerCase();
-    
+
     // Common patterns
     if (lastPathPart === 'github') return 'github';
     if (lastPathPart === 'stripe') return 'stripe';
@@ -44,12 +45,10 @@ class PlatformDetector {
     if (lastPathPart === 'supabase') return 'supabase';
     if (lastPathPart === 'vercel') return 'vercel';
     if (lastPathPart === 'polar') return 'polar';
-    
+
     return null;
   }
 }
-
-
 
 export async function POST(
   req: Request,
@@ -59,12 +58,13 @@ export async function POST(
   const startTime = Date.now();
   const logId = uuidv4();
   let data: any;
-  let detectedPlatform = PlatformDetector.detectFromHeaders(req.headers) || 'unknown';
+  let detectedPlatform =
+    PlatformDetector.detectFromHeaders(req.headers) || 'unknown';
 
   try {
     const supabase = createClient();
     data = await req.json();
-    
+
     // Get webhook config from database
     const { data: webhook, error } = await (await supabase)
       .from('webhooks')
@@ -157,35 +157,34 @@ export async function POST(
           status = 'failed';
         }
       }
-    
 
-    const log = {
-      id: logId,
-      webhook_id: id,
-      webhook_name: webhook[0].name || 'Unknown',
-      platform: detectedPlatform,
-      channel: channels.join(','),
-      status,
-      payload: data,
-      email_sent: channels.includes('email'),
-      email_recipient: webhook[0].notify_email
-        ? webhook[0].email_config.recipient_email
-        : undefined,
-      slack_sent: channels.includes('slack'),
-      slack_channel: webhook[0].notify_slack
-        ? webhook[0].slack_config.channel_name
-        : undefined,
-      error_message: errorMessage || undefined,
-      processed_at: new Date(),
-    };
+      const log = {
+        id: logId,
+        webhook_id: id,
+        webhook_name: webhook[0].name || 'Unknown',
+        platform: detectedPlatform,
+        channel: channels.join(','),
+        status,
+        payload: data,
+        email_sent: channels.includes('email'),
+        email_recipient: webhook[0].notify_email
+          ? webhook[0].email_config.recipient_email
+          : undefined,
+        slack_sent: channels.includes('slack'),
+        slack_channel: webhook[0].notify_slack
+          ? webhook[0].slack_config.channel_name
+          : undefined,
+        error_message: errorMessage || undefined,
+        processed_at: new Date(),
+      };
 
-    await fetch(`${process.env.PROD_URL}/api/logs`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(log),
-    });
+      await fetch(`${process.env.PROD_URL}/api/logs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(log),
+      });
     }
-    
+
     return Response.json({
       success: true,
       message: 'Webhook processed successfully',
@@ -204,7 +203,7 @@ export async function POST(
       error_message: `Failed to process webhook: ${err.message}`,
       processed_at: new Date(),
     };
-    
+
     try {
       await fetch(`${process.env.PROD_URL}/api/logs`, {
         method: 'POST',

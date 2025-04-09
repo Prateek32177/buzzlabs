@@ -14,6 +14,7 @@ import { DialogFooter } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { EmailTemplateOptions } from '@/const';
+import { emailTemplates } from '@/lib/templates';
 
 export function EmailConfig({
   webhook,
@@ -63,7 +64,7 @@ export function EmailConfig({
         <Label htmlFor='emailTemplate'>Template</Label>
         <Select
           disabled={isLoading}
-          value={emailConfig.template_id}
+          value={emailConfig.template_id || emailTemplates[0].id}
           onValueChange={value =>
             setEmailConfig({
               ...emailConfig,

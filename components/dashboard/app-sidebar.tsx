@@ -24,6 +24,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { getUser } from '@/hooks/user-auth';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 // This is sample data.
 const data = {
@@ -98,25 +99,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     fetchUser();
   }, []);
 
-  const { state } = useSidebar();
+  const { state,open } = useSidebar();
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
         <div className='flex justify-center items-left w-full h-full my-4'>
-          {state === 'collapsed' ? (
-            <div
-              className='text-2xl font-bold    animate-fade-in
+          {state === 'collapsed' && !open ? (
+            <div className='flex flex-col items-center justify-center w-full h-full gap-2'>
+              <div
+          className='text-2xl font-bold
           relative
           z-20
-          bg-gradient-to-r from-purple-600 to-rose-300
+         bg-gradient-to-r from-purple-500 to-rose-300
           text-transparent
           bg-clip-text'
-            >
-              H
+              >
+          H
+              </div>
+              <SidebarTrigger />
             </div>
           ) : (
-            <div className='w-full px-2'>
+            <div className='w-full flex items-center justify-between gap-2 px-4'>
               <Logo size='2xl' />
+              <SidebarTrigger className='-ml-1' />
             </div>
           )}
         </div>

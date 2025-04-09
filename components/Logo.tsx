@@ -24,10 +24,9 @@ export function Logo({ variant = 'green', size = 'text-sm' }: LogoProps) {
         className={`
           font-['Boldonse']
           text-base
-          animate-fade-in
           relative
           z-20
-          bg-gradient-to-r from-purple-600 to-rose-300
+          bg-gradient-to-r from-purple-500 to-rose-300
           text-transparent
           bg-clip-text
         `}

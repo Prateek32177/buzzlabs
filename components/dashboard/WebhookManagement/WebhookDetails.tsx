@@ -87,7 +87,7 @@ export function WebhookDetails({
   };
 
   return (
-    <div className='grid gap-6'>
+    <div className='grid gap-6 py-4'>
       <div className='grid gap-2'>
         <Label>Name</Label>
         <div className='flex gap-2'>
@@ -214,7 +214,7 @@ export function WebhookDetails({
                     type={field.type === 'secret' ? 'password' : 'text'}
                     placeholder={field.placeholder}
                     className='rounded-r-none font-mono text-sm'
-                    // readOnly={currentValues?.[field.readOnly]||true}
+                    readOnly={field.readOnly || true}
                     value={currentValues?.[field.key] || ''}
                     onChange={e => {
                       const updatedConfig = {
@@ -265,14 +265,20 @@ export function WebhookDetails({
               </div>
               <Switch
                 checked={webhook.notify_email}
-                onCheckedChange={() =>
-                  onUpdate(webhook.id, { notify_email: !webhook.notify_email })
-                }
+                onCheckedChange={() => {
+                  if (!webhook.email_config?.recipient_email) {
+                    toast.error('Email configuration required', {
+                      description: 'Please configure email settings first',
+                    });
+                    return;
+                  }
+                  onUpdate(webhook.id, { notify_email: !webhook.notify_email });
+                }}
                 disabled={isLoading}
               />
             </div>
             <div className='flex items-center gap-2'>
-              {webhook.email_config && (
+              {webhook?.email_config?.recipient_email && (
                 <Badge variant='outline' className='text-xs'>
                   {webhook.email_config.recipient_email}
                 </Badge>
@@ -294,14 +300,20 @@ export function WebhookDetails({
               </div>
               <Switch
                 checked={webhook.notify_slack}
-                onCheckedChange={() =>
-                  onUpdate(webhook.id, { notify_slack: !webhook.notify_slack })
-                }
+                onCheckedChange={() => {
+                  if (!webhook.slack_config?.channel_name) {
+                    toast.error('Slack configuration required', {
+                      description: 'Please configure Slack settings first',
+                    });
+                    return;
+                  }
+                  onUpdate(webhook.id, { notify_slack: !webhook.notify_slack });
+                }}
                 disabled={isLoading}
               />
             </div>
             <div className='flex items-center gap-2'>
-              {webhook.slack_config && (
+              {webhook?.slack_config?.channel_name && (
                 <Badge variant='outline' className='text-xs'>
                   {webhook.slack_config.channel_name}
                 </Badge>

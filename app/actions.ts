@@ -63,6 +63,40 @@ export const signInAction = async (formData: FormData) => {
   return redirect('/dashboard/webhooks');
 };
 
+export const signInWithGoogleAction = async () => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${process.env.PROD_URL}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    return encodedRedirect('error', '/sign-in', error.message);
+  }
+
+  return redirect(data.url);
+};
+
+export const signInWithGithubAction = async () => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+    options: {
+      redirectTo: `${process.env.PROD_URL}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    return encodedRedirect('error', '/sign-in', error.message);
+  }
+
+  return redirect(data.url);
+};
+
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get('email')?.toString();
   const supabase = await createClient();

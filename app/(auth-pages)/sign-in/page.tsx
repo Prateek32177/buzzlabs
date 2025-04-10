@@ -24,8 +24,8 @@ import { Separator } from '@/components/ui/separator';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Sign In | Buzzlabs',
-  description: 'Sign in to your Buzzlabs account',
+  title: 'Sign In | Hookflo',
+  description: 'Sign in to your Hookflo account',
 };
 
 export default async function Login(props: { searchParams: Promise<Message> }) {

@@ -5,12 +5,19 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Save, RefreshCw, Shield, Loader } from 'lucide-react';
+import {
+  Save,
+  RefreshCw,
+  Shield,
+  Loader,
+  CheckCircle,
+  VerifiedIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { getUser } from '@/hooks/user-auth';
 import { toast } from 'sonner';
 import { updateUser } from '@/app/actions';
-
+import { Badge } from '@/components/ui/badge';
 const ProfileTab = () => {
   const [userData, setUserData] = useState({
     username: '',
@@ -142,10 +149,10 @@ const ProfileTab = () => {
                     className='bg-hookflo-dark border-hookflo-dark-border text-white'
                   />
                   {userData.isEmailVerified && (
-                    <div className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-xs text-green-500'>
-                      <Shield className='h-4 w-4 mr-1' />
+                    <Badge className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-xs text-green-500 bg-green-900/30  rounded-full px-2 py-1'>
+                      <VerifiedIcon className='h-4 w-4 mr-1' />
                       Verified
-                    </div>
+                    </Badge>
                   )}
                 </div>
               </div>

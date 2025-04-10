@@ -99,7 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     fetchUser();
   }, []);
 
-  const { state,open } = useSidebar();
+  const { state, open } = useSidebar();
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
@@ -107,14 +107,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {state === 'collapsed' && !open ? (
             <div className='flex flex-col items-center justify-center w-full h-full gap-2'>
               <div
-          className='text-2xl font-bold
+                className='text-2xl font-bold
           relative
           z-20
          bg-gradient-to-r from-purple-500 to-rose-300
           text-transparent
           bg-clip-text'
               >
-          H
+                H
               </div>
               <SidebarTrigger />
             </div>

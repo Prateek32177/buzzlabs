@@ -1,7 +1,9 @@
+import { Loader2 } from 'lucide-react';
 export default function Loading() {
   return (
-    <div className='m-auto'>
-      <h1>Loading</h1>
+    <div className='min-h-screen flex items-center justify-center'>
+      <Loader2 className='h-8 w-8 animate-spin text-blue-500' />
+      <span className='ml-3 text-lg text-gray-700'>Loading...</span>
     </div>
   );
 }

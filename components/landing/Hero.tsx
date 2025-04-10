@@ -53,13 +53,13 @@ export default function Hero() {
       <NoiseGradientBackground />
       <section className='pt-52 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
         <div className='absolute inset-0 z-0'>
-          <Ripple mainCircleSize={400} mainCircleOpacity={0.2} numCircles={5} />
+          <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
         </div>
         <div className='px-2 m-auto   max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
             <Badge
               variant={'default'}
-              className='mb-4 bg-purple-500/10 border border-purple-500/20  text-white/80 shadow-md  text-xs sm:text-sm px-2 py-1 sm:px-3 hover:none'
+              className='mb-4 hover:bg-purple-500/10 bg-purple-500/10 border border-purple-500/20  text-white/80 shadow-md  text-xs sm:text-sm px-2 py-1 sm:px-3 hover:none'
             >
               <Sparkles className='w-4 h-4  text-purple-400 mr-2' />
               <span className='text-purple-400 mr-1 '>Simplifying Alerts:</span>
@@ -70,7 +70,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className={`text-[2.5rem] lg:text-[4rem] leading-[1] tracking-tighter  ${satoshi.variable}`}
+              className={`text-[2.5rem] lg:text-[4rem] leading-[1] tracking-tighter  ${satoshi.style}`}
             >
               <span className='text-white'>Transform</span>
 
@@ -83,13 +83,13 @@ export default function Hero() {
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
                   viewBox='0 0 24 24'
-                  stroke-width='1.5'
+                  strokeWidth='1.5'
                   stroke='currentColor'
                   className='w-8 h-8 text-purple-400'
                 >
                   <path
-                    stroke-linecap='round'
-                    stroke-linejoin='round'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
                     d='M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941'
                   />
                 </svg>

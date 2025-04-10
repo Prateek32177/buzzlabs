@@ -70,11 +70,11 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className={`text-[2.5rem] lg:text-[4rem] leading-[1.1] tracking-tighter font-light  ${satoshi.variable}`}
+              className={`text-[2.5rem] lg:text-[4rem] leading-[1] tracking-tighter  ${satoshi.variable}`}
             >
               <span className='text-white'>Transform</span>
 
-              <span className='relative mx-2  bg-gradient-to-r from-yellow-600  to-yellow-300 text-transparent bg-clip-text font-medium'>
+              <span className='relative mx-2  bg-gradient-to-r from-yellow-500  to-yellow-300 text-transparent bg-clip-text font-medium'>
                 events
               </span>
               <div className='flex items-center justify-center gap-3 my-2'>
@@ -101,7 +101,7 @@ export default function Hero() {
               <span className='text-white block mt-1'>notifications</span>
             </motion.h1>
 
-            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-400 max-w-sm sm:max-w-2xl mx-auto'>
+            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500 max-w-sm sm:max-w-2xl mx-auto'>
               Capture events from multiple platforms and instantly relay
               notifications across various channels with our robust webhook
               infrastructure.

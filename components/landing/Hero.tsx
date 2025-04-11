@@ -7,28 +7,6 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Ripple } from '../magicui/ripple';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
-import localFont from 'next/font/local';
-
-const satoshi = localFont({
-  src: [
-    {
-      path: './fonts/Satoshi-Light.woff2',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: './fonts/Satoshi-Regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: './fonts/Satoshi-Medium.woff2',
-      weight: '500',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-satoshi',
-});
 
 export default function Hero() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -70,7 +48,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className={`text-[2.5rem] lg:text-[4rem] leading-[1] tracking-tighter  ${satoshi.style}`}
+              className={`text-[2.5rem] lg:text-[4rem] leading-[1] tracking-tighter`}
             >
               <span className='text-white'>Transform</span>
 

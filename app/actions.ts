@@ -69,14 +69,13 @@ export const signInWithGoogleAction = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${process.env.PROD_URL}/auth/callback`,
+      redirectTo: `${process.env.PROD_URL}/auth/callback?redirect_to=/dashboard/webhooks`,
     },
   });
 
   if (error) {
     return encodedRedirect('error', '/sign-in', error.message);
   }
-
   return redirect(data.url);
 };
 
@@ -86,14 +85,13 @@ export const signInWithGithubAction = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: `${process.env.PROD_URL}/auth/callback`,
+      redirectTo: `${process.env.PROD_URL}/auth/callback?redirect_to=/dashboard/webhooks`,
     },
   });
 
   if (error) {
     return encodedRedirect('error', '/sign-in', error.message);
   }
-
   return redirect(data.url);
 };
 

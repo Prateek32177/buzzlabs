@@ -395,23 +395,13 @@ export function WebhookManagement() {
         </Card>
 
         {showDetails && (
-          <Dialog
+          <WebhookDetails
+            webhook={webhooks.find(w => w.id === showDetails)!}
+            onUpdate={(id, config) => updateWebhookConfig(id, config)}
+            isLoading={isLoadingId === showDetails}
             open={showDetails !== null}
             onOpenChange={open => !open && setShowDetails(null)}
-          >
-            <DialogContent className='max-w-2xl'>
-              <DialogHeader>
-                <DialogTitle>Webhook Configuration</DialogTitle>
-              </DialogHeader>
-              <ScrollArea className='h-[70vh] w-full '>
-                <WebhookDetails
-                  webhook={webhooks.find(w => w.id === showDetails)!}
-                  onUpdate={(id, config) => updateWebhookConfig(id, config)}
-                  isLoading={isLoadingId === showDetails}
-                />
-              </ScrollArea>
-            </DialogContent>
-          </Dialog>
+          />
         )}
 
         <EmailConfigDialog />

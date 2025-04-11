@@ -25,6 +25,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TemplateService, TemplateType } from '@/utils/template-manager';
 import { Save, RefreshCw, Loader } from 'lucide-react';
 import { getUser } from '@/hooks/user-auth';
+import { useSearchParams } from 'next/navigation';
+
+type TemplateId = { templateId: string };
 
 export default function SlackTemplateEditor() {
   const [selectedTemplate, setSelectedTemplate] = useState<any | null>(null);
@@ -40,6 +43,10 @@ export default function SlackTemplateEditor() {
 
   const templateService = new TemplateService();
   const [userid, setUserId] = useState('');
+
+  const searchParams = useSearchParams();
+  const template_id =
+    (searchParams.get('templateId') as TemplateId['templateId']) || null;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -130,7 +137,9 @@ export default function SlackTemplateEditor() {
         setIsLoading(false);
       }
     }
-
+    if (template_id) {
+      setTemplateId(template_id);
+    }
     loadTemplate();
   }, [templateId, userId]);
 

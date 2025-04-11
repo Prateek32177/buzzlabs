@@ -30,6 +30,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { getUser } from '@/hooks/user-auth';
+import { useSearchParams } from 'next/navigation';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -42,7 +43,13 @@ interface EditorTemplate extends ServiceTemplate {
   content?: string;
 }
 
+type TemplateId = { templateId: string };
+
 export default function EmailTemplateEditor() {
+  const searchParams = useSearchParams();
+  const template_id =
+    (searchParams.get('templateId') as TemplateId['templateId']) || null;
+
   const [selectedTemplate, setSelectedTemplate] =
     useState<EditorTemplate | null>(null);
   const [editedContent, setEditedContent] = useState<string>('');
@@ -185,6 +192,11 @@ export default function EmailTemplateEditor() {
   };
 
   useEffect(() => {
+    // Only set the templateId from search param once
+    if (template_id) {
+      setTemplateId(template_id);
+    }
+
     loadTemplate();
   }, [templateId, userId]);
 
@@ -199,10 +211,6 @@ export default function EmailTemplateEditor() {
     );
   };
 
-  // Auto-save functionality
-  // Remove the useEffect auto-save block completely
-
-  // Modify the saveTemplate function to check for changes
   const saveTemplate = async () => {
     if (!selectedTemplate?.id || !userId) {
       toast.error('No template selected');

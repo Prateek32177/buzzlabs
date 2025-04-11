@@ -11,7 +11,7 @@ import {
   SelectContent,
 } from '@/components/ui/select';
 import { DialogFooter } from '@/components/ui/dialog';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { EmailTemplateOptions } from '@/const';
 import { emailTemplates } from '@/lib/templates';
@@ -61,7 +61,19 @@ export function EmailConfig({
         />
       </div>
       <div className='space-y-2'>
-        <Label htmlFor='emailTemplate'>Template</Label>
+        <div className='flex items-center justify-between'>
+          <Label htmlFor='emailTemplate'>Template</Label>
+          <Button variant='link' size='sm' asChild>
+            <a
+              href={`/dashboard/email-templates?templateId=${emailConfig.template_id}`}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              <ExternalLink className='h-4 w-4' />
+              Preview Template
+            </a>
+          </Button>
+        </div>
         <Select
           disabled={isLoading}
           value={emailConfig.template_id || emailTemplates[0].id}

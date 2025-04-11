@@ -11,7 +11,7 @@ import {
   SelectContent,
 } from '@/components/ui/select';
 import { DialogFooter } from '@/components/ui/dialog';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { SlackTemplateOptions } from '@/const';
 import { randomSlackChannelName } from '@/lib/utils';
@@ -95,7 +95,20 @@ export function SlackConfig({
           </p>
         </div>
         <div className='grid w-full gap-2'>
-          <Label htmlFor='slackTemplate'>Template</Label>
+          <div className='flex items-center justify-between'>
+            <Label htmlFor='slackTemplate'>Template</Label>
+            <Button variant='link' size='sm' asChild>
+              <a
+                href={`/dashboard/slack-templates?templateId=${slackConfig.template_id}`}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <ExternalLink className='h-4 w-4' />
+                Preview Template
+              </a>
+            </Button>
+          </div>
+
           <Select
             disabled={isLoading}
             value={slackConfig.template_id || SlackTemplateOptions[0].id}

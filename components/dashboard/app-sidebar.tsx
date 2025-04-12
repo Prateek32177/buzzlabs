@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/sidebar';
 import { getUser } from '@/hooks/user-auth';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { HookfloIcon } from '../Logos/Hookflo';
 
 // This is sample data.
 const data = {
@@ -106,20 +107,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <div className='flex justify-center items-left w-full h-full my-4'>
           {state === 'collapsed' && !open ? (
             <div className='flex flex-col items-center justify-center w-full h-full gap-2'>
-              <div
-                className='text-2xl font-bold
-          relative
-          z-20
-         bg-gradient-to-r from-purple-500 to-rose-300
-          text-transparent
-          bg-clip-text'
-              >
-                H
-              </div>
+              <HookfloIcon />
+
               <SidebarTrigger />
             </div>
           ) : (
-            <div className='w-full flex items-center justify-between gap-2 px-4'>
+            <div className='w-full flex items-center justify-between gap-2'>
               <Logo size='2xl' />
               <SidebarTrigger className='-ml-1' />
             </div>

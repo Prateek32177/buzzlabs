@@ -1,14 +1,13 @@
 'use client';
 
-import { Luckiest_Guy } from 'next/font/google';
+import { Geist } from 'next/font/google';
 import Link from 'next/link';
+import { HookfloIcon } from '@/components/Logos/Hookflo';
 
-const logoFont = Luckiest_Guy({
-  weight: '400',
-  style: 'normal',
+const geistSans = Geist({
+  display: 'swap',
   subsets: ['latin'],
 });
-
 interface LogoProps {
   variant?: 'green' | 'white';
   size?: string;
@@ -16,19 +15,20 @@ interface LogoProps {
 }
 
 export function Logo({ variant = 'green', size = 'text-sm' }: LogoProps) {
-  const text = 'Hookflo';
+  const text = 'hookflo';
 
   return (
     <Link href='/' className='cursor-pointer inline-flex items-center gap-1'>
+      <HookfloIcon className='w-8 h-8 inline-flex' />
       <h1
         className={`
-          font-['Boldonse']
-          text-base
+
+          font-bold
           relative
           z-20
-          bg-gradient-to-r from-purple-500 to-rose-300
-          text-transparent
-          bg-clip-text
+          text-white/90
+          -ml-1
+          text-lg
         `}
       >
         {text}

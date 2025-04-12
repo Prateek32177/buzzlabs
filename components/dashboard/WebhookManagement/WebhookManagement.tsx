@@ -15,20 +15,21 @@ import {
 } from '@/components/ui/table';
 import { toast } from 'sonner';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-
-import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Eye, Trash2, Slack, Mail, Loader2 } from 'lucide-react';
+import {
+  Eye,
+  Trash2,
+  Slack,
+  Mail,
+  Loader2,
+  ArrowUpRight,
+  PlugZap,
+} from 'lucide-react';
 import { WebhookContext } from './WebhookContext';
 import { EmailConfigDialog } from './EmailConfigDialog';
 import { SlackConfigDialog } from './SlackConfigDialog';
@@ -301,7 +302,7 @@ export function WebhookManagement() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Name</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>Active</TableHead>
                       <TableHead>Notifications</TableHead>
                       <TableHead className='w-[100px]'>Actions</TableHead>
                     </TableRow>
@@ -310,8 +311,18 @@ export function WebhookManagement() {
                     {webhooks.map(webhook => (
                       <TableRow key={webhook.id}>
                         <TableCell className='pr-8'>
-                          <div className='flex items-center flex-start gap-4'>
-                            <span className='font-medium'>{webhook.name}</span>
+                          <div className='flex items-center flex-start gap-2 justify-start'>
+                            <a
+                              href={`/dashboard/webhooks/${webhook.id}`}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              className='text-gray-300 hover:text-gray-100 hover:underline flex items-center gap-1.5 opacity-100 hover:opacity-80 transition-all'
+                            >
+                              {webhook.name}
+                            </a>
+                            <span>
+                              <ArrowUpRight className='h-3.5 w-3.5' />
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell className='pr-8'>
@@ -328,7 +339,7 @@ export function WebhookManagement() {
                         <TableCell>
                           <div className='flex flex-wrap items-center gap-6'>
                             <div className='flex items-center gap-2'>
-                              <div className='flex items-center gap-1'>
+                              <div className='flex items-center gap-1 text-gray-300'>
                                 <Mail className='h-4 w-4' />
                                 <span className='text-sm'>Email</span>
                               </div>
@@ -344,9 +355,9 @@ export function WebhookManagement() {
                               />
                             </div>
                             <div className='flex items-center gap-2'>
-                              <div className='flex items-center gap-1'>
+                              <div className='flex items-center gap-1 text-gray-300'>
                                 <Slack className='h-4 w-4' />
-                                <span className='text-sm'>Slack</span>
+                                <span className='text-sm '>Slack</span>
                               </div>
                               <Switch
                                 checked={webhook.notify_slack}
@@ -365,11 +376,16 @@ export function WebhookManagement() {
                           <div className='flex items-center gap-2'>
                             <Button
                               variant='outline'
-                              size='icon'
+                              size='sm'
                               onClick={() => setShowDetails(webhook.id)}
                               disabled={isLoadingId === webhook.id}
                             >
-                              <Eye className='h-4 w-4' />
+                                    <span>
+                                {' '}
+                                <PlugZap className='h-8 w-8 ' />
+                              </span>
+                              <span className='md:flex hidden'>connect</span>
+                        
                             </Button>
                             <Button
                               variant='outline'

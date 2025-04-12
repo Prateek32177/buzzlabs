@@ -12,13 +12,14 @@ interface LogoProps {
   variant?: 'green' | 'white';
   size?: string;
   showAlpha?: boolean;
+  hideText?: boolean;
 }
 
-export function Logo({ variant = 'green', size = 'text-sm' }: LogoProps) {
+export function Logo({ variant = 'green', size = 'text-sm',hideText=false }: LogoProps) {
   const text = 'hookflo';
 
   return (
-    <Link href='/' className='cursor-pointer inline-flex items-center gap-1'>
+    <Link href='/' className='cursor-pointer inline-flex items-end gap-1'>
       <HookfloIcon className='w-8 h-8 inline-flex' />
       <h1
         className={`
@@ -28,7 +29,10 @@ export function Logo({ variant = 'green', size = 'text-sm' }: LogoProps) {
           z-20
           text-white/90
           -ml-1
+          mb-[3px]
           text-lg
+          ${hideText?'hidden':'flex'}
+          sm:flex
         `}
       >
         {text}

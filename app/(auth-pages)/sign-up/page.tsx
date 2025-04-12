@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BorderBeam } from '@/components/magicui/border-beam';
 import { Logo } from '@/components/Logo';
 
 export default async function Signup(props: {
@@ -73,7 +72,6 @@ export default async function Signup(props: {
               Sign up
             </SubmitButton>
           </CardFooter>
-          <BorderBeam duration={8} size={100} />
         </Card>
       </form>
     </>

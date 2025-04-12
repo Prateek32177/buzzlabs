@@ -52,7 +52,7 @@ export default function Hero() {
             >
               <span className='text-white'>Transform</span>
 
-              <span className='relative mx-2  bg-gradient-to-r from-yellow-500  to-yellow-300 text-transparent bg-clip-text font-medium'>
+              <span className='relative mx-2  bg-gradient-to-r from-[#FFE599]  to-[#FFD866] text-transparent bg-clip-text font-medium'>
                 events
               </span>
               <div className='flex items-center justify-center gap-3 my-2'>

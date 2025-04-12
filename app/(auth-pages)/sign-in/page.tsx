@@ -19,7 +19,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Logo } from '@/components/Logo';
-import { BorderBeam } from '@/components/magicui/border-beam';
 import { Separator } from '@/components/ui/separator';
 import { Metadata } from 'next';
 
@@ -131,7 +130,6 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
             <ArrowRight className='h-4 w-4 transition-transform duration-300 group-hover:translate-x-1' />
           </SubmitButton>
         </CardFooter>
-        <BorderBeam duration={8} size={100} />
       </Card>
     </form>
   );

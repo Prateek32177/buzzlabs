@@ -29,7 +29,7 @@ export function EmailConfig({
 }) {
   const [emailConfig, setEmailConfig] = useState({
     recipient_email: webhook.email_config?.recipient_email || '',
-    template_id: webhook.email_config?.template_id || '',
+    template_id: webhook.email_config?.template_id || emailTemplates[0].id,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,7 +76,7 @@ export function EmailConfig({
         </div>
         <Select
           disabled={isLoading}
-          value={emailConfig.template_id || emailTemplates[0].id}
+          value={emailConfig.template_id}
           onValueChange={value =>
             setEmailConfig({
               ...emailConfig,

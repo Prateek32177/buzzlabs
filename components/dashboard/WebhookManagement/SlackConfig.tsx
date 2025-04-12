@@ -15,6 +15,7 @@ import { Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { SlackTemplateOptions } from '@/const';
 import { randomSlackChannelName } from '@/lib/utils';
+import { slackTemplates } from '@/lib/slack-templates';
 
 export function SlackConfig({
   webhook,
@@ -27,13 +28,11 @@ export function SlackConfig({
   onCancel: () => void;
   isLoading: boolean;
 }) {
-  const [slackConfig, setSlackConfig] = useState(
-    webhook.slack_config || {
-      webhook_url: '',
-      channel_name: '',
-      template_id: '',
-    },
-  );
+  const [slackConfig, setSlackConfig] = useState({
+    webhook_url: webhook.slack_config?.webhook_url || '',
+    channel_name: webhook.slack_config?.channel_name || '',
+    template_id: webhook.slack_config?.template_id || slackTemplates[0].id,
+  });
 
   useEffect(() => {
     if (!slackConfig.channel_name) {
@@ -94,6 +93,7 @@ export function SlackConfig({
             Random channel name. Edit as per your choice.
           </p>
         </div>
+
         <div className='grid w-full gap-2'>
           <div className='flex items-center justify-between'>
             <Label htmlFor='slackTemplate'>Template</Label>
@@ -111,7 +111,7 @@ export function SlackConfig({
 
           <Select
             disabled={isLoading}
-            value={slackConfig.template_id || SlackTemplateOptions[0].id}
+            value={slackConfig.template_id}
             onValueChange={value =>
               setSlackConfig({
                 ...slackConfig,

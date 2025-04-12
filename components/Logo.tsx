@@ -15,7 +15,11 @@ interface LogoProps {
   hideText?: boolean;
 }
 
-export function Logo({ variant = 'green', size = 'text-sm',hideText=false }: LogoProps) {
+export function Logo({
+  variant = 'green',
+  size = 'text-sm',
+  hideText = false,
+}: LogoProps) {
   const text = 'hookflo';
 
   return (
@@ -31,7 +35,7 @@ export function Logo({ variant = 'green', size = 'text-sm',hideText=false }: Log
           -ml-1
           mb-[3px]
           text-lg
-          ${hideText?'hidden':'flex'}
+          ${hideText ? 'hidden' : 'flex'}
           sm:flex
         `}
       >

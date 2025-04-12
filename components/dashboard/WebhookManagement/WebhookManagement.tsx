@@ -380,12 +380,11 @@ export function WebhookManagement() {
                               onClick={() => setShowDetails(webhook.id)}
                               disabled={isLoadingId === webhook.id}
                             >
-                                    <span>
+                              <span>
                                 {' '}
                                 <PlugZap className='h-8 w-8 ' />
                               </span>
                               <span className='md:flex hidden'>connect</span>
-                        
                             </Button>
                             <Button
                               variant='outline'

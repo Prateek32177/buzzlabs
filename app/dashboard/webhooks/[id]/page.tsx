@@ -240,9 +240,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         <div className='lg:col-span-2 space-y-6'>
           <div className='grid gap-6 py-4 bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
             <h3 className='text-lg font-medium'>Basic Information</h3>
-            <div className='flex items-center justify-between mt-4'>
+            <div className='flex items-center justify-between '>
               <span className='text-sm text-muted-foreground'>
-              {webhook.is_active ? 'Disable Webhook' : 'Enable Webhook'}
+               Status: {webhook.is_active ? 'Active' : 'Disabled'}
               </span>
               <Switch
               checked={webhook.is_active}

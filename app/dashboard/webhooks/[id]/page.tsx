@@ -20,7 +20,6 @@ import {
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -28,13 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@/components/ui/sheet';
+
 import {
   Dialog,
   DialogContent,
@@ -68,19 +61,19 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     if (webhook?.platformConfig) {
       try {
         const platformConfig =
-          typeof webhook.platformConfig.config === 'string'
-            ? JSON.parse(webhook.platformConfig.config)
-            : webhook.platformConfig.config || {};
+          typeof webhook.platformConfig === 'string'
+            ? JSON.parse(webhook.platformConfig)
+            : webhook.platformConfig || {};
 
-        const platformValue = webhook.platformConfig.platform || 'supabase';
-        setPlatform(platformValue as WebhookPlatform);
+        const availablePlatforms = Object.keys(platformConfig);
+        const platformValue =
+          availablePlatforms.length > 0
+            ? (availablePlatforms[0] as WebhookPlatform)
+            : 'supabase';
+
+        setPlatform(platformValue);
 
         setConfigValues(platformConfig);
-
-        console.log('Platform config loaded:', {
-          platform: platformValue,
-          config: platformConfig,
-        });
       } catch (error) {
         console.error('Error parsing platform config:', error);
         setPlatform('supabase');
@@ -139,6 +132,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
   const handlePlatformChange = (newPlatform: WebhookPlatform) => {
     setPlatform(newPlatform);
+
     if (!configValues[newPlatform]) {
       setConfigValues(prev => ({
         ...prev,
@@ -176,16 +170,16 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         return;
       }
 
-      const updatedConfig = {
-        platform,
-        config: JSON.stringify(configValues),
+      const updatedConfigValues = {
+        ...configValues,
+        [platform]: currentValues,
       };
 
-      console.log('Saving config:', updatedConfig);
+      const updatedConfig = {
+        platformConfig: updatedConfigValues,
+      };
 
-      await updateWebhookConfig(webhook.id, {
-        platformConfig: updatedConfig,
-      });
+      await updateWebhookConfig(webhook.id, updatedConfig);
 
       toast.success('Configuration updated successfully');
     } catch (error) {
@@ -233,15 +227,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const currentValues = configValues[platform] || {};
   const currentConfig = platformConfigs[platform];
 
-  console.log(
-    'currentValues',
-    webhook?.platformConfig,
-    configValues[platform],
-    currentConfig,
-    platformConfigs[platform],
-    platform,
-    currentConfig.fields,
-  );
   return (
     <div className='space-y-6 mx-4 md:mx-10 max-w-7xl mx-auto'>
       <div className='flex flex-col gap-2'>

@@ -80,12 +80,16 @@ export function WebhookDetailsComp({
         return;
       }
 
-      await onUpdate(webhook.id, {
-        platformConfig: {
-          platform,
-          config: JSON.stringify(configValues),
-        },
-      });
+      const updatedConfigValues = {
+        ...configValues,
+        [platform]: currentValues,
+      };
+
+      const updatedConfig = {
+        platformConfig: updatedConfigValues,
+      };
+
+      await onUpdate(webhook.id, updatedConfig);
 
       toast.success('Configuration updated successfully');
     } catch (error) {

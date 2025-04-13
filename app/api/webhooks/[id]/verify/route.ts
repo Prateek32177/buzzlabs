@@ -82,7 +82,10 @@ export async function POST(
 
   try {
     const supabase = createClient();
-    data = await req.json();
+    
+    // Clone the request before reading the body
+    const clonedReq = req.clone();
+    data = await clonedReq.json();
 
     // Get webhook config from database
     const { data: webhook, error } = await (await supabase)

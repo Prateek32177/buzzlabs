@@ -5,28 +5,15 @@ import { sendSlackNotification } from '@/lib/slack';
 import { v4 as uuidv4 } from 'uuid';
 import { WebhookPlatform } from '@/lib/webhooks/types';
 
-// Platform detection service
 class PlatformDetector {
   static detectFromHeaders(headers: Headers): string | null {
-    // Common webhook platform headers
     if (headers.get('x-github-event')) return 'github';
-    if (headers.get('x-stripe-signature')) return 'stripe';
-    if (headers.get('x-slack-signature')) return 'slack';
-    if (headers.get('shopify-hmac-sha256')) return 'shopify';
+    if (headers.get('Stripe-Signature')) return 'stripe';
     if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk'; // Clerk uses Svix
-    if (headers.get('twilio-signature')) return 'twilio';
-    if (headers.get('x-twitter-webhooks-signature')) return 'twitter';
-    if (headers.get('x-hub-signature') && !headers.get('x-github-event'))
-      return 'facebook';
 
     // Supabase webhook headers
     if (headers.get('x-webhook-token')) return 'supabase';
     if (headers.get('x-webhook-id')) return 'supabase';
-    // Vercel webhook headers
-    if (headers.get('x-vercel-signature')) return 'vercel';
-
-    // Polar webhook headers
-    if (headers.get('x-polar-signature')) return 'polar';
 
     return null;
   }
@@ -60,34 +47,27 @@ export async function POST(
   const logId = uuidv4();
   let data: any;
 
-  // Get URL parameters
   const url = new URL(req.url);
   const utmSource = url.searchParams.get('utm_source');
 
-  // Detect platform from headers first
   let detectedPlatform = PlatformDetector.detectFromHeaders(req.headers);
 
-  // If UTM source is provided, prioritize it over header detection
   if (utmSource) {
     detectedPlatform = utmSource.toLowerCase() as WebhookPlatform;
   }
 
-  // If still no platform detected, try to detect from URL
   if (!detectedPlatform) {
     detectedPlatform = PlatformDetector.detectFromUrl(req.url);
   }
 
-  // Default to unknown if no platform could be detected
   detectedPlatform = detectedPlatform || 'unknown';
 
   try {
     const supabase = createClient();
-    
-    // Clone the request before reading the body
+
     const clonedReq = req.clone();
     data = await clonedReq.json();
 
-    // Get webhook config from database
     const { data: webhook, error } = await (await supabase)
       .from('webhooks')
       .select('*')
@@ -99,14 +79,11 @@ export async function POST(
       );
     }
 
-    // Prepare verification config based on platform
     const verificationConfig = {
       platform: webhook[0].platform || detectedPlatform,
       secret: getSecretForPlatform(webhook[0], detectedPlatform),
       toleranceInSeconds: 300,
     };
-
-    // Verify webhook
     const verificationResult = await WebhookVerificationService.verify(
       req,
       verificationConfig,
@@ -137,7 +114,6 @@ export async function POST(
       );
     }
 
-    // Process notifications
     let status: 'success' | 'pending' | 'failed' = 'pending';
     let channels: string[] = [];
     let errorMessage = '';
@@ -246,27 +222,22 @@ export async function POST(
   }
 }
 
-// Helper function to get the appropriate secret for a platform
 function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
   // Use platform-specific secrets when available
-  switch (webhook.platform || detectedPlatform) {
+  switch (detectedPlatform) {
     case 'clerk':
-      return webhook.clerk_secret || webhook.secret;
+      return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'stripe':
-      return webhook.stripe_secret || webhook.secret;
+      return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'github':
-      return webhook.github_secret || webhook.secret;
-    case 'slack':
-      return webhook.slack_secret || webhook.secret;
-    case 'shopify':
-      return webhook.shopify_secret || webhook.secret;
-    case 'vercel':
-      return webhook.vercel_secret || webhook.secret;
-    case 'polar':
-      return webhook.polar_secret || webhook.secret;
+      return webhook.platformConfig[detectedPlatform].github_secret;
     case 'supabase':
-      return webhook.supabase_secret || webhook.secret;
+      return webhook.platformConfig[detectedPlatform];
     default:
+      if (!webhook.secret) {
+        console.error('No secret found for webhook:', webhook.id);
+        throw new Error('Webhook secret is missing');
+      }
       return webhook.secret;
   }
 }

@@ -29,6 +29,7 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
       },
     ],
     verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
+    showSaveButton: false,
   },
   custom: {
     id: 'custom',
@@ -61,6 +62,7 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
   -H "Content-Type: application/json" \
   -d '{"event":"test"}'`,
     },
+    showSaveButton: true,
   },
   clerk: {
     id: 'clerk',
@@ -88,5 +90,6 @@ export const platformConfigs: Record<WebhookPlatform, WebhookPlatformConfig> = {
   -H "Content-Type: application/json" \
   -d '{"type":"user.created"}'`,
     },
+    showSaveButton: true,
   },
 };

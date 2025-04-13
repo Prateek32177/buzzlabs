@@ -77,9 +77,9 @@ type WebhookLogData = {
 };
 
 const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  success: 'bg-green-100 text-green-800 border-green-200',
-  failed: 'bg-red-100 text-red-800 border-red-200',
+  pending: 'bg-yellow-900/30 text-yellow-400 border-none ',
+  success: 'text-green-400 bg-green-900/30 border-none',
+  failed: 'bg-red-900/30 text-red-400 border-none',
 };
 
 const statusIcons = {
@@ -396,7 +396,7 @@ export function NotificationLogs() {
                               <Badge
                                 key={index}
                                 variant='secondary'
-                                className='text-sm'
+                                className='text-xs'
                               >
                                 {channel.trim()}
                               </Badge>
@@ -406,9 +406,8 @@ export function NotificationLogs() {
                       <TableCell>
                         <Badge
                           variant='outline'
-                          className={`capitalize flex items-center text-sm px-1 py-1 justify-center align-middle `}
+                          className={`capitalize flex items-center text-xs justify-center align-middle text-gray-300 ${statusColors[log.status]}`}
                         >
-                          {statusIcons[log.status]}
                           {log.status}
                         </Badge>
                       </TableCell>
@@ -417,7 +416,7 @@ export function NotificationLogs() {
                           {log.email_sent && log.email_recipient && (
                             <Badge
                               variant='outline'
-                              className='text-sm px-2.5 py-1.5 flex items-center gap-1.5 bg-gray-500/20 text-gray-300 border-gray-700 justify-center align-middle'
+                              className='text-xs px-2.5 py-1.5 flex text-gray-300 items-center gap-1.5 bg-gray-500/20  border-gray-700 justify-center align-middle'
                             >
                               <Mail className='h-3.5 w-3.5' />
                               <span
@@ -431,7 +430,7 @@ export function NotificationLogs() {
                           {log.slack_sent && log.slack_channel && (
                             <Badge
                               variant='outline'
-                              className='text-sm px-2.5 py-1.5 flex items-center gap-1.5 bg-gray-500/20 text-gray-300 border-gray-700 justify-center'
+                              className='text-xs px-2.5 py-1.5 flex text-gray-300 items-center gap-1.5 bg-gray-500/20  border-gray-700 justify-center align-middle'
                             >
                               <svg
                                 className='h-3.5 w-3.5'
@@ -592,7 +591,7 @@ export function NotificationLogs() {
           {filteredLogs.length > 0 && (
             <div className='flex flex-col sm:flex-row items-center justify-between gap-4'>
               <div className='flex items-center gap-4  '>
-                <div className='text-sm text-gray-400'>
+                <div className='text-xs text-gray-400 whitespace-nowrap'>
                   Showing {(currentPage - 1) * rowsPerPage + 1}-
                   {Math.min(currentPage * rowsPerPage, filteredLogs.length)} of{' '}
                   {filteredLogs.length} logs

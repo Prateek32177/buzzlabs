@@ -402,14 +402,20 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   )}
                 </div>
               ))}
-              <div className='mt-4'>
-                <Button onClick={handleConfigUpdate} disabled={isLoading}>
-                  {isLoading ? (
-                    <Loader2 className='h-4 w-4 animate-spin mr-2' />
-                  ) : null}
-                  Save Configuration
-                </Button>
-              </div>
+              {currentConfig?.showSaveButton && (
+                <div className='mt-4'>
+                  <Button
+                    onClick={handleConfigUpdate}
+                    disabled={isLoading}
+                    size={'sm'}
+                  >
+                    {isLoading ? (
+                      <Loader2 className='h-4 w-4 animate-spin mr-2' />
+                    ) : null}
+                    Save Configuration
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

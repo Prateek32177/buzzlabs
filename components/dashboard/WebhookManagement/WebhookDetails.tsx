@@ -14,7 +14,12 @@ import { Check, Clipboard, Loader2, Mail, Slack } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -191,84 +196,99 @@ export function WebhookDetailsComp({
           </Button>
         </div>
         <div className='space-y-4 '>
-          <Label>Configuration</Label>
-          <Card className='p-4 bg-zinc-700/10'>
-            <p className='text-sm text-muted-foreground mb-4'>
-              {currentConfig.description}
-            </p>
-
-            {currentConfig.fields.map(field => (
-              <div key={field.key} className='space-y-2'>
-                <Label htmlFor={field.key}>
-                  {field.label}
-                  {field.required && <span className='text-red-500'>*</span>}
-                </Label>
-                <p className='text-sm text-muted-foreground'>
-                  {field.description}
-                </p>
-                {field.type === 'select' ? (
-                  <Select
-                    value={configValues[field.key]}
-                    onValueChange={value =>
-                      setConfigValues({ ...configValues, [field.key]: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select...' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {field.options?.map(option => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className='flex'>
-                    <Input
-                      id={field.key}
-                      type={field.type === 'secret' ? 'password' : 'text'}
-                      placeholder={field.placeholder}
-                      className='rounded-r-none font-mono text-sm'
-                      readOnly={field.readOnly || true}
-                      value={currentValues?.[field.key] || ''}
-                      onChange={e => {
-                        const updatedConfig = {
-                          ...configValues,
-                          [platform]: {
-                            ...(currentValues || {}),
-                            [field.key]: e.target.value,
-                          },
-                        };
-                        setConfigValues(updatedConfig);
-                      }}
-                    />
-                    <Button
-                      variant={'secondary'}
-                      onClick={() => {
-                        const textToCopy = currentValues?.[field.key] || '';
-                        navigator.clipboard
-                          .writeText(textToCopy)
-                          .then(() => {
-                            toast.success('Copied to clipboard', {
-                              description:
-                                'The value has been copied to your clipboard.',
-                            });
-                          })
-                          .catch(() => {
-                            toast.error('Failed to copy', {
-                              description: 'Unable to copy to clipboard.',
-                            });
-                          });
-                      }}
+          <Card className='py-4 bg-zinc-700/10'>
+            <CardContent>
+              <CardTitle>Configuration</CardTitle>
+              <CardDescription className='mt-1 mb-3'>
+                {currentConfig.description}
+              </CardDescription>
+              {currentConfig.fields.map(field => (
+                <div key={field.key} className='space-y-2'>
+                  <Label htmlFor={field.key}>
+                    {field.label}
+                    {field.required && <span className='text-red-500'>*</span>}
+                  </Label>
+                  <p className='text-sm text-muted-foreground'>
+                    {field.description}
+                  </p>
+                  {field.type === 'select' ? (
+                    <Select
+                      value={configValues[field.key]}
+                      onValueChange={value =>
+                        setConfigValues({ ...configValues, [field.key]: value })
+                      }
                     >
-                      <Clipboard className='h-4 w-4' />
-                    </Button>
-                  </div>
-                )}
-              </div>
-            ))}
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select...' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {field.options?.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className='flex'>
+                      <Input
+                        id={field.key}
+                        type={field.type === 'secret' ? 'password' : 'text'}
+                        placeholder={field.placeholder}
+                        className='rounded-r-none font-mono text-sm'
+                        readOnly={field.readOnly || true}
+                        value={currentValues?.[field.key] || ''}
+                        onChange={e => {
+                          const updatedConfig = {
+                            ...configValues,
+                            [platform]: {
+                              ...(currentValues || {}),
+                              [field.key]: e.target.value,
+                            },
+                          };
+                          setConfigValues(updatedConfig);
+                        }}
+                      />
+                      <Button
+                        variant={'secondary'}
+                        onClick={() => {
+                          const textToCopy = currentValues?.[field.key] || '';
+                          navigator.clipboard
+                            .writeText(textToCopy)
+                            .then(() => {
+                              toast.success('Copied to clipboard', {
+                                description:
+                                  'The value has been copied to your clipboard.',
+                              });
+                            })
+                            .catch(() => {
+                              toast.error('Failed to copy', {
+                                description: 'Unable to copy to clipboard.',
+                              });
+                            });
+                        }}
+                      >
+                        <Clipboard className='h-4 w-4' />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {currentConfig.showSaveButton && (
+                <div className='mt-4'>
+                  <Button
+                    onClick={handleConfigUpdate}
+                    disabled={isLoading}
+                    size={'sm'}
+                  >
+                    {isLoading ? (
+                      <Loader2 className='h-4 w-4 animate-spin mr-2' />
+                    ) : null}
+                    Save Configuration
+                  </Button>
+                </div>
+              )}
+            </CardContent>
           </Card>
         </div>
 

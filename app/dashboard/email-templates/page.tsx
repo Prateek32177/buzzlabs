@@ -20,7 +20,13 @@ import {
   Template as ServiceTemplate,
 } from '@/utils/template-manager';
 import { toast } from 'sonner';
-import { Loader, Save, RefreshCw, HelpCircle } from 'lucide-react';
+import {
+  Loader,
+  Save,
+  RefreshCw,
+  HelpCircle,
+  ArrowUpRight,
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -406,33 +412,43 @@ export default function EmailTemplateEditor() {
         <div className='flex items-center justify-between flex-wrap gap-4'>
           <div
             className='
-          flex items-center gap-2'
+         flex items-center gap-2 justify-start'
           >
-            <Select
-              value={webhookId}
-              onValueChange={handleWebhookChange}
-              disabled={isWebhooksLoading}
-            >
-              <SelectTrigger className='w-[200px]'>
-                {isWebhooksLoading ? (
-                  <div className='flex items-center gap-2'>
-                    <Loader className='h-4 w-4 animate-spin' />
-                    <span>Loading...</span>
-                  </div>
-                ) : webhooksList.length === 0 ? (
-                  <span>No webhooks created</span>
-                ) : (
-                  <SelectValue placeholder='Select Webhook' />
-                )}
-              </SelectTrigger>
-              <SelectContent>
-                {webhooksList.map(webhook => (
-                  <SelectItem key={webhook.id} value={webhook.id}>
-                    {webhook.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {webhooksList.length !== 0 ? (
+              <Select
+                value={webhookId}
+                onValueChange={handleWebhookChange}
+                disabled={isWebhooksLoading}
+              >
+                <SelectTrigger className='w-[200px]'>
+                  {isWebhooksLoading ? (
+                    <div className='flex items-center gap-2'>
+                      <Loader className='h-4 w-4 animate-spin' />
+                      <span>Loading...</span>
+                    </div>
+                  ) : (
+                    <SelectValue placeholder='Select Webhook' />
+                  )}
+                </SelectTrigger>
+                <SelectContent>
+                  {webhooksList.map(webhook => (
+                    <SelectItem key={webhook.id} value={webhook.id}>
+                      {webhook.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <span className='text-sm text-gray-400'>
+                No webhook found{' '}
+                <a
+                  href='/dashboard/webhooks'
+                  className='underline whitespace-nowrap flex gap-1 text-white'
+                >
+                  Create Webhook <ArrowUpRight className='w-4 h-4' />
+                </a>
+              </span>
+            )}
             <Select value={templateId} onValueChange={handleTemplateChange}>
               <SelectTrigger className='w-[200px]'>
                 <SelectValue placeholder='Select a template' />
@@ -502,7 +518,7 @@ export default function EmailTemplateEditor() {
             <Button
               size={'sm'}
               onClick={saveTemplate}
-              disabled={isSaving}
+              disabled={isSaving || webhooksList.length === 0}
               className='flex items-center gap-2'
             >
               <Save className='h-4 w-4' />

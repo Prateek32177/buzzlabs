@@ -23,7 +23,7 @@ import { slackTemplates } from '@/lib/slack-templates';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TemplateService, TemplateType } from '@/utils/template-manager';
-import { Save, RefreshCw, Loader } from 'lucide-react';
+import { Save, RefreshCw, Loader, ArrowUpRight } from 'lucide-react';
 import { getUser } from '@/hooks/user-auth';
 import { useSearchParams } from 'next/navigation';
 
@@ -374,41 +374,51 @@ export default function SlackTemplateEditor() {
 
   return (
     <div className='container mx-auto p-6 space-y-6'>
-      <div className='flex flex-col'>
+      <div className='flex flex-col gap-6'>
         <h1 className='text-3xl text-white font-bold mb-6'>
           Slack Template Editor
         </h1>
 
-        <div className='mb-6 flex flex-col md:flex-row items-center justify-between gap-4 w-full'>
+        <div className='flex items-center justify-between flex-wrap gap-4'>
           <div
             className='
-          flex items-center gap-2'
+         flex items-center gap-2 justify-start'
           >
-            <Select
-              value={webhookId}
-              onValueChange={handleWebhookChange}
-              disabled={isWebhooksLoading}
-            >
-              <SelectTrigger className='w-[200px]'>
-                {isWebhooksLoading ? (
-                  <div className='flex items-center gap-2'>
-                    <Loader className='h-4 w-4 animate-spin' />
-                    <span>Loading...</span>
-                  </div>
-                ) : webhooksList.length === 0 ? (
-                  <span>No webhooks created</span>
-                ) : (
-                  <SelectValue placeholder='Select Webhook' />
-                )}
-              </SelectTrigger>
-              <SelectContent>
-                {webhooksList.map(webhook => (
-                  <SelectItem key={webhook.id} value={webhook.id}>
-                    {webhook.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {webhooksList.length !== 0 ? (
+              <Select
+                value={webhookId}
+                onValueChange={handleWebhookChange}
+                disabled={isWebhooksLoading}
+              >
+                <SelectTrigger className='w-[200px]'>
+                  {isWebhooksLoading ? (
+                    <div className='flex items-center gap-2'>
+                      <Loader className='h-4 w-4 animate-spin' />
+                      <span>Loading...</span>
+                    </div>
+                  ) : (
+                    <SelectValue placeholder='Select Webhook' />
+                  )}
+                </SelectTrigger>
+                <SelectContent>
+                  {webhooksList.map(webhook => (
+                    <SelectItem key={webhook.id} value={webhook.id}>
+                      {webhook.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <span className='text-sm text-gray-400'>
+                No webhook found{' '}
+                <a
+                  href='/dashboard/webhooks'
+                  className='underline whitespace-nowrap flex gap-1 text-white'
+                >
+                  Create Webhook <ArrowUpRight className='w-4 h-4' />
+                </a>
+              </span>
+            )}
             <Select
               value={templateId}
               onValueChange={handleTemplateChange}
@@ -426,13 +436,17 @@ export default function SlackTemplateEditor() {
               </SelectContent>
             </Select>
           </div>
-          <div className='flex w-full justify-between md:justify-end gap-2'>
+          <div className='flex gap-2'>
             <Button
               size={'sm'}
               onClick={saveTemplate}
               className='flex items-center gap-2'
               disabled={
-                isSaving || isLoading || !templateCode || jsonError !== null
+                isSaving ||
+                isLoading ||
+                !templateCode ||
+                jsonError !== null ||
+                webhooksList.length === 0
               }
             >
               <Save className='h-4 w-4' />

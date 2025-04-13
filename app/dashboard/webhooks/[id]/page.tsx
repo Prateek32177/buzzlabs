@@ -228,7 +228,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const currentConfig = platformConfigs[platform];
 
   return (
-    <div className='space-y-6 mx-4 md:mx-10 max-w-7xl mx-auto'>
+    <div className='container mx-auto p-6 space-y-6'>
       <div className='flex flex-col gap-2'>
         <h1 className='text-3xl font-bold tracking-tight'>Webhook Details</h1>
         <p className='text-zinc-400'>
@@ -240,6 +240,23 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         <div className='lg:col-span-2 space-y-6'>
           <div className='grid gap-6 py-4 bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
             <h3 className='text-lg font-medium'>Basic Information</h3>
+            <div className='flex items-center justify-between mt-4'>
+              <span className='text-sm text-muted-foreground'>
+              {webhook.is_active ? 'Disable Webhook' : 'Enable Webhook'}
+              </span>
+              <Switch
+              checked={webhook.is_active}
+              onCheckedChange={async (checked) => {
+                try {
+                await updateWebhookConfig(webhook.id, { is_active: checked });
+                toast.success('Webhook status updated successfully');
+                } catch (error) {
+                toast.error('Error', { description: 'Failed to update webhook status' });
+                }
+              }}
+              disabled={isLoading}
+              />
+            </div>
             <div className='grid gap-2'>
               <Label>Name</Label>
               <div className='flex gap-2'>
@@ -435,11 +452,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   />
                 </div>
                 <div className='flex items-center gap-2'>
-                  {webhook?.email_config?.recipient_email && (
-                    <Badge variant='outline' className='text-xs'>
-                      {webhook.email_config.recipient_email}
-                    </Badge>
-                  )}
                   <Button
                     variant='outline'
                     size='sm'
@@ -464,11 +476,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   />
                 </div>
                 <div className='flex items-center gap-2'>
-                  {webhook?.slack_config?.channel_name && (
-                    <Badge variant='outline' className='text-xs'>
-                      {webhook.slack_config.channel_name}
-                    </Badge>
-                  )}
                   <Button
                     variant='outline'
                     size='sm'

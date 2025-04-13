@@ -23,4 +23,5 @@ export interface WebhookPlatformConfig {
     node?: string;
     python?: string;
   };
+  showSaveButton?: boolean;
 }

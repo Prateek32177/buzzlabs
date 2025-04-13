@@ -23,7 +23,7 @@ import { slackTemplates } from '@/lib/slack-templates';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TemplateService, TemplateType } from '@/utils/template-manager';
-import { Save, RefreshCw, Loader } from 'lucide-react';
+import { Save, RefreshCw, Loader, ArrowUpRight } from 'lucide-react';
 import { getUser } from '@/hooks/user-auth';
 import { useSearchParams } from 'next/navigation';
 
@@ -40,6 +40,9 @@ export default function SlackTemplateEditor() {
     'idle' | 'saving' | 'saved' | 'error'
   >('idle');
   const [jsonError, setJsonError] = useState<string | null>(null);
+  const [webhooksList, setWebhooksList] = useState<any[]>([]);
+  const [webhookId, setSelectedWebhookId] = useState<string>();
+  const [isWebhooksLoading, setIsWebhooksLoading] = useState(true);
 
   const templateService = new TemplateService();
   const [userid, setUserId] = useState('');
@@ -47,6 +50,7 @@ export default function SlackTemplateEditor() {
   const searchParams = useSearchParams();
   const template_id =
     (searchParams.get('templateId') as TemplateId['templateId']) || null;
+  const webhook_id = searchParams.get('webhookId') || null;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -56,10 +60,35 @@ export default function SlackTemplateEditor() {
       setIsPageLoading(false);
     };
     fetchUser();
+    fetchWebhooksList();
   }, []);
 
   const userId = userid;
 
+  const fetchWebhooksList = async () => {
+    try {
+      setIsWebhooksLoading(true);
+      const response = await fetch('/api/webhooks?fields=templates');
+      if (!response.ok) throw new Error(`Failed to fetch webhooks`);
+      const data = await response.json();
+      setWebhooksList(data);
+
+      // Set default webhook ID to the first webhook if available and no webhook_id from search params
+      if (data.length > 0 && !webhook_id) {
+        setSelectedWebhookId(data[0].id);
+      } else if (webhook_id) {
+        // If webhook_id is in search params, set it as selected
+        setSelectedWebhookId(webhook_id);
+      }
+    } catch (error) {
+      toast.error('Error', {
+        description: 'Failed to fetch webhooks',
+        id: 'fetch-webhooks-error',
+      });
+    } finally {
+      setIsWebhooksLoading(false);
+    }
+  };
   // Load template from service on initial render
   useEffect(() => {
     async function loadTemplate() {
@@ -69,14 +98,19 @@ export default function SlackTemplateEditor() {
         setIsLoading(true);
         const customTemplate = await templateService.getUserTemplate(
           userId,
+
           templateId,
           TemplateType.SLACK,
+          webhookId || '',
         );
 
         const defaultTemplate = slackTemplates.find(t => t.id === templateId);
 
         if (!defaultTemplate) {
-          toast.error('Default template not found');
+          toast.error('Default template not found', {
+            id: 'default-template-error',
+            description: 'Failed to load default template',
+          });
           setIsLoading(false);
           return;
         }
@@ -111,20 +145,19 @@ export default function SlackTemplateEditor() {
             const defaultRendered = defaultTemplate.render({});
             setSelectedTemplate(defaultTemplate);
             setTemplateCode(JSON.stringify(defaultRendered, null, 2));
-            toast.warning('Using default template due to render error');
           }
         } else {
           // Use default template
           const rendered = defaultTemplate.render({});
           setSelectedTemplate(defaultTemplate);
           setTemplateCode(JSON.stringify(rendered, null, 2));
-          toast('Default template loaded', {
-            description: `Loaded the default ${defaultTemplate.name} template.`,
-          });
         }
       } catch (error) {
         console.error('Failed to load template:', error);
-        toast.error('Failed to load template');
+        toast.error('Failed to load template', {
+          id: 'load-template-error',
+          description: 'Failed to load template',
+        });
 
         // Fallback to default template
         const defaultTemplate = slackTemplates.find(t => t.id === templateId);
@@ -140,13 +173,22 @@ export default function SlackTemplateEditor() {
     if (template_id) {
       setTemplateId(template_id);
     }
+
+    // Set webhookId from search params if available
+    if (webhook_id) {
+      setSelectedWebhookId(webhook_id);
+    }
+
     loadTemplate();
-  }, [templateId, userId]);
+  }, [templateId, userId, webhookId]);
 
   // Save template function
   const saveTemplate = async () => {
     if (!selectedTemplate?.id || !userId) {
-      toast.error('No template selected');
+      toast.error('No template selected', {
+        id: 'no-template-error',
+        description: 'Please select a template to save',
+      });
       return;
     }
 
@@ -180,20 +222,22 @@ export default function SlackTemplateEditor() {
       }
       await templateService.saveUserCustomization(
         userId,
+
         selectedTemplate.id,
         TemplateType.SLACK,
         updatedTemplate,
+        webhookId || '',
       );
 
       // Update the selected template with the new content
       setSelectedTemplate(updatedTemplate);
 
       setSaveStatus('saved');
-      toast.success('Saved successfully!');
+      toast.success('Saved successfully!', { id: 'save-template' });
     } catch (error) {
       console.error('Failed to save template:', error);
       setSaveStatus('error');
-      toast.error('Failed to save');
+      toast.error('Failed to save', { id: 'save-template-error' });
     } finally {
       setIsSaving(false);
       setTimeout(() => setSaveStatus('idle'), 2000);
@@ -204,15 +248,17 @@ export default function SlackTemplateEditor() {
     setTemplateId(newTemplateId);
     const defaultTemplate = slackTemplates.find(t => t.id === newTemplateId);
     if (!defaultTemplate) {
-      toast.error('Template not found');
+      toast.error('Template not found', { id: 'template-error' });
       return;
     }
 
     try {
       const customTemplate = await templateService.getUserTemplate(
         userId?.toString() || '',
+
         newTemplateId,
         TemplateType.SLACK,
+        webhookId || '',
       );
 
       if (customTemplate) {
@@ -233,9 +279,6 @@ export default function SlackTemplateEditor() {
 
           setSelectedTemplate(customTemplate);
           setTemplateCode(JSON.stringify(renderedContent, null, 2));
-          toast('Template loaded', {
-            description: `Loaded your customized version of the ${defaultTemplate.name} template.`,
-          });
         } catch (renderError) {
           console.error('Error rendering custom template:', renderError);
 
@@ -250,13 +293,12 @@ export default function SlackTemplateEditor() {
         const rendered = defaultTemplate.render({});
         setSelectedTemplate(defaultTemplate);
         setTemplateCode(JSON.stringify(rendered, null, 2));
-        toast('Default template loaded', {
-          description: `Loaded the default ${defaultTemplate.name} template.`,
-        });
       }
     } catch (error) {
       console.error('Failed to load template:', error);
-      toast.error('Failed to load template');
+      toast.error('Failed to load template', {
+        id: 'load-template-error',
+      });
 
       // Fallback to default template
       if (defaultTemplate) {
@@ -285,13 +327,20 @@ export default function SlackTemplateEditor() {
         setJsonError(null); // Reset JSON error state
         toast.success('Template reset', {
           description: `The ${selectedTemplate.name} template has been reset to default.`,
+          id: 'reset-template',
         });
       } else {
-        toast.error('Default template not found');
+        toast.error('Default template not found', {
+          id: 'reset-template-error',
+          description: 'Failed to reset template',
+        });
       }
     } catch (error) {
       console.error('Failed to reset template:', error);
-      toast.error('Failed to reset template');
+      toast.error('Failed to reset template', {
+        id: 'reset-template-error',
+        description: 'Failed to reset template',
+      });
     }
   };
 
@@ -300,6 +349,10 @@ export default function SlackTemplateEditor() {
     updatedTemplate: Record<string, any>,
   ) => {
     setTemplateCode(JSON.stringify(updatedTemplate, null, 2));
+  };
+
+  const handleWebhookChange = (selectedWebhookId: string) => {
+    setSelectedWebhookId(selectedWebhookId || '');
   };
 
   // Parse the template for preview
@@ -321,35 +374,79 @@ export default function SlackTemplateEditor() {
 
   return (
     <div className='container mx-auto p-6 space-y-6'>
-      <div className='flex flex-col'>
+      <div className='flex flex-col gap-6'>
         <h1 className='text-3xl text-white font-bold mb-6'>
           Slack Template Editor
         </h1>
 
-        <div className='mb-6 flex flex-col md:flex-row items-center justify-between gap-4 w-full'>
-          <Select
-            value={templateId}
-            onValueChange={handleTemplateChange}
-            disabled={isLoading}
+        <div className='flex items-center justify-between flex-wrap gap-4'>
+          <div
+            className='
+         flex items-center gap-2 justify-start'
           >
-            <SelectTrigger className='w-full md:w-[300px] text-foreground'>
-              <SelectValue placeholder='Select a template' />
-            </SelectTrigger>
-            <SelectContent className='text-foreground'>
-              {slackTemplates.map(template => (
-                <SelectItem key={template.id} value={template.id}>
-                  {template.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className='flex w-full justify-between md:justify-end gap-2'>
+            {webhooksList.length !== 0 ? (
+              <Select
+                value={webhookId}
+                onValueChange={handleWebhookChange}
+                disabled={isWebhooksLoading}
+              >
+                <SelectTrigger className='w-[200px]'>
+                  {isWebhooksLoading ? (
+                    <div className='flex items-center gap-2'>
+                      <Loader className='h-4 w-4 animate-spin' />
+                      <span>Loading...</span>
+                    </div>
+                  ) : (
+                    <SelectValue placeholder='Select Webhook' />
+                  )}
+                </SelectTrigger>
+                <SelectContent>
+                  {webhooksList.map(webhook => (
+                    <SelectItem key={webhook.id} value={webhook.id}>
+                      {webhook.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <span className='text-sm text-gray-400'>
+                No webhook found{' '}
+                <a
+                  href='/dashboard/webhooks'
+                  className='underline whitespace-nowrap flex gap-1 text-white'
+                >
+                  Create Webhook <ArrowUpRight className='w-4 h-4' />
+                </a>
+              </span>
+            )}
+            <Select
+              value={templateId}
+              onValueChange={handleTemplateChange}
+              disabled={isLoading}
+            >
+              <SelectTrigger className='w-full md:w-[300px] text-foreground'>
+                <SelectValue placeholder='Select a template' />
+              </SelectTrigger>
+              <SelectContent className='text-foreground'>
+                {slackTemplates.map(template => (
+                  <SelectItem key={template.id} value={template.id}>
+                    {template.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className='flex gap-2'>
             <Button
               size={'sm'}
               onClick={saveTemplate}
               className='flex items-center gap-2'
               disabled={
-                isSaving || isLoading || !templateCode || jsonError !== null
+                isSaving ||
+                isLoading ||
+                !templateCode ||
+                jsonError !== null ||
+                webhooksList.length === 0
               }
             >
               <Save className='h-4 w-4' />

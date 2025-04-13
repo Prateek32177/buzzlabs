@@ -3,29 +3,17 @@ import { createClient } from '@/utils/supabase/server';
 import { sendEmail } from '@/lib/email';
 import { sendSlackNotification } from '@/lib/slack';
 import { v4 as uuidv4 } from 'uuid';
+import { WebhookPlatform } from '@/lib/webhooks/types';
 
-// Platform detection service
 class PlatformDetector {
   static detectFromHeaders(headers: Headers): string | null {
-    // Common webhook platform headers
     if (headers.get('x-github-event')) return 'github';
-    if (headers.get('x-stripe-signature')) return 'stripe';
-    if (headers.get('x-slack-signature')) return 'slack';
-    if (headers.get('shopify-hmac-sha256')) return 'shopify';
+    if (headers.get('Stripe-Signature')) return 'stripe';
     if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk'; // Clerk uses Svix
-    if (headers.get('twilio-signature')) return 'twilio';
-    if (headers.get('x-twitter-webhooks-signature')) return 'twitter';
-    if (headers.get('x-hub-signature') && !headers.get('x-github-event'))
-      return 'facebook';
 
     // Supabase webhook headers
     if (headers.get('x-webhook-token')) return 'supabase';
     if (headers.get('x-webhook-id')) return 'supabase';
-    // Vercel webhook headers
-    if (headers.get('x-vercel-signature')) return 'vercel';
-
-    // Polar webhook headers
-    if (headers.get('x-polar-signature')) return 'polar';
 
     return null;
   }
@@ -58,14 +46,28 @@ export async function POST(
   const startTime = Date.now();
   const logId = uuidv4();
   let data: any;
-  let detectedPlatform =
-    PlatformDetector.detectFromHeaders(req.headers) || 'unknown';
+
+  const url = new URL(req.url);
+  const utmSource = url.searchParams.get('utm_source');
+
+  let detectedPlatform = PlatformDetector.detectFromHeaders(req.headers);
+
+  if (utmSource) {
+    detectedPlatform = utmSource.toLowerCase() as WebhookPlatform;
+  }
+
+  if (!detectedPlatform) {
+    detectedPlatform = PlatformDetector.detectFromUrl(req.url);
+  }
+
+  detectedPlatform = detectedPlatform || 'unknown';
 
   try {
     const supabase = createClient();
-    data = await req.json();
 
-    // Get webhook config from database
+    const clonedReq = req.clone();
+    data = await clonedReq.json();
+
     const { data: webhook, error } = await (await supabase)
       .from('webhooks')
       .select('*')
@@ -77,15 +79,15 @@ export async function POST(
       );
     }
 
-    // Verify webhook
-    const verificationResult = await WebhookVerificationService.verify(req, {
-      platform: webhook[0].platform || '',
-      secret:
-        webhook[0].platform === 'clerk'
-          ? webhook[0].clerk_secret
-          : webhook[0].secret,
+    const verificationConfig = {
+      platform: webhook[0].platform || detectedPlatform,
+      secret: getSecretForPlatform(webhook[0], detectedPlatform),
       toleranceInSeconds: 300,
-    });
+    };
+    const verificationResult = await WebhookVerificationService.verify(
+      req,
+      verificationConfig,
+    );
 
     if (!verificationResult.isValid) {
       const log = {
@@ -112,7 +114,6 @@ export async function POST(
       );
     }
 
-    // Process notifications
     let status: 'success' | 'pending' | 'failed' = 'pending';
     let channels: string[] = [];
     let errorMessage = '';
@@ -125,7 +126,7 @@ export async function POST(
             from: 'Superhook Alerts <alerts@brokersify.in>',
             to: webhook[0].email_config.recipient_email,
             templateId: webhook[0].email_config.template_id,
-            data: { type: 'webhook', payload: data },
+            data,
           });
           channels.push('email');
           status = 'success';
@@ -143,11 +144,7 @@ export async function POST(
             webhookUrl: webhook[0].slack_config.webhook_url,
             channelName: webhook[0].slack_config.channel_name,
             templateId: webhook[0].slack_config.template_id,
-            data: {
-              webhookId: id,
-              payload: data,
-              timestamp: new Date().toISOString(),
-            },
+            data
           });
           channels.push('slack');
           status = 'success';
@@ -218,5 +215,25 @@ export async function POST(
       { error: `Failed to process webhook: ${err.message}` },
       { status: 500 },
     );
+  }
+}
+
+function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
+  // Use platform-specific secrets when available
+  switch (detectedPlatform) {
+    case 'clerk':
+      return webhook.platformConfig[detectedPlatform].signing_secret;
+    case 'stripe':
+      return webhook.platformConfig[detectedPlatform].signing_secret;
+    case 'github':
+      return webhook.platformConfig[detectedPlatform].github_secret;
+    case 'supabase':
+      return webhook.platformConfig[detectedPlatform];
+    default:
+      if (!webhook.secret) {
+        console.error('No secret found for webhook:', webhook.id);
+        throw new Error('Webhook secret is missing');
+      }
+      return webhook.secret;
   }
 }

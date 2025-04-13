@@ -159,11 +159,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       const currentValues = configValues[platform] || {};
       const currentConfig = platformConfigs[platform];
 
-      const missingFields = currentConfig.fields
+      const missingFields = currentConfig?.fields
         .filter(field => field.required && !currentValues[field.key])
         .map(field => field.label);
 
-      if (missingFields.length > 0) {
+      if (missingFields && missingFields.length > 0) {
         toast.error('Error', {
           description: `Missing required fields: ${missingFields.join(', ')}`,
         });
@@ -336,11 +336,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
               Configuration
             </h3>
             <p className='text-sm text-muted-foreground mb-4'>
-              {currentConfig.description}
+              {currentConfig?.description}
             </p>
 
             <div className='space-y-4'>
-              {currentConfig.fields.map(field => (
+              {currentConfig?.fields.map(field => (
                 <div key={field.key} className='space-y-2'>
                   <Label htmlFor={field.key}>
                     {field.label}
@@ -419,14 +419,20 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   )}
                 </div>
               ))}
-              <div className='mt-4'>
-                <Button onClick={handleConfigUpdate} disabled={isLoading}>
-                  {isLoading ? (
-                    <Loader2 className='h-4 w-4 animate-spin mr-2' />
-                  ) : null}
-                  Save Configuration
-                </Button>
-              </div>
+              {currentConfig?.showSaveButton && (
+                <div className='mt-4'>
+                  <Button
+                    onClick={handleConfigUpdate}
+                    disabled={isLoading}
+                    size={'sm'}
+                  >
+                    {isLoading ? (
+                      <Loader2 className='h-4 w-4 animate-spin mr-2' />
+                    ) : null}
+                    Save Configuration
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -491,7 +497,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
             <div className='flex items-center justify-between mb-4'>
               <h3 className='text-lg font-medium'>Integration Guide</h3>
-              {currentConfig.docs && (
+              {currentConfig?.docs && (
                 <Button variant='outline' size='sm' asChild>
                   <a
                     href={currentConfig.docs}
@@ -590,7 +596,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 </div>
               )}
 
-              {currentConfig.verificationHeaders && (
+              {currentConfig?.verificationHeaders && (
                 <div className='mt-4'>
                   <h4 className='text-sm font-medium mb-2'>Required Headers</h4>
                   <div className='flex flex-wrap gap-2'>
@@ -710,7 +716,7 @@ function EmailConfigForm({
           <Label htmlFor='emailTemplate'>Template</Label>
           <Button variant='link' size='sm' asChild>
             <a
-              href={`/dashboard/email-templates?templateId=${emailConfig.template_id}`}
+              href={`/dashboard/email-templates?templateId=${emailConfig.template_id}&webhookId=${webhook.id}`}
               target='_blank'
               rel='noopener noreferrer'
             >
@@ -855,7 +861,7 @@ function SlackConfigForm({
             <Label htmlFor='slackTemplate'>Template</Label>
             <Button variant='link' size='sm' asChild>
               <a
-                href={`/dashboard/slack-templates?templateId=${slackConfig.template_id}`}
+                href={`/dashboard/slack-templates?templateId=${slackConfig.template_id}&webhookId=${webhook.id}`}
                 target='_blank'
                 rel='noopener noreferrer'
               >

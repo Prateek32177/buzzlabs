@@ -131,7 +131,6 @@ const ProfileTab = () => {
                   onChange={e =>
                     setUserData({ ...userData, username: e.target.value })
                   }
-                  className='bg-hookflo-dark border-hookflo-dark-border text-white'
                 />
               </div>
 
@@ -146,7 +145,6 @@ const ProfileTab = () => {
                     onChange={e =>
                       setUserData({ ...userData, email: e.target.value })
                     }
-                    className='bg-hookflo-dark border-hookflo-dark-border text-white'
                   />
                   {userData.isEmailVerified && (
                     <Badge className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-xs text-green-500 bg-green-900/30  rounded-full px-2 py-1'>

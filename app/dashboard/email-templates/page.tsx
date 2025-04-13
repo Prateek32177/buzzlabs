@@ -20,7 +20,13 @@ import {
   Template as ServiceTemplate,
 } from '@/utils/template-manager';
 import { toast } from 'sonner';
-import { Loader, Save, RefreshCw, HelpCircle } from 'lucide-react';
+import {
+  Loader,
+  Save,
+  RefreshCw,
+  HelpCircle,
+  ArrowUpRight,
+} from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -49,6 +55,7 @@ export default function EmailTemplateEditor() {
   const searchParams = useSearchParams();
   const template_id =
     (searchParams.get('templateId') as TemplateId['templateId']) || null;
+  const webhook_id = searchParams.get('webhookId') || null;
 
   const [selectedTemplate, setSelectedTemplate] =
     useState<EditorTemplate | null>(null);
@@ -62,6 +69,9 @@ export default function EmailTemplateEditor() {
   const [isLoading, setIsLoading] = useState(true);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [userid, setUserId] = useState('');
+  const [webhooksList, setWebhooksList] = useState<any[]>([]);
+  const [webhookId, setSelectedWebhookId] = useState<string>();
+  const [isWebhooksLoading, setIsWebhooksLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -71,7 +81,33 @@ export default function EmailTemplateEditor() {
       setIsPageLoading(false);
     };
     fetchUser();
+    fetchWebhooksList();
   }, []);
+
+  const fetchWebhooksList = async () => {
+    try {
+      setIsWebhooksLoading(true);
+      const response = await fetch('/api/webhooks?fields=templates');
+      if (!response.ok) throw new Error(`Failed to fetch webhooks`);
+      const data = await response.json();
+      setWebhooksList(data);
+
+      // Set default webhook ID to the first webhook if available and no webhook_id from search params
+      if (data.length > 0 && !webhook_id) {
+        setSelectedWebhookId(data[0].id);
+      } else if (webhook_id) {
+        // If webhook_id is in search params, set it as selected
+        setSelectedWebhookId(webhook_id);
+      }
+    } catch (error) {
+      toast.error('Error', {
+        description: 'Failed to fetch webhooks',
+        id: 'webhook-fetch-error',
+      });
+    } finally {
+      setIsWebhooksLoading(false);
+    }
+  };
 
   const userId = userid;
   // Load all available templates
@@ -85,12 +121,15 @@ export default function EmailTemplateEditor() {
         userId,
         templateId,
         TemplateType.EMAIL,
+        webhookId || '',
       );
 
       const defaultTemplate = emailTemplates.find(t => t.id === templateId);
 
       if (!defaultTemplate) {
-        toast.error('Default template not found');
+        toast.error('Default template not found', {
+          id: 'default-template-not-found',
+        });
         setIsLoading(false);
         return;
       }
@@ -137,8 +176,6 @@ export default function EmailTemplateEditor() {
               {},
             ),
           );
-
-          toast('Custom template loaded');
         } catch (renderError) {
           console.error('Error rendering custom template:', renderError);
 
@@ -152,7 +189,6 @@ export default function EmailTemplateEditor() {
           });
           setEditedContent(defaultRendered.html);
           setEditedSubject(defaultRendered.subject);
-          toast.warning('Using default template due to render error');
         }
       } else {
         // Use default template
@@ -165,13 +201,12 @@ export default function EmailTemplateEditor() {
         });
         setEditedContent(rendered.html);
         setEditedSubject(rendered.subject);
-        toast('Default template loaded', {
-          description: `Loaded the default ${defaultTemplate.name} template.`,
-        });
       }
     } catch (error) {
       console.error('Failed to load template:', error);
-      toast.error('Failed to load template');
+      toast.error('Failed to load template', {
+        id: 'template-load-error',
+      });
 
       // Fallback to default template
       const defaultTemplate = emailTemplates.find(t => t.id === templateId);
@@ -197,8 +232,13 @@ export default function EmailTemplateEditor() {
       setTemplateId(template_id);
     }
 
+    // Set webhookId from search params if available
+    if (webhook_id) {
+      setSelectedWebhookId(webhook_id);
+    }
+
     loadTemplate();
-  }, [templateId, userId]);
+  }, [templateId, userId, webhookId]);
 
   // Enhanced variable extraction function
   const extractVariables = (content: string): string[] => {
@@ -213,7 +253,7 @@ export default function EmailTemplateEditor() {
 
   const saveTemplate = async () => {
     if (!selectedTemplate?.id || !userId) {
-      toast.error('No template selected');
+      toast.error('No template selected', { id: 'no-template-selected' });
       return;
     }
 
@@ -222,7 +262,10 @@ export default function EmailTemplateEditor() {
       editedContent === selectedTemplate.content &&
       editedSubject === selectedTemplate.subject
     ) {
-      toast.info('No changes to save');
+      toast.info('No changes to save', {
+        description: 'Please modify the content or subject to save.',
+        id: 'no-changes-to-save',
+      });
       return;
     }
 
@@ -252,13 +295,18 @@ export default function EmailTemplateEditor() {
         selectedTemplate.id,
         TemplateType.EMAIL,
         updatedTemplate,
+        webhookId || '',
       );
 
       await loadTemplate();
-      toast.success('Saved successfully!');
+      toast.success('Saved successfully!', {
+        id: 'template-saved',
+      });
     } catch (error) {
       console.error('Save error:', error);
-      toast.error('Failed to save template');
+      toast.error('Failed to save template', {
+        id: 'template-save-error',
+      });
     } finally {
       setIsSaving(false);
     }
@@ -266,6 +314,10 @@ export default function EmailTemplateEditor() {
 
   const handleTemplateChange = (selectedId: string) => {
     setTemplateId(selectedId);
+  };
+
+  const handleWebhookChange = (selectedWebhookId: string) => {
+    setSelectedWebhookId(selectedWebhookId || '');
   };
 
   const resetTemplate = async () => {
@@ -304,15 +356,31 @@ export default function EmailTemplateEditor() {
         );
         setVariables(initialVars);
 
+        // Delete the customization if it exists
+        if (webhookId) {
+          await templateService.deleteUserCustomization(
+            userId,
+            selectedTemplate.id,
+            TemplateType.EMAIL,
+            webhookId,
+          );
+        }
+
         toast.success('Template reset', {
           description: `The ${selectedTemplate.name} template has been reset to default.`,
+          id: 'template-reset',
         });
       } else {
-        toast.error('Default template not found');
+        toast.error('Default template not found', {
+          id: 'default-template-not-found',
+          description: 'The selected template does not exist.',
+        });
       }
     } catch (error) {
       console.error('Failed to reset template:', error);
-      toast.error('Failed to reset template');
+      toast.error('Failed to reset template', {
+        id: 'template-reset-error',
+      });
     }
   };
 
@@ -342,19 +410,58 @@ export default function EmailTemplateEditor() {
       <div className='flex flex-col gap-6'>
         <h1 className='text-3xl font-bold'>Email Template Editor</h1>
         <div className='flex items-center justify-between flex-wrap gap-4'>
-          <Select value={templateId} onValueChange={handleTemplateChange}>
-            <SelectTrigger className='w-[280px]'>
-              <SelectValue placeholder='Select a template' />
-            </SelectTrigger>
-            <SelectContent>
-              {emailTemplates.map(template => (
-                <SelectItem key={template.id} value={template.id}>
-                  {template.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
+          <div
+            className='
+         flex items-center gap-2 justify-start'
+          >
+            {webhooksList.length !== 0 ? (
+              <Select
+                value={webhookId}
+                onValueChange={handleWebhookChange}
+                disabled={isWebhooksLoading}
+              >
+                <SelectTrigger className='w-[200px]'>
+                  {isWebhooksLoading ? (
+                    <div className='flex items-center gap-2'>
+                      <Loader className='h-4 w-4 animate-spin' />
+                      <span>Loading...</span>
+                    </div>
+                  ) : (
+                    <SelectValue placeholder='Select Webhook' />
+                  )}
+                </SelectTrigger>
+                <SelectContent>
+                  {webhooksList.map(webhook => (
+                    <SelectItem key={webhook.id} value={webhook.id}>
+                      {webhook.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <span className='text-sm text-gray-400'>
+                No webhook found{' '}
+                <a
+                  href='/dashboard/webhooks'
+                  className='underline whitespace-nowrap flex gap-1 text-white'
+                >
+                  Create Webhook <ArrowUpRight className='w-4 h-4' />
+                </a>
+              </span>
+            )}
+            <Select value={templateId} onValueChange={handleTemplateChange}>
+              <SelectTrigger className='w-[200px]'>
+                <SelectValue placeholder='Select a template' />
+              </SelectTrigger>
+              <SelectContent>
+                {emailTemplates.map(template => (
+                  <SelectItem key={template.id} value={template.id}>
+                    {template.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className='flex gap-2'>
             <Dialog>
               <DialogTrigger asChild>
@@ -411,7 +518,7 @@ export default function EmailTemplateEditor() {
             <Button
               size={'sm'}
               onClick={saveTemplate}
-              disabled={isSaving}
+              disabled={isSaving || webhooksList.length === 0}
               className='flex items-center gap-2'
             >
               <Save className='h-4 w-4' />

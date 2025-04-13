@@ -25,6 +25,8 @@ export async function GET(req: Request) {
     }
     if (error) throw error;
 
+    const url = new URL(req.url);
+    const fields = url.searchParams.get('fields');
     // Map database fields to frontend expected format
     const formattedWebhooks = await Promise.all(
       webhooks.map(async webhook => {
@@ -34,6 +36,14 @@ export async function GET(req: Request) {
         } catch (e) {
           decryptedToken = 'Decryption failed';
         }
+
+        if (fields === 'templates') {
+          return {
+            id: webhook.id,
+            name: webhook.name,
+          };
+        }
+
         return {
           id: webhook.id,
           name: webhook.name,
@@ -76,7 +86,7 @@ export async function POST(req: Request) {
     // Create webhook
     // Define platform-specific configuration generator
     const getPlatformConfig = (platform: string) => {
-      const configs = {
+      const configs: Record<string, any> = {
         custom: {
           webhook_id: webhookId,
           webhook_token: webhookSecret,
@@ -87,8 +97,28 @@ export async function POST(req: Request) {
         },
         clerk: {
           webhook_id: webhookId,
+          signing_secret: webhookSecret || '',
         },
-        // Add more platforms here as needed
+        stripe: {
+          webhook_id: webhookId,
+          signing_secret: webhookSecret || '',
+        },
+        github: {
+          webhook_id: webhookId,
+          signing_secret: webhookSecret || '',
+        },
+        shopify: {
+          webhook_id: webhookId,
+          signing_secret: webhookSecret || '',
+        },
+        vercel: {
+          webhook_id: webhookId,
+          signing_secret: webhookSecret || '',
+        },
+        polar: {
+          webhook_id: webhookId,
+          signing_secret: webhookSecret || '',
+        },
       };
 
       return configs[platform as keyof typeof configs] || {};
@@ -130,6 +160,7 @@ export async function POST(req: Request) {
       notify_slack: webhook.notify_slack,
       email_config: webhook.email_config,
       slack_config: webhook.slack_config,
+      platformConfig: webhook.platformConfig,
     });
   } catch (error) {
     console.error('Create webhook error:', error);

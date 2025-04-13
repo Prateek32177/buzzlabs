@@ -30,24 +30,38 @@ export class TemplateService {
     userId: string,
     templateId: string,
     type: TemplateType,
+    webhookId?: string,
   ): Promise<Template | null> {
     const baseTemplate = this.getBaseTemplate(templateId, type);
     if (!baseTemplate) return null;
 
     try {
       const supabase = await createClient();
-      const { data: customization, error: customizationError } = await supabase
+
+      let query = supabase
         .from('user_template_customizations')
         .select('*')
         .eq('user_id', userId)
         .eq('template_id', templateId)
         .eq('template_type', type)
-        .eq('is_active', true)
-        .single();
+        .eq('is_active', true);
 
-      if (customizationError || !customization) {
+      if (webhookId) {
+        query = query.eq('webhook_id', webhookId);
+      }
+
+      const { data: customizations, error: customizationError } = await query;
+
+      if (
+        customizationError ||
+        !customizations ||
+        customizations.length === 0
+      ) {
         return baseTemplate;
       }
+
+      // Use the first customization found
+      const customization = customizations[0];
 
       // Create a deep copy of the base template
       const customizedTemplate = {
@@ -84,6 +98,7 @@ export class TemplateService {
     templateId: string,
     type: TemplateType,
     customizedTemplate: any,
+    webhookId?: string,
   ): Promise<void> {
     const baseTemplate = this.getBaseTemplate(templateId, type);
     if (!baseTemplate) throw new Error(`Template not found: ${templateId}`);
@@ -104,30 +119,62 @@ export class TemplateService {
     const patch = createPatch(baseForPatch, templateForPatch);
     const supabase = await createClient();
 
-    const { data: existingCustomization, error } = await supabase
-      .from('user_template_customizations')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .eq('template_type', type);
-
-    if (existingCustomization && existingCustomization.length > 0) {
-      await supabase
+    try {
+      // Include webhook_id in the query if it's provided
+      let query = supabase
         .from('user_template_customizations')
-        .update({
-          customizations: patch,
-          updated_at: new Date(),
-          is_active: true,
-        })
-        .eq('id', existingCustomization[0].id);
-    } else {
-      await supabase.from('user_template_customizations').insert({
-        user_id: userId,
-        template_id: templateId,
-        template_type: type,
-        customizations: patch,
-        is_active: true,
-      });
+        .select('*')
+        .eq('user_id', userId)
+        .eq('template_id', templateId)
+        .eq('template_type', type);
+
+      if (webhookId) {
+        query = query.eq('webhook_id', webhookId);
+      }
+
+      const { data: existingCustomizations, error } = await query;
+
+      if (error) {
+        console.error('Error checking for existing customizations:', error);
+        throw error;
+      }
+
+      if (existingCustomizations && existingCustomizations.length > 0) {
+        // Update existing customization
+        const { error: updateError } = await supabase
+          .from('user_template_customizations')
+          .update({
+            customizations: patch,
+            updated_at: new Date(),
+            is_active: true,
+          })
+          .eq('id', existingCustomizations[0].id);
+
+        if (updateError) {
+          console.error('Error updating customization:', updateError);
+          throw updateError;
+        }
+      } else {
+        // Insert new customization
+        const { error: insertError } = await supabase
+          .from('user_template_customizations')
+          .insert({
+            user_id: userId,
+            template_id: templateId,
+            template_type: type,
+            webhook_id: webhookId || null,
+            customizations: patch,
+            is_active: true,
+          });
+
+        if (insertError) {
+          console.error('Error inserting customization:', insertError);
+          throw insertError;
+        }
+      }
+    } catch (error) {
+      console.error('Error saving customization:', error);
+      throw error;
     }
   }
 
@@ -135,14 +182,33 @@ export class TemplateService {
     userId: string,
     templateId: string,
     type: TemplateType,
+    webhookId?: string,
   ): Promise<void> {
     const supabase = await createClient();
-    await supabase
-      .from('user_template_customizations')
-      .update({ is_active: false })
-      .eq('user_id', userId)
-      .eq('template_id', templateId)
-      .eq('template_type', type);
+
+    try {
+      // Include webhook_id in the query if it's provided
+      let query = supabase
+        .from('user_template_customizations')
+        .update({ is_active: false })
+        .eq('user_id', userId)
+        .eq('template_id', templateId)
+        .eq('template_type', type);
+
+      if (webhookId) {
+        query = query.eq('webhook_id', webhookId);
+      }
+
+      const { error } = await query;
+
+      if (error) {
+        console.error('Error deleting customization:', error);
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error in deleteUserCustomization:', error);
+      throw error;
+    }
   }
 
   async getAllTemplates(type?: TemplateType): Promise<Template[]> {

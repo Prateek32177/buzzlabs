@@ -144,7 +144,7 @@ export async function POST(
             webhookUrl: webhook[0].slack_config.webhook_url,
             channelName: webhook[0].slack_config.channel_name,
             templateId: webhook[0].slack_config.template_id,
-            data
+            data,
           });
           channels.push('slack');
           status = 'success';

@@ -62,8 +62,43 @@ export async function sendSlackNotification({
 // Helper function to replace variables in template
 function replaceVariables(template: any, data: Record<string, any>): any {
   if (typeof template === 'string') {
-    return template.replace(/{{([\w.-]+)}}/g, (match, key) => {
-      return data[key] || match;
+    return template.replace(/{{([\w.]+)}}/g, (match, key) => {
+      // Split the key by dots to handle nested properties
+      const keys = key.split('.');
+      let value = data;
+
+      // Traverse the nested structure
+      for (const k of keys) {
+        if (value === undefined || value === null) {
+          return match; // Keep original placeholder if any part of the path is undefined
+        }
+
+        // Handle array properties
+        if (Array.isArray(value)) {
+          // If we're at the last key and it's an array, return the first item
+          if (k === keys[keys.length - 1]) {
+            value = value[0];
+          } else {
+            // Otherwise, try to find the item in the array that matches the next key
+            const nextKey = keys[keys.indexOf(k) + 1];
+            value = value.find(item => item[nextKey] !== undefined);
+          }
+        } else {
+          value = value[k];
+        }
+      }
+
+      // If we found a value, return it, otherwise keep the original placeholder
+      if (value === undefined || value === null) {
+        return match;
+      }
+
+      // Convert the value to string, handling objects and arrays
+      if (typeof value === 'object') {
+        return JSON.stringify(value);
+      }
+
+      return String(value);
     });
   }
 

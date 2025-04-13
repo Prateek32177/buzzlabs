@@ -457,144 +457,144 @@ export function NotificationLogs() {
                               </Button>
                             </DialogTrigger>
                             <DialogContent className='sm:max-w-[550px]'>
-                             <ScrollArea className='h-[500px] w-full  overflow-auto'> 
-                              <DialogHeader>
-                                <DialogTitle className='text-xl font-semibold text-white flex items-center gap-2'>
-                                  <Badge
-                                    variant='outline'
-                                    className={`capitalize ${
-                                      log.status === 'success'
-                                        ? 'bg-green-900/50 text-green-300 border-green-700'
-                                        : log.status === 'failed'
-                                          ? 'bg-red-900/50 text-red-300 border-red-700'
-                                          : 'bg-yellow-900/50 text-yellow-300 border-yellow-700'
-                                    }`}
-                                  >
-                                    {statusIcons[log.status]}
-                                    {log.status}
-                                  </Badge>
-                                  {log.webhook_name}
-                                </DialogTitle>
-                              </DialogHeader>
+                              <ScrollArea className='h-[500px] w-full  overflow-auto'>
+                                <DialogHeader>
+                                  <DialogTitle className='text-xl font-semibold text-white flex items-center gap-2'>
+                                    <Badge
+                                      variant='outline'
+                                      className={`capitalize ${
+                                        log.status === 'success'
+                                          ? 'bg-green-900/50 text-green-300 border-green-700'
+                                          : log.status === 'failed'
+                                            ? 'bg-red-900/50 text-red-300 border-red-700'
+                                            : 'bg-yellow-900/50 text-yellow-300 border-yellow-700'
+                                      }`}
+                                    >
+                                      {statusIcons[log.status]}
+                                      {log.status}
+                                    </Badge>
+                                    {log.webhook_name}
+                                  </DialogTitle>
+                                </DialogHeader>
 
-                              <div className='mt-4 space-y-6'>
-                                {/* Info Grid */}
-                                <div className='grid grid-cols gap-4'>
-                                  <div className='min-w-0'>
-                                    <p className='text-sm text-gray-400 mb-1'>
-                                      Webhook ID
-                                    </p>
-                                    <p className='font-medium break-all'>
-                                      {log.webhook_id}
-                                    </p>
-                                  </div>
-                                  <div className='min-w-0'>
-                                    <p className='text-sm text-gray-400 mb-1'>
-                                      Processed At
-                                    </p>
-                                    <p className='font-medium'>
-                                      {formatDate(log.processed_at)}
-                                    </p>
-                                  </div>
-                                  <div className='grid grid-cols-2 gap-4'>
+                                <div className='mt-4 space-y-6'>
+                                  {/* Info Grid */}
+                                  <div className='grid grid-cols gap-4'>
                                     <div className='min-w-0'>
                                       <p className='text-sm text-gray-400 mb-1'>
-                                        Platform
+                                        Webhook ID
                                       </p>
-                                      <Badge
-                                        variant='outline'
-                                        className='bg-purple-900/50 text-purple-300 border-purple-700'
-                                      >
-                                        {log.platform}
-                                      </Badge>
+                                      <p className='font-medium break-all'>
+                                        {log.webhook_id}
+                                      </p>
                                     </div>
                                     <div className='min-w-0'>
                                       <p className='text-sm text-gray-400 mb-1'>
-                                        Channel
+                                        Processed At
                                       </p>
-                                      <Badge
-                                        variant='secondary'
-                                        className='bg-blue-900/50 text-blue-300 border-blue-700'
-                                      >
-                                        {log.channel}
-                                      </Badge>
+                                      <p className='font-medium'>
+                                        {formatDate(log.processed_at)}
+                                      </p>
                                     </div>
-                                  </div>
-                                </div>
-
-                                {/* Notification Details */}
-                                <div className='space-y-3'>
-                                  <h4 className='font-medium text-white flex items-center gap-2'>
-                                    <Mail className='h-4 w-4' />
-                                    Notification Details
-                                  </h4>
-                                  <div className='space-y-2 bg-gray-800/30 p-4 rounded-md overflow-x-auto break-words'>
-                                    {log.email_sent && (
-                                      <div className='flex items-center text-sm text-gray-300'>
-                                        <Mail className='h-4 w-4 mr-2 text-blue-400' />
-                                        <span className='font-medium break-all'>
-                                          Email sent to:{' '}
-                                          <span className='font-medium'>
-                                            {log.email_recipient}
-                                          </span>
-                                        </span>
-                                      </div>
-                                    )}
-                                    {log.slack_sent && (
-                                      <div className='flex items-center text-sm text-gray-300'>
-                                        <svg
-                                          className='h-4 w-4 mr-2 text-pink-400'
-                                          viewBox='0 0 24 24'
-                                          fill='currentColor'
+                                    <div className='grid grid-cols-2 gap-4'>
+                                      <div className='min-w-0'>
+                                        <p className='text-sm text-gray-400 mb-1'>
+                                          Platform
+                                        </p>
+                                        <Badge
+                                          variant='outline'
+                                          className='bg-purple-900/50 text-purple-300 border-purple-700'
                                         >
-                                          <path d='...' />{' '}
-                                          {/* You already have the path */}
-                                        </svg>
-                                        <span className='font-medium break-all'>
-                                          Slack message sent to:{' '}
-                                          <span className='font-medium'>
-                                            {log.slack_channel}
-                                          </span>
-                                        </span>
+                                          {log.platform}
+                                        </Badge>
                                       </div>
-                                    )}
-                                    {!log.email_sent && !log.slack_sent && (
-                                      <p className='text-gray-400'>
-                                        No notifications were delivered.
-                                      </p>
-                                    )}
+                                      <div className='min-w-0'>
+                                        <p className='text-sm text-gray-400 mb-1'>
+                                          Channel
+                                        </p>
+                                        <Badge
+                                          variant='secondary'
+                                          className='bg-blue-900/50 text-blue-300 border-blue-700'
+                                        >
+                                          {log.channel}
+                                        </Badge>
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
 
-                                {/* Error Message */}
-                                {log.error_message && (
+                                  {/* Notification Details */}
                                   <div className='space-y-3'>
                                     <h4 className='font-medium text-white flex items-center gap-2'>
-                                      <AlertCircle className='h-4 w-4 text-red-400' />
-                                      Error Details
+                                      <Mail className='h-4 w-4' />
+                                      Notification Details
                                     </h4>
-                                    <ScrollArea className='h-[100px] w-full rounded-md border border-gray-700 bg-red-900/20 p-4'>
-                                      <p className='text-red-300 font-medium'>
-                                        {log.error_message}
-                                      </p>
+                                    <div className='space-y-2 bg-gray-800/30 p-4 rounded-md overflow-x-auto break-words'>
+                                      {log.email_sent && (
+                                        <div className='flex items-center text-sm text-gray-300'>
+                                          <Mail className='h-4 w-4 mr-2 text-blue-400' />
+                                          <span className='font-medium break-all'>
+                                            Email sent to:{' '}
+                                            <span className='font-medium'>
+                                              {log.email_recipient}
+                                            </span>
+                                          </span>
+                                        </div>
+                                      )}
+                                      {log.slack_sent && (
+                                        <div className='flex items-center text-sm text-gray-300'>
+                                          <svg
+                                            className='h-4 w-4 mr-2 text-pink-400'
+                                            viewBox='0 0 24 24'
+                                            fill='currentColor'
+                                          >
+                                            <path d='...' />{' '}
+                                            {/* You already have the path */}
+                                          </svg>
+                                          <span className='font-medium break-all'>
+                                            Slack message sent to:{' '}
+                                            <span className='font-medium'>
+                                              {log.slack_channel}
+                                            </span>
+                                          </span>
+                                        </div>
+                                      )}
+                                      {!log.email_sent && !log.slack_sent && (
+                                        <p className='text-gray-400'>
+                                          No notifications were delivered.
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Error Message */}
+                                  {log.error_message && (
+                                    <div className='space-y-3'>
+                                      <h4 className='font-medium text-white flex items-center gap-2'>
+                                        <AlertCircle className='h-4 w-4 text-red-400' />
+                                        Error Details
+                                      </h4>
+                                      <ScrollArea className='h-[100px] w-full rounded-md border border-gray-700 bg-red-900/20 p-4'>
+                                        <p className='text-red-300 font-medium'>
+                                          {log.error_message}
+                                        </p>
+                                      </ScrollArea>
+                                    </div>
+                                  )}
+
+                                  {/* Payload */}
+                                  <div className='space-y-3 w-full'>
+                                    <h4 className='font-medium text-white flex items-center gap-2'>
+                                      <FileJson className='h-4 w-4' />
+                                      Payload
+                                    </h4>
+                                    <ScrollArea className='h-[200px] w-full rounded-md border border-gray-700 p-4 bg-gray-800/20 overflow-auto'>
+                                      <pre className='text-sm font-mono text-gray-200 whitespace-pre-wrap break-words'>
+                                        {JSON.stringify(log.payload, null, 2)}
+                                      </pre>
                                     </ScrollArea>
                                   </div>
-                                )}
-
-                                {/* Payload */}
-                                <div className='space-y-3 w-full'>
-                                  <h4 className='font-medium text-white flex items-center gap-2'>
-                                    <FileJson className='h-4 w-4' />
-                                    Payload
-                                  </h4>
-                                  <ScrollArea className='h-[200px] w-full rounded-md border border-gray-700 p-4 bg-gray-800/20 overflow-auto'>
-                                    <pre className='text-sm font-mono text-gray-200 whitespace-pre-wrap break-words'>
-                                      {JSON.stringify(log.payload, null, 2)}
-                                    </pre>
-                                  </ScrollArea>
                                 </div>
-                              </div>
-                            </ScrollArea>
+                              </ScrollArea>
                             </DialogContent>
                           </Dialog>
                         </div>

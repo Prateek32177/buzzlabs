@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -482,12 +482,35 @@ function SectionBlockEditor({
   block: any;
   onChange: (block: any) => void;
 }) {
-  const updateText = (text: string) => {
+  const [text, setText] = useState(block.text?.text || '');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [cursorPosition, setCursorPosition] = useState<number | null>(null);
+
+  // Update local state when block changes
+  useEffect(() => {
+    setText(block.text?.text || '');
+  }, [block.text?.text]);
+
+  // Restore cursor position after render
+  useEffect(() => {
+    if (cursorPosition !== null && textareaRef.current) {
+      textareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
+      setCursorPosition(null);
+    }
+  }, [cursorPosition, text]);
+
+  const updateText = (newText: string) => {
+    // Save cursor position before update
+    if (textareaRef.current) {
+      setCursorPosition(textareaRef.current.selectionStart);
+    }
+
+    setText(newText);
     onChange({
       ...block,
       text: {
         type: 'mrkdwn',
-        text,
+        text: newText,
       },
     });
   };
@@ -503,7 +526,8 @@ function SectionBlockEditor({
         <Label htmlFor='section-text'>Text</Label>
         <Textarea
           id='section-text'
-          value={block.text?.text || ''}
+          ref={textareaRef}
+          value={text}
           onChange={e => updateText(e.target.value)}
           placeholder='Enter text with Slack markdown'
           rows={3}
@@ -635,6 +659,7 @@ function ActionsBlockEditor({
     </div>
   );
 }
+
 // Context block editor
 function ContextBlockEditor({
   block,

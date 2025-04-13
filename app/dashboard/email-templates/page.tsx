@@ -96,6 +96,7 @@ export default function EmailTemplateEditor() {
     } catch (error) {
       toast.error('Error', {
         description: 'Failed to fetch webhooks',
+        id: 'webhook-fetch-error',
       });
     } finally {
       setIsWebhooksLoading(false);
@@ -120,7 +121,9 @@ export default function EmailTemplateEditor() {
       const defaultTemplate = emailTemplates.find(t => t.id === templateId);
 
       if (!defaultTemplate) {
-        toast.error('Default template not found');
+        toast.error('Default template not found', {
+          id: 'default-template-not-found',
+        });
         setIsLoading(false);
         return;
       }
@@ -167,8 +170,6 @@ export default function EmailTemplateEditor() {
               {},
             ),
           );
-
-          toast('Custom template loaded');
         } catch (renderError) {
           console.error('Error rendering custom template:', renderError);
 
@@ -182,7 +183,6 @@ export default function EmailTemplateEditor() {
           });
           setEditedContent(defaultRendered.html);
           setEditedSubject(defaultRendered.subject);
-          toast.warning('Using default template due to render error');
         }
       } else {
         // Use default template
@@ -195,13 +195,12 @@ export default function EmailTemplateEditor() {
         });
         setEditedContent(rendered.html);
         setEditedSubject(rendered.subject);
-        toast('Default template loaded', {
-          description: `Loaded the default ${defaultTemplate.name} template.`,
-        });
       }
     } catch (error) {
       console.error('Failed to load template:', error);
-      toast.error('Failed to load template');
+      toast.error('Failed to load template', {
+        id: 'template-load-error',
+      });
 
       // Fallback to default template
       const defaultTemplate = emailTemplates.find(t => t.id === templateId);
@@ -248,7 +247,7 @@ export default function EmailTemplateEditor() {
 
   const saveTemplate = async () => {
     if (!selectedTemplate?.id || !userId) {
-      toast.error('No template selected');
+      toast.error('No template selected', { id: 'no-template-selected' });
       return;
     }
 
@@ -257,7 +256,10 @@ export default function EmailTemplateEditor() {
       editedContent === selectedTemplate.content &&
       editedSubject === selectedTemplate.subject
     ) {
-      toast.info('No changes to save');
+      toast.info('No changes to save', {
+        description: 'Please modify the content or subject to save.',
+        id: 'no-changes-to-save',
+      });
       return;
     }
 
@@ -291,10 +293,14 @@ export default function EmailTemplateEditor() {
       );
 
       await loadTemplate();
-      toast.success('Saved successfully!');
+      toast.success('Saved successfully!', {
+        id: 'template-saved',
+      });
     } catch (error) {
       console.error('Save error:', error);
-      toast.error('Failed to save template');
+      toast.error('Failed to save template', {
+        id: 'template-save-error',
+      });
     } finally {
       setIsSaving(false);
     }
@@ -356,13 +362,19 @@ export default function EmailTemplateEditor() {
 
         toast.success('Template reset', {
           description: `The ${selectedTemplate.name} template has been reset to default.`,
+          id: 'template-reset',
         });
       } else {
-        toast.error('Default template not found');
+        toast.error('Default template not found', {
+          id: 'default-template-not-found',
+          description: 'The selected template does not exist.',
+        });
       }
     } catch (error) {
       console.error('Failed to reset template:', error);
-      toast.error('Failed to reset template');
+      toast.error('Failed to reset template', {
+        id: 'template-reset-error',
+      });
     }
   };
 

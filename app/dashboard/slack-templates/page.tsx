@@ -83,6 +83,7 @@ export default function SlackTemplateEditor() {
     } catch (error) {
       toast.error('Error', {
         description: 'Failed to fetch webhooks',
+        id: 'fetch-webhooks-error',
       });
     } finally {
       setIsWebhooksLoading(false);
@@ -106,7 +107,10 @@ export default function SlackTemplateEditor() {
         const defaultTemplate = slackTemplates.find(t => t.id === templateId);
 
         if (!defaultTemplate) {
-          toast.error('Default template not found');
+          toast.error('Default template not found', {
+            id: 'default-template-error',
+            description: 'Failed to load default template',
+          });
           setIsLoading(false);
           return;
         }
@@ -141,20 +145,19 @@ export default function SlackTemplateEditor() {
             const defaultRendered = defaultTemplate.render({});
             setSelectedTemplate(defaultTemplate);
             setTemplateCode(JSON.stringify(defaultRendered, null, 2));
-            toast.warning('Using default template due to render error');
           }
         } else {
           // Use default template
           const rendered = defaultTemplate.render({});
           setSelectedTemplate(defaultTemplate);
           setTemplateCode(JSON.stringify(rendered, null, 2));
-          toast('Default template loaded', {
-            description: `Loaded the default ${defaultTemplate.name} template.`,
-          });
         }
       } catch (error) {
         console.error('Failed to load template:', error);
-        toast.error('Failed to load template');
+        toast.error('Failed to load template', {
+          id: 'load-template-error',
+          description: 'Failed to load template',
+        });
 
         // Fallback to default template
         const defaultTemplate = slackTemplates.find(t => t.id === templateId);
@@ -182,7 +185,10 @@ export default function SlackTemplateEditor() {
   // Save template function
   const saveTemplate = async () => {
     if (!selectedTemplate?.id || !userId) {
-      toast.error('No template selected');
+      toast.error('No template selected', {
+        id: 'no-template-error',
+        description: 'Please select a template to save',
+      });
       return;
     }
 
@@ -227,11 +233,11 @@ export default function SlackTemplateEditor() {
       setSelectedTemplate(updatedTemplate);
 
       setSaveStatus('saved');
-      toast.success('Saved successfully!');
+      toast.success('Saved successfully!', { id: 'save-template' });
     } catch (error) {
       console.error('Failed to save template:', error);
       setSaveStatus('error');
-      toast.error('Failed to save');
+      toast.error('Failed to save', { id: 'save-template-error' });
     } finally {
       setIsSaving(false);
       setTimeout(() => setSaveStatus('idle'), 2000);
@@ -242,7 +248,7 @@ export default function SlackTemplateEditor() {
     setTemplateId(newTemplateId);
     const defaultTemplate = slackTemplates.find(t => t.id === newTemplateId);
     if (!defaultTemplate) {
-      toast.error('Template not found');
+      toast.error('Template not found', { id: 'template-error' });
       return;
     }
 
@@ -273,9 +279,6 @@ export default function SlackTemplateEditor() {
 
           setSelectedTemplate(customTemplate);
           setTemplateCode(JSON.stringify(renderedContent, null, 2));
-          toast('Template loaded', {
-            description: `Loaded your customized version of the ${defaultTemplate.name} template.`,
-          });
         } catch (renderError) {
           console.error('Error rendering custom template:', renderError);
 
@@ -290,13 +293,12 @@ export default function SlackTemplateEditor() {
         const rendered = defaultTemplate.render({});
         setSelectedTemplate(defaultTemplate);
         setTemplateCode(JSON.stringify(rendered, null, 2));
-        toast('Default template loaded', {
-          description: `Loaded the default ${defaultTemplate.name} template.`,
-        });
       }
     } catch (error) {
       console.error('Failed to load template:', error);
-      toast.error('Failed to load template');
+      toast.error('Failed to load template', {
+        id: 'load-template-error',
+      });
 
       // Fallback to default template
       if (defaultTemplate) {
@@ -325,13 +327,20 @@ export default function SlackTemplateEditor() {
         setJsonError(null); // Reset JSON error state
         toast.success('Template reset', {
           description: `The ${selectedTemplate.name} template has been reset to default.`,
+          id: 'reset-template',
         });
       } else {
-        toast.error('Default template not found');
+        toast.error('Default template not found', {
+          id: 'reset-template-error',
+          description: 'Failed to reset template',
+        });
       }
     } catch (error) {
       console.error('Failed to reset template:', error);
-      toast.error('Failed to reset template');
+      toast.error('Failed to reset template', {
+        id: 'reset-template-error',
+        description: 'Failed to reset template',
+      });
     }
   };
 

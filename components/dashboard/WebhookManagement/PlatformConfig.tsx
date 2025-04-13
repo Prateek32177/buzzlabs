@@ -33,7 +33,7 @@ export function PlatformConfig({
     webhook.platformConfig,
   );
 
-  const currentConfig = platformConfigs[platform];
+  const currentConfig = platformConfigs[platform] || platformConfigs['custom'];
 
   const handlePlatformChange = (newPlatform: WebhookPlatform) => {
     setPlatform(newPlatform);
@@ -78,10 +78,10 @@ export function PlatformConfig({
             <Label>Configuration</Label>
             <Card className='p-4'>
               <p className='text-sm text-muted-foreground mb-4'>
-                {currentConfig.description}
+                {currentConfig!.description}
               </p>
 
-              {currentConfig.fields.map(field => (
+              {currentConfig!.fields.map(field => (
                 <div key={field.key} className='space-y-2'>
                   <Label htmlFor={field.key}>
                     {field.label}
@@ -128,16 +128,16 @@ export function PlatformConfig({
             </Card>
           </div>
 
-          {currentConfig.docs && (
+          {currentConfig!.docs && (
             <p className='text-sm text-muted-foreground'>
               For more information, see the{' '}
               <a
-                href={currentConfig.docs}
+                href={currentConfig!.docs}
                 target='_blank'
                 rel='noopener noreferrer'
                 className='text-primary hover:underline'
               >
-                {currentConfig.name} documentation
+                {currentConfig!.name} documentation
               </a>
               .
             </p>

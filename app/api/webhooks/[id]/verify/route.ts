@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 import { sendEmail } from '@/lib/email';
 import { sendSlackNotification } from '@/lib/slack';
 import { v4 as uuidv4 } from 'uuid';
+import { WebhookPlatform } from '@/lib/webhooks/types';
 
 // Platform detection service
 class PlatformDetector {
@@ -58,8 +59,26 @@ export async function POST(
   const startTime = Date.now();
   const logId = uuidv4();
   let data: any;
-  let detectedPlatform =
-    PlatformDetector.detectFromHeaders(req.headers) || 'unknown';
+
+  // Get URL parameters
+  const url = new URL(req.url);
+  const utmSource = url.searchParams.get('utm_source');
+
+  // Detect platform from headers first
+  let detectedPlatform = PlatformDetector.detectFromHeaders(req.headers);
+
+  // If UTM source is provided, prioritize it over header detection
+  if (utmSource) {
+    detectedPlatform = utmSource.toLowerCase() as WebhookPlatform;
+  }
+
+  // If still no platform detected, try to detect from URL
+  if (!detectedPlatform) {
+    detectedPlatform = PlatformDetector.detectFromUrl(req.url);
+  }
+
+  // Default to unknown if no platform could be detected
+  detectedPlatform = detectedPlatform || 'unknown';
 
   try {
     const supabase = createClient();
@@ -77,15 +96,18 @@ export async function POST(
       );
     }
 
-    // Verify webhook
-    const verificationResult = await WebhookVerificationService.verify(req, {
-      platform: webhook[0].platform || '',
-      secret:
-        webhook[0].platform === 'clerk'
-          ? webhook[0].clerk_secret
-          : webhook[0].secret,
+    // Prepare verification config based on platform
+    const verificationConfig = {
+      platform: webhook[0].platform || detectedPlatform,
+      secret: getSecretForPlatform(webhook[0], detectedPlatform),
       toleranceInSeconds: 300,
-    });
+    };
+
+    // Verify webhook
+    const verificationResult = await WebhookVerificationService.verify(
+      req,
+      verificationConfig,
+    );
 
     if (!verificationResult.isValid) {
       const log = {
@@ -218,5 +240,30 @@ export async function POST(
       { error: `Failed to process webhook: ${err.message}` },
       { status: 500 },
     );
+  }
+}
+
+// Helper function to get the appropriate secret for a platform
+function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
+  // Use platform-specific secrets when available
+  switch (webhook.platform || detectedPlatform) {
+    case 'clerk':
+      return webhook.clerk_secret || webhook.secret;
+    case 'stripe':
+      return webhook.stripe_secret || webhook.secret;
+    case 'github':
+      return webhook.github_secret || webhook.secret;
+    case 'slack':
+      return webhook.slack_secret || webhook.secret;
+    case 'shopify':
+      return webhook.shopify_secret || webhook.secret;
+    case 'vercel':
+      return webhook.vercel_secret || webhook.secret;
+    case 'polar':
+      return webhook.polar_secret || webhook.secret;
+    case 'supabase':
+      return webhook.supabase_secret || webhook.secret;
+    default:
+      return webhook.secret;
   }
 }

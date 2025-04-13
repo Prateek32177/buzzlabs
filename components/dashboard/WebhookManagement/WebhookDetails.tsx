@@ -53,7 +53,7 @@ export function WebhookDetailsComp({
     webhook.platformConfig || {},
   );
   const currentValues = (configValues[platform] || {}) as Record<string, any>;
-  const currentConfig = platformConfigs[platform];
+  const currentConfig = platformConfigs[platform] || platformConfigs['custom'];
 
   const handlePlatformChange = (newPlatform: WebhookPlatform) => {
     setPlatform(newPlatform);
@@ -74,7 +74,7 @@ export function WebhookDetailsComp({
         string,
         any
       >;
-      const missingFields = currentConfig.fields
+      const missingFields = currentConfig!.fields
         .filter(field => field.required && !currentValues[field.key])
         .map(field => field.label);
 
@@ -200,9 +200,9 @@ export function WebhookDetailsComp({
             <CardContent>
               <CardTitle>Configuration</CardTitle>
               <CardDescription className='mt-1 mb-3'>
-                {currentConfig.description}
+                {currentConfig!.description}
               </CardDescription>
-              {currentConfig.fields.map(field => (
+              {currentConfig!.fields.map(field => (
                 <div key={field.key} className='space-y-2'>
                   <Label htmlFor={field.key}>
                     {field.label}
@@ -274,7 +274,7 @@ export function WebhookDetailsComp({
                   )}
                 </div>
               ))}
-              {currentConfig.showSaveButton && (
+              {currentConfig!.showSaveButton && (
                 <div className='mt-4'>
                   <Button
                     onClick={handleConfigUpdate}

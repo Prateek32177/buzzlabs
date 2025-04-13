@@ -25,6 +25,8 @@ export async function GET(req: Request) {
     }
     if (error) throw error;
 
+    const url = new URL(req.url);
+    const fields = url.searchParams.get('fields');
     // Map database fields to frontend expected format
     const formattedWebhooks = await Promise.all(
       webhooks.map(async webhook => {
@@ -34,6 +36,14 @@ export async function GET(req: Request) {
         } catch (e) {
           decryptedToken = 'Decryption failed';
         }
+
+        if (fields === 'templates') {
+          return {
+            id: webhook.id,
+            name: webhook.name,
+          };
+        }
+
         return {
           id: webhook.id,
           name: webhook.name,

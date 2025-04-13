@@ -40,6 +40,9 @@ export default function SlackTemplateEditor() {
     'idle' | 'saving' | 'saved' | 'error'
   >('idle');
   const [jsonError, setJsonError] = useState<string | null>(null);
+  const [webhooksList, setWebhooksList] = useState<any[]>([]);
+  const [webhookId, setSelectedWebhookId] = useState<string>();
+  const [isWebhooksLoading, setIsWebhooksLoading] = useState(true);
 
   const templateService = new TemplateService();
   const [userid, setUserId] = useState('');
@@ -47,6 +50,7 @@ export default function SlackTemplateEditor() {
   const searchParams = useSearchParams();
   const template_id =
     (searchParams.get('templateId') as TemplateId['templateId']) || null;
+  const webhook_id = searchParams.get('webhookId') || null;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -56,10 +60,34 @@ export default function SlackTemplateEditor() {
       setIsPageLoading(false);
     };
     fetchUser();
+    fetchWebhooksList();
   }, []);
 
   const userId = userid;
 
+  const fetchWebhooksList = async () => {
+    try {
+      setIsWebhooksLoading(true);
+      const response = await fetch('/api/webhooks?fields=templates');
+      if (!response.ok) throw new Error(`Failed to fetch webhooks`);
+      const data = await response.json();
+      setWebhooksList(data);
+
+      // Set default webhook ID to the first webhook if available and no webhook_id from search params
+      if (data.length > 0 && !webhook_id) {
+        setSelectedWebhookId(data[0].id);
+      } else if (webhook_id) {
+        // If webhook_id is in search params, set it as selected
+        setSelectedWebhookId(webhook_id);
+      }
+    } catch (error) {
+      toast.error('Error', {
+        description: 'Failed to fetch webhooks',
+      });
+    } finally {
+      setIsWebhooksLoading(false);
+    }
+  };
   // Load template from service on initial render
   useEffect(() => {
     async function loadTemplate() {
@@ -69,8 +97,10 @@ export default function SlackTemplateEditor() {
         setIsLoading(true);
         const customTemplate = await templateService.getUserTemplate(
           userId,
+
           templateId,
           TemplateType.SLACK,
+          webhookId || '',
         );
 
         const defaultTemplate = slackTemplates.find(t => t.id === templateId);
@@ -140,8 +170,14 @@ export default function SlackTemplateEditor() {
     if (template_id) {
       setTemplateId(template_id);
     }
+
+    // Set webhookId from search params if available
+    if (webhook_id) {
+      setSelectedWebhookId(webhook_id);
+    }
+
     loadTemplate();
-  }, [templateId, userId]);
+  }, [templateId, userId, webhookId]);
 
   // Save template function
   const saveTemplate = async () => {
@@ -180,9 +216,11 @@ export default function SlackTemplateEditor() {
       }
       await templateService.saveUserCustomization(
         userId,
+
         selectedTemplate.id,
         TemplateType.SLACK,
         updatedTemplate,
+        webhookId || '',
       );
 
       // Update the selected template with the new content
@@ -211,8 +249,10 @@ export default function SlackTemplateEditor() {
     try {
       const customTemplate = await templateService.getUserTemplate(
         userId?.toString() || '',
+
         newTemplateId,
         TemplateType.SLACK,
+        webhookId || '',
       );
 
       if (customTemplate) {
@@ -302,6 +342,10 @@ export default function SlackTemplateEditor() {
     setTemplateCode(JSON.stringify(updatedTemplate, null, 2));
   };
 
+  const handleWebhookChange = (selectedWebhookId: string) => {
+    setSelectedWebhookId(selectedWebhookId || '');
+  };
+
   // Parse the template for preview
   const getParsedTemplate = (): Record<string, any> | null => {
     try {
@@ -327,22 +371,52 @@ export default function SlackTemplateEditor() {
         </h1>
 
         <div className='mb-6 flex flex-col md:flex-row items-center justify-between gap-4 w-full'>
-          <Select
-            value={templateId}
-            onValueChange={handleTemplateChange}
-            disabled={isLoading}
+          <div
+            className='
+          flex items-center gap-2'
           >
-            <SelectTrigger className='w-full md:w-[300px] text-foreground'>
-              <SelectValue placeholder='Select a template' />
-            </SelectTrigger>
-            <SelectContent className='text-foreground'>
-              {slackTemplates.map(template => (
-                <SelectItem key={template.id} value={template.id}>
-                  {template.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select
+              value={webhookId}
+              onValueChange={handleWebhookChange}
+              disabled={isWebhooksLoading}
+            >
+              <SelectTrigger className='w-[200px]'>
+                {isWebhooksLoading ? (
+                  <div className='flex items-center gap-2'>
+                    <Loader className='h-4 w-4 animate-spin' />
+                    <span>Loading...</span>
+                  </div>
+                ) : webhooksList.length === 0 ? (
+                  <span>No webhooks created</span>
+                ) : (
+                  <SelectValue placeholder='Select Webhook' />
+                )}
+              </SelectTrigger>
+              <SelectContent>
+                {webhooksList.map(webhook => (
+                  <SelectItem key={webhook.id} value={webhook.id}>
+                    {webhook.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={templateId}
+              onValueChange={handleTemplateChange}
+              disabled={isLoading}
+            >
+              <SelectTrigger className='w-full md:w-[300px] text-foreground'>
+                <SelectValue placeholder='Select a template' />
+              </SelectTrigger>
+              <SelectContent className='text-foreground'>
+                {slackTemplates.map(template => (
+                  <SelectItem key={template.id} value={template.id}>
+                    {template.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className='flex w-full justify-between md:justify-end gap-2'>
             <Button
               size={'sm'}

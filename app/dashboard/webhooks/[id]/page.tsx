@@ -709,7 +709,7 @@ function EmailConfigForm({
           <Label htmlFor='emailTemplate'>Template</Label>
           <Button variant='link' size='sm' asChild>
             <a
-              href={`/dashboard/email-templates?templateId=${emailConfig.template_id}`}
+              href={`/dashboard/email-templates?templateId=${emailConfig.template_id}&webhookId=${webhook.id}`}
               target='_blank'
               rel='noopener noreferrer'
             >
@@ -854,7 +854,7 @@ function SlackConfigForm({
             <Label htmlFor='slackTemplate'>Template</Label>
             <Button variant='link' size='sm' asChild>
               <a
-                href={`/dashboard/slack-templates?templateId=${slackConfig.template_id}`}
+                href={`/dashboard/slack-templates?templateId=${slackConfig.template_id}&webhookId=${webhook.id}`}
                 target='_blank'
                 rel='noopener noreferrer'
               >

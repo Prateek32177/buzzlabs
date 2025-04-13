@@ -49,6 +49,7 @@ export default function EmailTemplateEditor() {
   const searchParams = useSearchParams();
   const template_id =
     (searchParams.get('templateId') as TemplateId['templateId']) || null;
+  const webhook_id = searchParams.get('webhookId') || null;
 
   const [selectedTemplate, setSelectedTemplate] =
     useState<EditorTemplate | null>(null);
@@ -62,6 +63,9 @@ export default function EmailTemplateEditor() {
   const [isLoading, setIsLoading] = useState(true);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [userid, setUserId] = useState('');
+  const [webhooksList, setWebhooksList] = useState<any[]>([]);
+  const [webhookId, setSelectedWebhookId] = useState<string>();
+  const [isWebhooksLoading, setIsWebhooksLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -71,7 +75,32 @@ export default function EmailTemplateEditor() {
       setIsPageLoading(false);
     };
     fetchUser();
+    fetchWebhooksList();
   }, []);
+
+  const fetchWebhooksList = async () => {
+    try {
+      setIsWebhooksLoading(true);
+      const response = await fetch('/api/webhooks?fields=templates');
+      if (!response.ok) throw new Error(`Failed to fetch webhooks`);
+      const data = await response.json();
+      setWebhooksList(data);
+
+      // Set default webhook ID to the first webhook if available and no webhook_id from search params
+      if (data.length > 0 && !webhook_id) {
+        setSelectedWebhookId(data[0].id);
+      } else if (webhook_id) {
+        // If webhook_id is in search params, set it as selected
+        setSelectedWebhookId(webhook_id);
+      }
+    } catch (error) {
+      toast.error('Error', {
+        description: 'Failed to fetch webhooks',
+      });
+    } finally {
+      setIsWebhooksLoading(false);
+    }
+  };
 
   const userId = userid;
   // Load all available templates
@@ -85,6 +114,7 @@ export default function EmailTemplateEditor() {
         userId,
         templateId,
         TemplateType.EMAIL,
+        webhookId || '',
       );
 
       const defaultTemplate = emailTemplates.find(t => t.id === templateId);
@@ -197,8 +227,13 @@ export default function EmailTemplateEditor() {
       setTemplateId(template_id);
     }
 
+    // Set webhookId from search params if available
+    if (webhook_id) {
+      setSelectedWebhookId(webhook_id);
+    }
+
     loadTemplate();
-  }, [templateId, userId]);
+  }, [templateId, userId, webhookId]);
 
   // Enhanced variable extraction function
   const extractVariables = (content: string): string[] => {
@@ -252,6 +287,7 @@ export default function EmailTemplateEditor() {
         selectedTemplate.id,
         TemplateType.EMAIL,
         updatedTemplate,
+        webhookId || '',
       );
 
       await loadTemplate();
@@ -266,6 +302,10 @@ export default function EmailTemplateEditor() {
 
   const handleTemplateChange = (selectedId: string) => {
     setTemplateId(selectedId);
+  };
+
+  const handleWebhookChange = (selectedWebhookId: string) => {
+    setSelectedWebhookId(selectedWebhookId || '');
   };
 
   const resetTemplate = async () => {
@@ -303,6 +343,16 @@ export default function EmailTemplateEditor() {
           {},
         );
         setVariables(initialVars);
+
+        // Delete the customization if it exists
+        if (webhookId) {
+          await templateService.deleteUserCustomization(
+            userId,
+            selectedTemplate.id,
+            TemplateType.EMAIL,
+            webhookId,
+          );
+        }
 
         toast.success('Template reset', {
           description: `The ${selectedTemplate.name} template has been reset to default.`,
@@ -342,19 +392,48 @@ export default function EmailTemplateEditor() {
       <div className='flex flex-col gap-6'>
         <h1 className='text-3xl font-bold'>Email Template Editor</h1>
         <div className='flex items-center justify-between flex-wrap gap-4'>
-          <Select value={templateId} onValueChange={handleTemplateChange}>
-            <SelectTrigger className='w-[280px]'>
-              <SelectValue placeholder='Select a template' />
-            </SelectTrigger>
-            <SelectContent>
-              {emailTemplates.map(template => (
-                <SelectItem key={template.id} value={template.id}>
-                  {template.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
+          <div
+            className='
+          flex items-center gap-2'
+          >
+            <Select
+              value={webhookId}
+              onValueChange={handleWebhookChange}
+              disabled={isWebhooksLoading}
+            >
+              <SelectTrigger className='w-[200px]'>
+                {isWebhooksLoading ? (
+                  <div className='flex items-center gap-2'>
+                    <Loader className='h-4 w-4 animate-spin' />
+                    <span>Loading...</span>
+                  </div>
+                ) : webhooksList.length === 0 ? (
+                  <span>No webhooks created</span>
+                ) : (
+                  <SelectValue placeholder='Select Webhook' />
+                )}
+              </SelectTrigger>
+              <SelectContent>
+                {webhooksList.map(webhook => (
+                  <SelectItem key={webhook.id} value={webhook.id}>
+                    {webhook.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={templateId} onValueChange={handleTemplateChange}>
+              <SelectTrigger className='w-[200px]'>
+                <SelectValue placeholder='Select a template' />
+              </SelectTrigger>
+              <SelectContent>
+                {emailTemplates.map(template => (
+                  <SelectItem key={template.id} value={template.id}>
+                    {template.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className='flex gap-2'>
             <Dialog>
               <DialogTrigger asChild>

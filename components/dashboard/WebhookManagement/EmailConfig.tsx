@@ -65,7 +65,7 @@ export function EmailConfig({
           <Label htmlFor='emailTemplate'>Template</Label>
           <Button variant='link' size='sm' asChild>
             <a
-              href={`/dashboard/email-templates?templateId=${emailConfig.template_id}`}
+              href={`/dashboard/email-templates?templateId=${emailConfig.template_id}&webhookId=${webhook.id}`}
               target='_blank'
               rel='noopener noreferrer'
             >

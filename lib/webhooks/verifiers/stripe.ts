@@ -5,7 +5,9 @@ import { timingSafeEqual, createHmac } from 'crypto';
 export class StripeWebhookVerifier extends WebhookVerifier {
   async verify(request: Request): Promise<WebhookVerificationResult> {
     try {
-      const signature = request.headers.get('stripe-signature');
+      // Check for both possible header names
+      const signature = request.headers.get('stripe-signature') || request.headers.get('x-stripe-signature');
+      
       if (!signature) {
         return {
           isValid: false,
@@ -17,7 +19,7 @@ export class StripeWebhookVerifier extends WebhookVerifier {
       // Get the raw body for verification
       const rawBody = await request.text();
 
-      // Parse the signature header
+      // Step 1: Extract the timestamp and signatures from the header
       const sigParts = signature.split(',');
       const sigMap: Record<string, string> = {};
 
@@ -29,7 +31,7 @@ export class StripeWebhookVerifier extends WebhookVerifier {
       }
 
       const timestamp = sigMap['t'];
-      const sig = sigMap['v1'];
+      const sig = sigMap['v1']; // Only use v1 signatures as per Stripe docs
 
       if (!timestamp || !sig) {
         return {
@@ -49,18 +51,26 @@ export class StripeWebhookVerifier extends WebhookVerifier {
         };
       }
 
-      // Create the signed payload
+      // Step 2: Prepare the signed_payload string
       const signedPayload = `${timestamp}.${rawBody}`;
 
-      // Create HMAC with SHA-256
+      // Step 3: Determine the expected signature
       const hmac = createHmac('sha256', this.secret);
       hmac.update(signedPayload);
       const expectedSignature = hmac.digest('hex');
 
-      // Compare signatures using timing-safe comparison
+      // Step 4: Compare the signatures using constant-time comparison
       const isValid = this.safeCompare(sig, expectedSignature);
 
       if (!isValid) {
+        console.error('Stripe signature verification failed:', {
+          received: sig,
+          expected: expectedSignature,
+          timestamp,
+          bodyLength: rawBody.length,
+          signedPayload: signedPayload.substring(0, 50) + '...', // Log first 50 chars for debugging
+        });
+        
         return {
           isValid: false,
           error: 'Invalid Stripe signature',
@@ -94,6 +104,7 @@ export class StripeWebhookVerifier extends WebhookVerifier {
         },
       };
     } catch (error) {
+      console.error('Stripe verification error:', error);
       return {
         isValid: false,
         error: `Stripe verification error: ${(error as Error).message}`,

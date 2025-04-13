@@ -126,7 +126,7 @@ export async function POST(
             from: 'Superhook Alerts <alerts@brokersify.in>',
             to: webhook[0].email_config.recipient_email,
             templateId: webhook[0].email_config.template_id,
-            data: { type: 'webhook', payload: data },
+            data,
           });
           channels.push('email');
           status = 'success';
@@ -144,11 +144,7 @@ export async function POST(
             webhookUrl: webhook[0].slack_config.webhook_url,
             channelName: webhook[0].slack_config.channel_name,
             templateId: webhook[0].slack_config.template_id,
-            data: {
-              webhookId: id,
-              payload: data,
-              timestamp: new Date().toISOString(),
-            },
+            data
           });
           channels.push('slack');
           status = 'success';

@@ -135,13 +135,18 @@ export function SlackConfig({
       <DialogFooter className='flex justify-between'>
         <Button
           type='button'
+          size={'sm'}
           variant='outline'
           onClick={onCancel}
           disabled={isLoading}
         >
           Cancel
         </Button>
-        <Button type='submit' disabled={isLoading || !slackConfig.webhook_url}>
+        <Button
+          type='submit'
+          size={'sm'}
+          disabled={isLoading || !slackConfig.webhook_url}
+        >
           {isLoading ? (
             <>
               <Loader2 className='mr-2 h-4 w-4 animate-spin' />

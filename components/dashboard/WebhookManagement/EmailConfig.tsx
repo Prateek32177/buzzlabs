@@ -101,12 +101,14 @@ export function EmailConfig({
           type='button'
           variant='outline'
           onClick={onCancel}
+          size={'sm'}
           disabled={isLoading}
         >
           Cancel
         </Button>
         <Button
           type='submit'
+          size={'sm'}
           disabled={isLoading || !emailConfig.recipient_email}
         >
           {isLoading ? (

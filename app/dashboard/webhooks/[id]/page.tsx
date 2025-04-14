@@ -16,6 +16,8 @@ import {
   Mail,
   Slack,
   ExternalLink,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
@@ -50,6 +52,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const [showEmailConfig, setShowEmailConfig] = useState(false);
   const [showSlackConfig, setShowSlackConfig] = useState(false);
   const { copyToClipboard } = useClipboard();
+  const [showSecret, setShowSecret] = useState(false);
 
   useEffect(() => {
     if (webhookId) {
@@ -382,7 +385,13 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     <div className='flex'>
                       <Input
                         id={field.key}
-                        type={field.type === 'secret' ? 'password' : 'text'}
+                        type={
+                          field.type === 'secret'
+                            ? showSecret
+                              ? 'text'
+                              : 'password'
+                            : 'text'
+                        }
                         placeholder={field.placeholder}
                         className='rounded-r-none font-mono text-sm'
                         readOnly={field.readOnly || false}
@@ -398,8 +407,24 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                           setConfigValues(updatedConfig);
                         }}
                       />
+
+                      {field.type === 'secret' && (
+                        <button
+                          type='button'
+                          className='bg-muted p-2 border border-l-0 border-input  hover:bg-muted/70'
+                          onClick={() => setShowSecret(prev => !prev)}
+                        >
+                          {!showSecret ? (
+                            <EyeOff className='h-4 w-4' />
+                          ) : (
+                            <Eye className='h-4 w-4' />
+                          )}
+                        </button>
+                      )}
                       <Button
                         variant={'secondary'}
+                        className='rounded-l-none'
+                        size={"icon"}
                         onClick={() => {
                           const textToCopy = currentValues?.[field.key] || '';
                           navigator.clipboard

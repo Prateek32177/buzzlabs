@@ -10,7 +10,15 @@ import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Check, Clipboard, Loader2, Mail, Slack } from 'lucide-react';
+import {
+  Check,
+  Clipboard,
+  Loader2,
+  Mail,
+  Slack,
+  EyeOff,
+  Eye,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -48,6 +56,7 @@ export function WebhookDetailsComp({
   const { setShowEmailConfig, setShowSlackConfig } = useWebhook();
   const { copyToClipboard } = useClipboard();
   const [platform, setPlatform] = useState<WebhookPlatform>('supabase');
+  const [showSecret, setShowSecret] = useState(false);
 
   const [configValues, setConfigValues] = useState<Record<string, any>>(
     webhook.platformConfig || {},
@@ -116,6 +125,7 @@ export function WebhookDetailsComp({
             <Button
               onClick={handleNameUpdate}
               disabled={isLoading || name === webhook.name}
+              size={'sm'}
             >
               {isLoading ? (
                 <Loader2 className='h-4 w-4 animate-spin' />
@@ -146,24 +156,7 @@ export function WebhookDetailsComp({
             >
               <div className='flex items-center'>
                 <div className='w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 shadow-sm'>
-                  {config.id === 'supabase' && (
-                    <svg
-                      viewBox='0 0 24 24'
-                      className='w-6 h-6 text-emerald-500'
-                      fill='currentColor'
-                    >
-                      <path d='M21.362 9.354H12V.396a.396.396 0 0 0-.716-.233L2.203 12.424l-.401.562a1.04 1.04 0 0 0 .836 1.659H12v8.959a.396.396 0 0 0 .716.233l9.081-12.261.401-.562a1.04 1.04 0 0 0-.836-1.66z' />
-                    </svg>
-                  )}
-                  {config.id === 'clerk' && (
-                    <svg
-                      viewBox='0 0 24 24'
-                      className='w-6 h-6 text-white'
-                      fill='currentColor'
-                    >
-                      <path d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12' />
-                    </svg>
-                  )}
+                  <config.icon className='w-5 h-5 text-emerald-500' />
                 </div>
                 <span className='text-white capitalize'>{config.name}</span>
               </div>
@@ -233,10 +226,16 @@ export function WebhookDetailsComp({
                     <div className='flex'>
                       <Input
                         id={field.key}
-                        type={field.type === 'secret' ? 'password' : 'text'}
+                        type={
+                          field.type === 'secret'
+                            ? showSecret
+                              ? 'text'
+                              : 'password'
+                            : 'text'
+                        }
                         placeholder={field.placeholder}
                         className='rounded-r-none font-mono text-sm'
-                        readOnly={field.readOnly || true}
+                        readOnly={field.readOnly || false}
                         value={currentValues?.[field.key] || ''}
                         onChange={e => {
                           const updatedConfig = {
@@ -249,8 +248,24 @@ export function WebhookDetailsComp({
                           setConfigValues(updatedConfig);
                         }}
                       />
+
+                      {field.type === 'secret' && (
+                        <button
+                          type='button'
+                          className='bg-muted p-2 border border-l-0 border-input  hover:bg-muted/70'
+                          onClick={() => setShowSecret(prev => !prev)}
+                        >
+                          {!showSecret ? (
+                            <EyeOff className='h-4 w-4' />
+                          ) : (
+                            <Eye className='h-4 w-4' />
+                          )}
+                        </button>
+                      )}
                       <Button
                         variant={'secondary'}
+                        className='rounded-l-none'
+                        size={"icon"}
                         onClick={() => {
                           const textToCopy = currentValues?.[field.key] || '';
                           navigator.clipboard

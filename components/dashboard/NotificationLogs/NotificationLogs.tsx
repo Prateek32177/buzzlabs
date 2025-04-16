@@ -60,6 +60,7 @@ import {
   SlackIcon,
 } from 'lucide-react';
 import Link from 'next/link';
+import StatusBadge from '@/components/ui/status-badges';
 
 type WebhookLogData = {
   id: string;
@@ -192,8 +193,8 @@ export function NotificationLogs() {
           </CardDescription>
         </CardHeader>
         <CardContent className='flex items-center justify-center h-64'>
-          <div className='flex flex-col items-center gap-4'>
-            <Loader className='w-10 h-10 text-center animate-spin' />
+          <div className='flex flex-col items-center gap-4 text-gray-400'>
+            <Loader className='w-8 h-8 text-center animate-spin' />
 
             <p className=''>Loading notification logs...</p>
           </div>
@@ -221,10 +222,10 @@ export function NotificationLogs() {
               <Button
                 size={'sm'}
                 onClick={fetchLogs}
-                className='flex items-center gap-2'
+                className='flex items-center gap-2 text-gray-400'
               >
-                <RefreshCw className='h-4 w-4' />
                 Try again
+                <RefreshCw className='h-3 w-3' />
               </Button>
             </div>
           </div>
@@ -249,9 +250,9 @@ export function NotificationLogs() {
             onClick={fetchLogs}
             variant='outline'
             size='sm'
-            className='flex items-center gap-2 border-gray-700 hover:bg-gray-800 '
+            className='flex items-center gap-2 text-gray-400 '
           >
-            <RefreshCw className='h-4 w-4' />
+            <RefreshCw className='h-3 w-3' />
             Refresh
           </Button>
         </div>
@@ -405,19 +406,18 @@ export function NotificationLogs() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant='outline'
-                          className={`capitalize flex items-center text-xs justify-center align-middle text-gray-300 ${statusColors[log.status]}`}
-                        >
-                          {log.status}
-                        </Badge>
+                        {log.status === 'success' ? (
+                          <StatusBadge status={'delivered'} />
+                        ) : (
+                          <StatusBadge status={log.status} />
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className='flex flex-col gap-2'>
                           {log.email_sent && log.email_recipient && (
                             <Badge
                               variant='outline'
-                              className='text-xs px-2.5 py-1.5 flex text-gray-300 items-center gap-1.5 bg-gray-500/20  border-gray-700 justify-center align-middle'
+                              className='text-xs px-2.5 py-1.5 flex text-gray-300 items-center gap-1.5 bg-zinc-900/60 justify-center align-middle'
                             >
                               <Mail className='h-3.5 w-3.5' />
                               <span
@@ -431,7 +431,7 @@ export function NotificationLogs() {
                           {log.slack_sent && log.slack_channel && (
                             <Badge
                               variant='outline'
-                              className='text-xs px-2.5 py-1.5 flex text-gray-300 items-center gap-1.5 bg-gray-500/20  border-gray-700 justify-center align-middle'
+                              className='text-xs px-2.5 py-1.5 flex text-gray-300 items-center gap-1.5 bg-zinc-900/60 justify-center align-middle'
                             >
                               <SlackIcon className='h-3.5 w-3.5' />
                               <span>{log.slack_channel}</span>

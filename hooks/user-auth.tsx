@@ -26,6 +26,7 @@ export async function getUser() {
       userId: user?.id ?? null,
       username: user?.user_metadata?.username ?? null,
       avatar_seed: user?.user_metadata?.avatar_seed ?? null,
+      subscription_tier: user?.user_metadata?.subscription_tier ?? null,
       error: null,
     };
   } catch (error) {

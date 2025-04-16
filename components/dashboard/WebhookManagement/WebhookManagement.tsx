@@ -29,6 +29,7 @@ import {
   Loader2,
   ArrowUpRight,
   PlugZap,
+  Plus,
 } from 'lucide-react';
 import { WebhookContext } from './WebhookContext';
 import { EmailConfigDialog } from './EmailConfigDialog';
@@ -257,7 +258,7 @@ export function WebhookManagement() {
           <CardContent>
             <div className='flex flex-col sm:flex-row gap-4'>
               <Input
-                placeholder='Enter webhook name'
+                placeholder='Enter webhook name to create'
                 value={newWebhookName}
                 onChange={e => setNewWebhookName(e.target.value)}
                 className='flex-1'
@@ -269,11 +270,14 @@ export function WebhookManagement() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                    Adding...
+                    <Loader2 className='h-4 w-4 animate-spin' />
+                    Creating...
                   </>
                 ) : (
-                  'Add Webhook'
+                  <>
+                    <Plus className='h-4 w-4' />
+                    <span className='tracking-tight'>Create Webhook</span>
+                  </>
                 )}
               </Button>
             </div>

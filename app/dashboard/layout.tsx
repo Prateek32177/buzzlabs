@@ -12,14 +12,17 @@ export default function Layout({
 }>) {
   return (
     <SidebarProvider>
-      <AppSidebar side='left' variant='inset' collapsible='icon' />
+      <AppSidebar
+        side='left'
+        variant='inset'
+        collapsible='icon'
+        className='sidebar-background'
+      />
       <SidebarInset>
-        <header className='flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
-          <div className='max-[768px]:block hidden '>
-            <SidebarTrigger className='ml-4' />
-          </div>
-        </header>
-        <div>{children}</div>
+        <div className='max-[768px]:block hidden '>
+          <SidebarTrigger className='ml-4' />
+        </div>
+        <div className='mx-4 my-8'>{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -20,7 +20,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { getUser } from '@/hooks/user-auth';
@@ -111,7 +110,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           />
         )}
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

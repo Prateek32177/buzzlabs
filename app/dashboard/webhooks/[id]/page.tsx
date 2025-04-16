@@ -424,7 +424,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                       <Button
                         variant={'secondary'}
                         className='rounded-l-none'
-                        size={"icon"}
+                        size={'icon'}
                         onClick={() => {
                           const textToCopy = currentValues?.[field.key] || '';
                           navigator.clipboard

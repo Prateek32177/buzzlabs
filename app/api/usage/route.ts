@@ -34,7 +34,7 @@ interface UserType {
   subscription_tier?: string;
 }
 
-export const tierLimits: Record<string, any> = {
+ const tierLimits: Record<string, any> = {
   free: {
     dailyRequests: 100,
     dailyEmails: 50,

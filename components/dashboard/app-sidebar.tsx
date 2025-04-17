@@ -25,7 +25,6 @@ import {
 import { getUser } from '@/hooks/user-auth';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { HookfloIcon } from '../Logos/Hookflo';
-
 // This is sample data.
 const data = {
   navMain: [
@@ -100,6 +99,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
+        <>
+        <UsageBar
+        label='Emails left'
+        used={40}
+        total={100}
+
+        />
+           <UsageBar
+        label='Slack alerts left'
+        used={40}
+        total={500}
+
+        />
+        
+
         {email && (
           <NavUser
             user={{
@@ -109,7 +123,47 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             }}
           />
         )}
+        </>
       </SidebarFooter>
     </Sidebar>
+  );
+}
+
+
+function UsageBar({
+  label,
+  used,
+  total,
+  colorFrom = '#d546ef', // Fuchsia-500
+  colorTo = '#8b5cd6', // Violet-500
+}: {
+  label?: string;
+  used: number;
+  total: number;
+  colorFrom?: string;
+  colorTo?: string;
+}) {
+  const percentage = Math.min((used / total) * 100, 100);
+
+  return (
+    <div className="w-full mb-2 px-4">
+      {/* Label */}
+      <div className="flex justify-between text-[11px] font-medium text-zinc-400 mb-1 tracking-tight">
+        <span>{label}</span>
+        <span className="tabular-nums">{used}/{total}</span>
+      </div>
+
+      {/* Track */}
+      <div className="relative h-2.5 rounded-full bg-zinc-800/70 backdrop-blur-sm shadow-inner overflow-hidden">
+        {/* Progress Fill */}
+        <div
+          className="absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-in-out"
+          style={{
+            width: `${percentage}%`,
+            background: `linear-gradient(to right, ${colorFrom}, ${colorTo})`,
+          }}
+        />
+      </div>
+    </div>
   );
 }

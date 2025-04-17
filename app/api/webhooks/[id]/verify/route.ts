@@ -4,6 +4,10 @@ import { sendEmail } from '@/lib/email';
 import { sendSlackNotification } from '@/lib/slack';
 import { v4 as uuidv4 } from 'uuid';
 import { WebhookPlatform } from '@/lib/webhooks/types';
+import { trackUsage } from '@/lib/analytics/usage';
+
+// Import the rate limit checking function
+import { checkUsageLimits } from '@/lib/analytics/usage';
 
 class PlatformDetector {
   static detectFromHeaders(headers: Headers): string | null {
@@ -62,20 +66,80 @@ export async function POST(
 
   detectedPlatform = detectedPlatform || 'unknown';
 
+  // Initialize usage metrics
+  const usageMetrics = {
+    userId: '',
+    webhookId: id,
+    requestCount: 1,
+    emailCount: 0,
+    slackCount: 0,
+    payloadSize: 0,
+    responseTimeMs: 0,
+    platform: detectedPlatform,
+    status: 'pending',
+  };
+
   try {
     const supabase = createClient();
 
     const clonedReq = req.clone();
     data = await clonedReq.json();
 
+    // Track payload size (useful for rate limiting based on data volume)
+    usageMetrics.payloadSize = new TextEncoder().encode(
+      JSON.stringify(data),
+    ).length;
+
     const { data: webhook, error } = await (await supabase)
       .from('webhooks')
       .select('*')
       .eq('id', id);
     if (error || !webhook || webhook.length === 0) {
+      usageMetrics.status = 'failed';
+      await trackUsage(usageMetrics);
+
       return Response.json(
         { error: `Webhook not found ${error?.message}` },
         { status: 404 },
+      );
+    }
+
+    // Set user ID for usage tracking
+    usageMetrics.userId = webhook[0].user_id;
+    
+    // Check if the user has reached their usage limits
+    const { hasReachedLimit, currentUsage } = await checkUsageLimits(webhook[0].user_id);
+    
+    if (hasReachedLimit) {
+      const log = {
+        id: logId,
+        webhook_id: id,
+        webhook_name: webhook[0].name || 'Unknown',
+        platform: detectedPlatform || 'Unknown',
+        channel: '',
+        status: 'failed' as const,
+        payload: data,
+        error_message: 'Rate limit exceeded',
+        processed_at: new Date(),
+      };
+
+      await fetch(`${process.env.PROD_URL}/api/logs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(log),
+      });
+
+      // Track rate limit exceeded
+      usageMetrics.status = 'failed';
+      await trackUsage(usageMetrics);
+
+      return Response.json(
+        { 
+          error: 'Rate limit exceeded', 
+          currentUsage,
+          message: 'You have reached your daily usage limit. Please upgrade your plan for higher limits.'
+        },
+        { status: 429 },
       );
     }
 
@@ -108,6 +172,10 @@ export async function POST(
         body: JSON.stringify(log),
       });
 
+      // Track verification failure
+      usageMetrics.status = 'failed';
+      await trackUsage(usageMetrics);
+
       return Response.json(
         { error: verificationResult.error },
         { status: 401 },
@@ -129,6 +197,7 @@ export async function POST(
             data,
           });
           channels.push('email');
+          usageMetrics.emailCount = 1; // Track email notification
           status = 'success';
         } catch (err) {
           const error = err as Error;
@@ -147,6 +216,7 @@ export async function POST(
             data,
           });
           channels.push('slack');
+          usageMetrics.slackCount = 1; // Track slack notification
           status = 'success';
         } catch (err) {
           const error = err as Error;
@@ -182,6 +252,13 @@ export async function POST(
       });
     }
 
+    // Calculate response time
+    usageMetrics.responseTimeMs = Date.now() - startTime;
+    usageMetrics.status = status;
+
+    // Track the usage metrics
+    await trackUsage(usageMetrics);
+
     return Response.json({
       success: true,
       message: 'Webhook processed successfully',
@@ -207,6 +284,11 @@ export async function POST(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(log),
       });
+
+      // Track error in metrics
+      usageMetrics.status = 'failed';
+      usageMetrics.responseTimeMs = Date.now() - startTime;
+      await trackUsage(usageMetrics);
     } catch (logError) {
       console.error('Failed to log webhook error:', logError);
     }

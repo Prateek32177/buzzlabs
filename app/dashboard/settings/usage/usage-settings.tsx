@@ -4,8 +4,6 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import ProgressBar from '@/components/ui/progress-bar';
 import {
-  AreaChart,
-  Area,
   LineChart,
   Line,
   XAxis,
@@ -14,64 +12,92 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { Mail, Slack, Clock, TrendingUp } from 'lucide-react';
-import { Value } from '@radix-ui/react-select';
+import {
+  Mail,
+  Slack,
+  Clock,
+  TrendingUp,
+  AlertTriangle,
+  RefreshCw,
+} from 'lucide-react';
 import EmailSlackCharts from './EmailSlackCharts';
+import { useUsageData } from '@/hooks/use-usage-data';
+import { formatBytes } from '@/lib/utils';
 
-// Sample data for charts
-const emailData = [
-  { name: 'Mon', value: 400 },
-  { name: 'Tue', value: 300 },
-  { name: 'Wed', value: 500 },
-  { name: 'Thu', value: 280 },
-  { name: 'Fri', value: 590 },
-  { name: 'Sat', value: 320 },
-  { name: 'Sun', value: 400 },
-];
-
-const slackData = [
-  { name: 'Mon', value: 300 },
-  { name: 'Tue', value: 450 },
-  { name: 'Wed', value: 380 },
-  { name: 'Thu', value: 520 },
-  { name: 'Fri', value: 400 },
-  { name: 'Sat', value: 280 },
-  { name: 'Sun', value: 350 },
-];
-
-const webhookData = [
-  { name: 'Jan', value: 40 },
-  { name: 'Feb', value: 30 },
-  { name: 'Mar', value: 50 },
-  { name: 'Apr', value: 28 },
-  { name: 'May', value: 18 },
-  { name: 'Jun', value: 24 },
-  { name: 'Jul', value: 35 },
-  { name: 'Aug', value: 54 },
-];
-// webhooks
-const maxWebhook = 100;
-const currentWebhook = 75;
-const webhookLimitPercentage = (currentWebhook / maxWebhook) * 100;
-const webhookLimitColor =
-  webhookLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
-// notifications
-const maxNotification = 1000;
-const currentNotiCount = 950;
-const notificationLimitPercentage = (currentNotiCount / maxNotification) * 100;
-const NotificationLimitColor =
-  notificationLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
 const UsageTab = () => {
+  const { usageData, isLoading, error } = useUsageData();
+
+  if (isLoading) {
+    return (
+      <div className='flex justify-center items-center h-64'>
+        <RefreshCw className='h-8 w-8 text-violet-500 animate-spin' />
+        <span className='ml-2 text-gray-400'>Loading your usage data...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className='flex flex-col items-center justify-center h-64 text-center'>
+        <AlertTriangle className='h-8 w-8 text-red-500 mb-2' />
+        <h3 className='text-lg font-medium text-white'>
+          Failed to load usage data
+        </h3>
+        <p className='text-sm text-gray-400 mt-1'>{error}</p>
+        <button
+          className='mt-4 px-4 py-2 bg-violet-600 hover:bg-violet-700 rounded-md text-white text-sm'
+          onClick={() => window.location.reload()}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (!usageData) {
+    return null;
+  }
+
+  const { subscription, usage } = usageData;
+
+  // Calculate percentages for progress bars
+  const webhookLimitPercentage =
+    (usage.current.activeWebhooks / subscription.limits.webhookLimit) * 100;
+  const notificationLimitPercentage =
+    (usage.current.totalNotifications / subscription.limits.notificationLimit) *
+    100;
+
+  // Determine color based on usage percentage
+  const webhookLimitColor =
+    webhookLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
+  const notificationLimitColor =
+    notificationLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
+
+  // Format tier name for display
+  const tierName =
+    subscription.tier.charAt(0).toUpperCase() + subscription.tier.slice(1);
+
+  // Get latest day's email and slack counts for display
+  const latestData =
+    usage.emailSlackData.length > 0
+      ? usage.emailSlackData[usage.emailSlackData.length - 1]
+      : { date: 'Today', Email: 0, Slack: 0 };
+
   return (
     <div className='space-y-6 animate-fade-in mb-16'>
       {/* Consumption Summary */}
-      <Card className='p-6  glass-card rounded-lg  h-full mt-6 '>
+      <Card className='p-6 glass-card rounded-lg h-full mt-6'>
         <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6'>
           <div>
             <h3 className='text-lg font-medium text-white'>
               Consumption Summary
             </h3>
-            <p className='text-sm text-gray-400'>Free plan • amoditjha</p>
+            <p className='text-sm text-gray-400'>
+              {tierName} plan •{' '}
+              {usage.hasReachedLimit && (
+                <span className='text-red-500 font-medium'>Limit reached</span>
+              )}
+            </p>
           </div>
           <div className='text-sm flex items-center text-hookflo-green'>
             <Clock className='h-4 w-4 mr-1' />
@@ -81,28 +107,77 @@ const UsageTab = () => {
 
         <div className='mb-6'>
           <div className='flex justify-between mb-2'>
-            <span className='text-sm text-gray-400'>Daily webhook limit</span>
+            <span className='text-sm text-gray-400'>Webhook limit</span>
             <span className='text-sm text-gray-400'>
-              {currentWebhook} / {maxWebhook} webhooks
+              {usage.current.activeWebhooks} /{' '}
+              {subscription.limits.webhookLimit} webhooks
             </span>
           </div>
           <ProgressBar
-            value={currentWebhook}
-            max={maxWebhook}
+            value={usage.current.activeWebhooks}
+            max={subscription.limits.webhookLimit}
             barColor={webhookLimitColor}
           />
         </div>
+
         <div className='mb-6'>
           <div className='flex justify-between mb-2'>
-            <span className='text-sm text-gray-400'>Daily webhook limit</span>
             <span className='text-sm text-gray-400'>
-              {currentNotiCount} / {maxNotification} Notifications
+              Monthly notification limit
+            </span>
+            <span className='text-sm text-gray-400'>
+              {usage.current.totalNotifications} /{' '}
+              {subscription.limits.notificationLimit} Notifications
             </span>
           </div>
           <ProgressBar
-            value={currentNotiCount}
-            max={maxNotification}
-            barColor={NotificationLimitColor}
+            value={usage.current.totalNotifications}
+            max={subscription.limits.notificationLimit}
+            barColor={notificationLimitColor}
+          />
+        </div>
+
+        {/* Daily usage limits */}
+        <div className='mb-6'>
+          <div className='flex justify-between mb-2'>
+            <span className='text-sm text-gray-400'>Daily requests</span>
+            <span className='text-sm text-gray-400'>
+              {usage.current.requests} / {subscription.limits.dailyRequests}{' '}
+              requests
+            </span>
+          </div>
+          <ProgressBar
+            value={usage.current.requests}
+            max={subscription.limits.dailyRequests}
+            barColor={
+              (usage.current.requests / subscription.limits.dailyRequests) *
+                100 <
+              80
+                ? 'bg-violet-500'
+                : 'bg-purple-800'
+            }
+          />
+        </div>
+
+        <div className='mb-6'>
+          <div className='flex justify-between mb-2'>
+            <span className='text-sm text-gray-400'>Daily data volume</span>
+            <span className='text-sm text-gray-400'>
+              {formatBytes(usage.current.totalDataVolume)} /{' '}
+              {subscription.limits.dailyDataVolumeMB} MB
+            </span>
+          </div>
+          <ProgressBar
+            value={usage.current.totalDataVolume}
+            max={subscription.limits.dailyDataVolumeMB * 1024 * 1024}
+            barColor={
+              (usage.current.totalDataVolume /
+                (subscription.limits.dailyDataVolumeMB * 1024 * 1024)) *
+                100 <
+              80
+                ? 'bg-violet-500'
+                : 'bg-purple-800'
+            }
           />
         </div>
 
@@ -112,7 +187,7 @@ const UsageTab = () => {
               Active webhooks
             </h4>
             <div className='text-3xl font-bold text-white'>
-              {currentWebhook}
+              {usage.current.activeWebhooks}
             </div>
           </div>
           <div>
@@ -120,21 +195,28 @@ const UsageTab = () => {
               Monthly notifications
             </h4>
             <div className='text-3xl font-bold text-white'>
-              {currentNotiCount}
+              {usage.current.totalNotifications}
             </div>
           </div>
         </div>
       </Card>
+
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
         {/* Email and Slack Usage */}
-        <EmailSlackCharts />
+        <EmailSlackCharts
+          data={usage.emailSlackData}
+          latestDate={latestData.date}
+          emailCount={latestData.Email}
+          slackCount={latestData.Slack}
+        />
+
         {/* Webhook Usage */}
-        <Card className='p-6 glass-card rounded-lg  h-full mt-6'>
+        <Card className='p-6 glass-card rounded-lg h-full mt-6'>
           <h3 className='text-lg font-medium text-white mb-4'>Webhook Usage</h3>
           <div className='h-[250px]'>
             <ResponsiveContainer width='100%' height='100%'>
               <LineChart
-                data={webhookData}
+                data={usage.webhookData}
                 margin={{
                   top: 5,
                   right: 20,
@@ -176,12 +258,44 @@ const UsageTab = () => {
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <div className='mt-3 text-sm text-hookflo-green flex items-center'>
-            <TrendingUp className='h-4 w-4 mr-1' />
-            <span>Trending up by 5.2% this month</span>
-          </div>
+          {usage.webhookData.length > 1 && (
+            <WebhookTrend data={usage.webhookData} />
+          )}
         </Card>
       </div>
+    </div>
+  );
+};
+
+// Helper component to show webhook trend
+const WebhookTrend = ({ data }:{data:any}) => {
+  if (data.length < 2) return null;
+
+  // Calculate trend percentage by comparing last two months
+  const lastIndex = data.length - 1;
+  const currentMonth = data[lastIndex].value;
+  const previousMonth = data[lastIndex - 1].value;
+
+  const percentageChange =
+    previousMonth === 0
+      ? 100
+      : (((currentMonth - previousMonth) / previousMonth) * 100).toFixed(1);
+
+  const isUp = currentMonth >= previousMonth;
+
+  return (
+    <div
+      className={`mt-3 text-sm flex items-center ${isUp ? 'text-hookflo-green' : 'text-red-500'}`}
+    >
+      {isUp ? (
+        <TrendingUp className='h-4 w-4 mr-1' />
+      ) : (
+        <TrendingUp className='h-4 w-4 mr-1 transform rotate-180' />
+      )}
+      <span>
+        {isUp ? 'Trending up' : 'Trending down'} by{' '}
+        {Math.abs(Number(percentageChange))}% this month
+      </span>
     </div>
   );
 };

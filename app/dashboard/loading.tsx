@@ -1,9 +1,9 @@
-import { Loader2 } from 'lucide-react';
+import { Loader } from '@/components/ui/loader';
+
 export default function Loading() {
   return (
     <div className='min-h-screen flex items-center justify-center'>
-      <Loader2 className='h-8 w-8 animate-spin text-blue-500' />
-      <span className='ml-3 text-lg text-gray-700'>Loading...</span>
+      <Loader text='Loading...' />
     </div>
   );
 }

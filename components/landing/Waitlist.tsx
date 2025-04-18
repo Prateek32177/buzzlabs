@@ -2,10 +2,10 @@
 
 import type React from 'react';
 import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InteractiveHoverButton } from '@/components/magicui/interactive-hover-button';
+import { Loader } from '../ui/loader';
 
 export default function WaitlistSection() {
   return (
@@ -89,11 +89,7 @@ export function WaitlistForm() {
                 disabled={isLoading}
                 className='absolute right-1 h-10 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 border-none px-4 sm:px-6 text-xs md:text-sm whitespace-nowrap'
               >
-                {isLoading ? (
-                  <Loader2 className='h-5 w-5 animate-spin' />
-                ) : (
-                  <>Join Waitlist</>
-                )}
+                {isLoading ? <Loader /> : <>Join Waitlist</>}
               </InteractiveHoverButton>
             </div>
             {error && (

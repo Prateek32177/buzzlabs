@@ -11,11 +11,12 @@ import {
   SelectContent,
 } from '@/components/ui/select';
 import { DialogFooter } from '@/components/ui/dialog';
-import { Loader2, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { SlackTemplateOptions } from '@/const';
 import { randomSlackChannelName } from '@/lib/utils';
 import { slackTemplates } from '@/lib/slack-templates';
+import { Loader } from '@/components/ui/loader';
 
 export function SlackConfig({
   webhook,
@@ -147,14 +148,7 @@ export function SlackConfig({
           size={'sm'}
           disabled={isLoading || !slackConfig.webhook_url}
         >
-          {isLoading ? (
-            <>
-              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              Saving...
-            </>
-          ) : (
-            'Save Configuration'
-          )}
+          {isLoading ? <Loader text='Saving...' /> : 'Save Configuration'}
         </Button>
       </DialogFooter>
     </form>

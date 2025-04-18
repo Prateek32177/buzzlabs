@@ -1,5 +1,4 @@
 import { WebhookSecurity } from '@/utils/webhook-security';
-import { Encryption } from '@/utils/encryption';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
@@ -30,13 +29,6 @@ export async function GET(req: Request) {
     // Map database fields to frontend expected format
     const formattedWebhooks = await Promise.all(
       webhooks.map(async webhook => {
-        let decryptedToken;
-        try {
-          decryptedToken = await Encryption.decrypt(webhook.secret);
-        } catch (e) {
-          decryptedToken = 'Decryption failed';
-        }
-
         if (fields === 'templates') {
           return {
             id: webhook.id,
@@ -48,7 +40,6 @@ export async function GET(req: Request) {
           id: webhook.id,
           name: webhook.name,
           url: webhook.url,
-          secret: decryptedToken,
           is_active: webhook.is_active,
           platformConfig: webhook.platformConfig,
           notify_email: webhook.notify_email,
@@ -81,10 +72,7 @@ export async function POST(req: Request) {
 
     const webhookSecret = WebhookSecurity.generateSecret();
     const webhookId = crypto.randomUUID();
-    const encryptedSecret = await Encryption.encrypt(webhookSecret);
 
-    // Create webhook
-    // Define platform-specific configuration generator
     const getPlatformConfig = (platform: string) => {
       const configs: Record<string, any> = {
         custom: {
@@ -130,7 +118,6 @@ export async function POST(req: Request) {
         id: webhookId,
         user_id: user.id,
         name,
-        secret: encryptedSecret,
         platformConfig: Array.isArray(platform)
           ? platform.reduce((configs: Record<string, any>, p: string) => {
               configs[p] = getPlatformConfig(p);
@@ -154,7 +141,6 @@ export async function POST(req: Request) {
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: webhookSecret,
       is_active: webhook.is_active,
       notify_email: webhook.notify_email,
       notify_slack: webhook.notify_slack,

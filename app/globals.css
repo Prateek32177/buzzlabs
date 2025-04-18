@@ -46,9 +46,9 @@
   }
 
   .dark {
-    --background: 240 4% 9%;
+    --background: 240 9% 9%;
     --foreground: 0 0% 98%;
-    --card: 240 4% 9%;
+    --card: 240 9% 11%;
     --card-foreground: 0 0% 98%;
     --popover: 240 4% 12%;
     --popover-foreground: 0 0% 98%;
@@ -62,26 +62,23 @@
     --accent-foreground: 240 4% 95%;
     --destructive: 0 85% 62%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.5% 15%;
-    --input: 240 3.5% 22%;
+    --border: 240 3.5% 20%;
+    --input: 240 3.5% 20%;
     --ring: 255 100% 75%;
     --chart-1: 240 5% 84.9%;
     --chart-2: 240 5% 65.1%;
     --chart-3: 240 5% 45.1%;
     --chart-4: 240 5% 26%;
     --chart-5: 240 5% 15.9%;
-    --sidebar-background: linear-gradient(
-      180deg,
-      hsl(240 3% 11%) 0%,
-      hsl(240 3% 8%) 100%
-    );
+
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 240 5% 92%;
+    --sidebar-primary: 240 5% 50%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 240 5% 20%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 240 4% 10%;
     --sidebar-ring: 255 100% 75%;
+    --sidebar-background: 240 9% 11%; /* normal */
   }
 }
 
@@ -367,10 +364,15 @@
 
 @layer base {
   .sidebar-background {
-    @apply bg-[hsl(var(--sidebar-background))] text-[hsl(var(--sidebar-foreground))] shadow-lg backdrop-blur-md border-r border-[hsl(var(--sidebar-border))];
+    @apply bg-[hsl(var(--sidebar-background))] text-[hsl(var(--sidebar-foreground))] shadow-lg backdrop-blur-xl border-r border-[hsl(var(--sidebar-border))];
     box-shadow:
       0 4px 24px -1px rgba(0, 0, 0, 0.2),
       0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  /* Add this for mobile/expanded state */
+  .sidebar-background.mobile-expanded {
+    @apply bg-[hsl(var(--sidebar-background-mobile))];
   }
 
   .feature-card {

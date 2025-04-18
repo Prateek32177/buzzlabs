@@ -25,7 +25,18 @@ import {
 import { getUser } from '@/hooks/user-auth';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { HookfloIcon } from '../Logos/Hookflo';
-// This is sample data.
+import { useRouter } from 'next/navigation';
+import { useUsageData } from '@/hooks/use-usage-data';
+
+type UsageBarProps = {
+  label?: string;
+  used: number;
+  total: number;
+  colorFrom?: string;
+  colorTo?: string;
+  isCollapsed?: boolean; // whether sidebar is collapsed
+};
+
 const data = {
   navMain: [
     {
@@ -66,6 +77,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [avatarSeed, setAvatarSeed] = useState('');
+  const { usageData, isLoading, error } = useUsageData();
+
   useEffect(() => {
     const fetchUser = async () => {
       const { userEmail, username, avatar_seed } = await getUser();
@@ -100,21 +113,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         <>
-        <UsageBar
-        label='Emails left'
-        used={40}
-        total={100}
+          <UsageBar
+            label='Emails left'
+            used={usageData?.usage.current.emails || 0}
+            total={usageData?.subscription.limits.dailyEmails || 0}
+            isCollapsed={!open}
+          />
+          <UsageBar
+            label='Slack alerts left'
+            used={usageData?.usage.current.slackNotifications || 0}
+            total={usageData?.subscription.limits.dailySlackNotifications || 0}
+            isCollapsed={!open}
+          />
 
-        />
-           <UsageBar
-        label='Slack alerts left'
-        used={40}
-        total={500}
-
-        />
-        
-
-        {email && (
           <NavUser
             user={{
               name: username || '',
@@ -122,42 +133,49 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${avatarSeed}&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede`,
             }}
           />
-        )}
         </>
       </SidebarFooter>
     </Sidebar>
   );
 }
 
-
-function UsageBar({
+export function UsageBar({
   label,
   used,
   total,
-  colorFrom = '#d546ef', // Fuchsia-500
-  colorTo = '#8b5cd6', // Violet-500
-}: {
-  label?: string;
-  used: number;
-  total: number;
-  colorFrom?: string;
-  colorTo?: string;
-}) {
+  colorFrom = '#d546ef',
+  colorTo = '#8b5cd6',
+  isCollapsed = false,
+}: UsageBarProps) {
+  const router = useRouter();
   const percentage = Math.min((used / total) * 100, 100);
 
+  const handleClick = () => {
+    router.push('/dashboard/settings/usage');
+  };
+
   return (
-    <div className="w-full mb-2 px-4">
+    <div
+      onClick={handleClick}
+      className={`w-full px-4 mb-2 cursor-pointer group transition-opacity duration-300 ${
+        isCollapsed
+          ? 'opacity-0 pointer-events-none h-0 overflow-hidden'
+          : 'opacity-100'
+      }`}
+    >
       {/* Label */}
-      <div className="flex justify-between text-[11px] font-medium text-zinc-400 mb-1 tracking-tight">
+      <div className='flex justify-between text-[11px] font-medium text-zinc-400 mb-1 tracking-tight'>
         <span>{label}</span>
-        <span className="tabular-nums">{used}/{total}</span>
+        <span className='tabular-nums'>
+          {used}/{total}
+        </span>
       </div>
 
       {/* Track */}
-      <div className="relative h-2.5 rounded-full bg-zinc-800/70 backdrop-blur-sm shadow-inner overflow-hidden">
+      <div className='relative h-2.5 rounded-full bg-zinc-800/70 backdrop-blur-sm shadow-inner overflow-hidden group-hover:ring-1 group-hover:ring-zinc-600/30'>
         {/* Progress Fill */}
         <div
-          className="absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-in-out"
+          className='absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-in-out'
           style={{
             width: `${percentage}%`,
             background: `linear-gradient(to right, ${colorFrom}, ${colorTo})`,

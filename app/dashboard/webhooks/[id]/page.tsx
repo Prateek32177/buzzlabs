@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import {
   Check,
   Clipboard,
-  Loader2,
   Mail,
   Slack,
   ExternalLink,
@@ -29,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Loader } from '@/components/ui/loader';
 
 import {
   Dialog,
@@ -214,7 +214,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   if (isLoading && !webhook) {
     return (
       <div className='flex items-center justify-center h-screen'>
-        <Loader2 className='h-8 w-8 animate-spin text-gray-500' />
+        <Loader />
       </div>
     );
   }
@@ -222,7 +222,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   if (!webhook) {
     return (
       <div className='flex items-center justify-center h-screen'>
-        <p className='text-gray-500'>Loading webhook details...</p>
+        <Loader text='Loading webhook details...' />
       </div>
     );
   }
@@ -275,11 +275,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   placeholder='Webhook name'
                 />
                 <Button onClick={handleNameUpdate} disabled={isLoading}>
-                  {isLoading ? (
-                    <Loader2 className='h-4 w-4 animate-spin' />
-                  ) : (
-                    'Save'
-                  )}
+                  {isLoading ? <Loader text='Saving...' /> : 'Save'}
                 </Button>
               </div>
             </div>
@@ -455,9 +451,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     disabled={isLoading}
                     size={'sm'}
                   >
-                    {isLoading ? (
-                      <Loader2 className='h-4 w-4 animate-spin mr-2' />
-                    ) : null}
+                    {isLoading ? <Loader text='Loading...' /> : null}
                     Save Configuration
                   </Button>
                 </div>
@@ -789,14 +783,7 @@ function EmailConfigForm({
           type='submit'
           disabled={isLoading || !emailConfig.recipient_email}
         >
-          {isLoading ? (
-            <>
-              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              Saving...
-            </>
-          ) : (
-            'Save Configuration'
-          )}
+          {isLoading ? <Loader text='Saving...' /> : 'Save Configuration'}
         </Button>
       </DialogFooter>
     </form>
@@ -933,14 +920,7 @@ function SlackConfigForm({
           Cancel
         </Button>
         <Button type='submit' disabled={isLoading || !slackConfig.webhook_url}>
-          {isLoading ? (
-            <>
-              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              Saving...
-            </>
-          ) : (
-            'Save Configuration'
-          )}
+          {isLoading ? <Loader text='Saving...' /> : 'Save Configuration'}
         </Button>
       </DialogFooter>
     </form>

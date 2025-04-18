@@ -32,7 +32,5 @@ export async function GET(request: Request) {
     }
   }
 
-  // No code present, return to sign-in page
-  console.log('No auth code found, redirecting to sign-in');
   return NextResponse.redirect(`${origin}/sign-in`);
 }

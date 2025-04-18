@@ -27,7 +27,6 @@ import { Loader } from '@/components/ui/loader';
 
 const UsageTab = () => {
   const { usageData, isLoading, error } = useUsageData();
-  console.log('usageData', usageData);
 
   if (isLoading) {
     return (
@@ -60,7 +59,6 @@ const UsageTab = () => {
   }
 
   const { subscription, usage } = usageData;
-  console.log(' subscription usagedata', subscription);
   // Calculate percentages for progress bars
   const webhookLimitPercentage =
     (usage.current.activeWebhooks / subscription.limits.webhookLimit) * 100;

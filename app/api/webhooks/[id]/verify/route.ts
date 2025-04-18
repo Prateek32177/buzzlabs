@@ -316,7 +316,6 @@ function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
       return webhook.platformConfig[detectedPlatform];
     default:
       if (!webhook.secret) {
-        console.error('No secret found for webhook:', webhook.id);
         throw new Error('Webhook secret is missing');
       }
       return webhook.secret;

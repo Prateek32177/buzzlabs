@@ -9,10 +9,10 @@ import {
   Save,
   RefreshCw,
   Shield,
-  Loader,
   CheckCircle,
   VerifiedIcon,
 } from 'lucide-react';
+import { Loader } from '@/components/ui/loader';
 import Link from 'next/link';
 import { getUser } from '@/hooks/user-auth';
 import { toast } from 'sonner';
@@ -91,7 +91,7 @@ const ProfileTab = () => {
   if (isLoading) {
     return (
       <div className='h-[50vh] flex items-center justify-center'>
-        <Loader className='h-8 w-8 animate-spin text-white' />
+        <Loader />
       </div>
     );
   }

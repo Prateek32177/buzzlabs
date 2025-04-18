@@ -23,6 +23,7 @@ import {
 import EmailSlackCharts from './EmailSlackCharts';
 import { useUsageData } from '@/hooks/use-usage-data';
 import { formatBytes } from '@/lib/utils';
+import { Loader } from '@/components/ui/loader';
 
 const UsageTab = () => {
   const { usageData, isLoading, error } = useUsageData();
@@ -30,8 +31,7 @@ const UsageTab = () => {
   if (isLoading) {
     return (
       <div className='flex justify-center items-center h-64'>
-        <RefreshCw className='h-8 w-8 text-violet-500 animate-spin' />
-        <span className='ml-2 text-gray-400'>Loading your usage data...</span>
+        <Loader text='Getting usage data...' />
       </div>
     );
   }
@@ -59,7 +59,6 @@ const UsageTab = () => {
   }
 
   const { subscription, usage } = usageData;
-
   // Calculate percentages for progress bars
   const webhookLimitPercentage =
     (usage.current.activeWebhooks / subscription.limits.webhookLimit) * 100;
@@ -69,9 +68,9 @@ const UsageTab = () => {
 
   // Determine color based on usage percentage
   const webhookLimitColor =
-    webhookLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
+    webhookLimitPercentage < 80 ? 'bg-purple-400' : 'bg-purple-800';
   const notificationLimitColor =
-    notificationLimitPercentage < 80 ? 'bg-violet-500' : 'bg-purple-800';
+    notificationLimitPercentage < 80 ? 'bg-purple-400' : 'bg-purple-800';
 
   // Format tier name for display
   const tierName =
@@ -93,7 +92,7 @@ const UsageTab = () => {
               Consumption Summary
             </h3>
             <p className='text-sm text-gray-400'>
-              {tierName} plan •{' '}
+              {tierName} plan
               {usage.hasReachedLimit && (
                 <span className='text-red-500 font-medium'>Limit reached</span>
               )}
@@ -101,7 +100,7 @@ const UsageTab = () => {
           </div>
           <div className='text-sm flex items-center text-hookflo-green'>
             <Clock className='h-4 w-4 mr-1' />
-            Your limit will reset at midnight IST
+            Your daily limit will reset at midnight IST
           </div>
         </div>
 
@@ -268,7 +267,7 @@ const UsageTab = () => {
 };
 
 // Helper component to show webhook trend
-const WebhookTrend = ({ data }:{data:any}) => {
+const WebhookTrend = ({ data }: { data: any }) => {
   if (data.length < 2) return null;
 
   // Calculate trend percentage by comparing last two months

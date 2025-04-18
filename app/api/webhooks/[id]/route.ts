@@ -33,7 +33,6 @@ export async function GET(
       id: webhook.id,
       name: webhook.name,
       url: webhook.url,
-      secret: webhook.secret,
       is_active: webhook.is_active,
       notify_email: webhook.notify_email,
       notify_slack: webhook.notify_slack,
@@ -58,19 +57,6 @@ export async function PATCH(
     const id = (await params).id;
     const updates = await request.json();
     const supabase = createClient();
-
-    // If updating platform config for custom platform, ensure secret is encrypted
-    if (updates.platformConfig && updates.platform === 'custom') {
-      const webhookSecret = updates.platformConfig.webhook_token;
-      if (webhookSecret) {
-        const encryptedSecret = await SecureWebhookService.storeWebhookSecret(
-          id,
-          webhookSecret,
-        );
-        updates.secret = encryptedSecret;
-      }
-    }
-
     const {
       data: { user },
       error: authError,
@@ -93,7 +79,6 @@ export async function PATCH(
       id: webhook[0].id,
       name: webhook[0].name,
       url: webhook[0].url,
-      secret: webhook[0].secret,
       is_active: webhook[0].is_active,
       notify_email: webhook[0].notify_email,
       notify_slack: webhook[0].notify_slack,

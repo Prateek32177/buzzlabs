@@ -11,11 +11,11 @@ import {
   SelectContent,
 } from '@/components/ui/select';
 import { DialogFooter } from '@/components/ui/dialog';
-import { Loader2, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { EmailTemplateOptions } from '@/const';
 import { emailTemplates } from '@/lib/templates';
-
+import { Loader } from '@/components/ui/loader';
 export function EmailConfig({
   webhook,
   onUpdate,
@@ -111,14 +111,7 @@ export function EmailConfig({
           size={'sm'}
           disabled={isLoading || !emailConfig.recipient_email}
         >
-          {isLoading ? (
-            <>
-              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              Saving...
-            </>
-          ) : (
-            'Save Configuration'
-          )}
+          {isLoading ? <Loader text='Saving...' /> : 'Save Configuration'}
         </Button>
       </DialogFooter>
     </form>

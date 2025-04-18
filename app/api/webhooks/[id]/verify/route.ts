@@ -106,10 +106,12 @@ export async function POST(
 
     // Set user ID for usage tracking
     usageMetrics.userId = webhook[0].user_id;
-    
+
     // Check if the user has reached their usage limits
-    const { hasReachedLimit, currentUsage } = await checkUsageLimits(webhook[0].user_id);
-    
+    const { hasReachedLimit, currentUsage } = await checkUsageLimits(
+      webhook[0].user_id,
+    );
+
     if (hasReachedLimit) {
       const log = {
         id: logId,
@@ -134,10 +136,11 @@ export async function POST(
       await trackUsage(usageMetrics);
 
       return Response.json(
-        { 
-          error: 'Rate limit exceeded', 
+        {
+          error: 'Rate limit exceeded',
           currentUsage,
-          message: 'You have reached your daily usage limit. Please upgrade your plan for higher limits.'
+          message:
+            'You have reached your daily usage limit. Please upgrade your plan for higher limits.',
         },
         { status: 429 },
       );
@@ -313,7 +316,6 @@ function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
       return webhook.platformConfig[detectedPlatform];
     default:
       if (!webhook.secret) {
-        console.error('No secret found for webhook:', webhook.id);
         throw new Error('Webhook secret is missing');
       }
       return webhook.secret;

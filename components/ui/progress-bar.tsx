@@ -19,7 +19,7 @@ const ProgressBar = ({
   return (
     <div
       className={cn(
-        'w-full bg-gray-800 rounded-full h-2.5 overflow-hidden',
+        'w-full bg-zinc-800 rounded-full h-2.5 overflow-hidden',
         className,
       )}
     >

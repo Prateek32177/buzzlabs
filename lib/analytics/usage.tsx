@@ -68,7 +68,7 @@ export async function trackUsage(metrics: UsageMetrics): Promise<void> {
   }
 }
 
-export async function checkUsageLimits(userId: string): Promise<{ 
+export async function checkUsageLimits(userId: string): Promise<{
   hasReachedLimit: boolean;
   currentUsage: {
     requests: number;
@@ -86,11 +86,11 @@ export async function checkUsageLimits(userId: string): Promise<{
   try {
     const supabase = await createClient();
     const today = new Date().toISOString().split('T')[0];
-    
+
     // Get user's subscription tier
     const { subscription_tier } = await getUser();
     const tier = subscription_tier || 'free';
-    
+
     // Get today's usage
     const { data: usage, error } = await supabase
       .from('usage_daily')
@@ -98,28 +98,29 @@ export async function checkUsageLimits(userId: string): Promise<{
       .eq('user_id', userId)
       .eq('date', today)
       .single();
-      
-    if (error && error.code !== 'PGRST116') { // PGRST116 is the error code for no rows returned
+
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 is the error code for no rows returned
       console.error('Failed to get usage data:', error);
     }
-    
+
     const currentUsage = {
       requests: usage?.request_count || 0,
       emails: usage?.email_count || 0,
       slackNotifications: usage?.slack_count || 0,
       totalDataVolume: usage?.total_payload_bytes || 0,
     };
-    
+
     // Define tier limits (this would come from your subscription plans table)
     const limits = tierLimits[tier] || tierLimits.free;
-    
+
     // Check if any limit is exceeded
-    const hasReachedLimit = 
-      currentUsage.requests >= limits.dailyRequests || 
-      currentUsage.emails >= limits.dailyEmails || 
-      currentUsage.slackNotifications >= limits.dailySlackNotifications || 
+    const hasReachedLimit =
+      currentUsage.requests >= limits.dailyRequests ||
+      currentUsage.emails >= limits.dailyEmails ||
+      currentUsage.slackNotifications >= limits.dailySlackNotifications ||
       currentUsage.totalDataVolume >= limits.dailyDataVolumeMB * 1024 * 1024;
-    
+
     return {
       hasReachedLimit,
       currentUsage: {
@@ -128,8 +129,8 @@ export async function checkUsageLimits(userId: string): Promise<{
           requests: limits.dailyRequests,
           emails: limits.dailyEmails,
           slackNotifications: limits.dailySlackNotifications,
-          dataVolumeMB: limits.dailyDataVolumeMB
-        }
+          dataVolumeMB: limits.dailyDataVolumeMB,
+        },
       },
     };
   } catch (error) {
@@ -146,8 +147,8 @@ export async function checkUsageLimits(userId: string): Promise<{
           requests: 100,
           emails: 50,
           slackNotifications: 3,
-          dataVolumeMB: 10
-        }
+          dataVolumeMB: 10,
+        },
       },
     };
   }

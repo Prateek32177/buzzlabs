@@ -7,6 +7,9 @@ import {
   Github,
 } from 'lucide-react';
 import { WebhookPlatform } from '../types';
+import { SupabaseLogo } from '@/components/Logos';
+import { ClerkLogo } from '@/components/Logos';
+import StripeLogo from '@/components/Logos/StripeLogo';
 
 export const platformConfigs: Partial<
   Record<WebhookPlatform, WebhookPlatformConfig>
@@ -15,7 +18,7 @@ export const platformConfigs: Partial<
     id: 'supabase',
     name: 'Supabase',
     description: 'Authenticate webhooks from Supabase DB',
-    icon: AlertCircle,
+    icon: SupabaseLogo,
     fields: [
       {
         key: 'webhook_id',
@@ -76,7 +79,7 @@ export const platformConfigs: Partial<
     id: 'clerk',
     name: 'Clerk',
     description: 'Authenticate webhooks from Clerk user management',
-    icon: UserCircle,
+    icon: ClerkLogo,
     fields: [
       {
         key: 'signing_secret',
@@ -104,7 +107,7 @@ export const platformConfigs: Partial<
     id: 'stripe',
     name: 'Stripe',
     description: 'Authenticate webhooks from Stripe payment processing',
-    icon: CreditCard,
+    icon: StripeLogo,
     fields: [
       {
         key: 'signing_secret',

@@ -14,7 +14,6 @@ export default function Layout({
     <SidebarProvider>
       <AppSidebar
         side='left'
-        variant='inset'
         collapsible='icon'
         className='sidebar-background'
       />

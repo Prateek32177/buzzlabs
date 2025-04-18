@@ -1,4 +1,4 @@
-export const ClerkLogo = ({ className }: { className: string }) => (
+export const ClerkLogo = ({ className }: { className?: string }) => (
   <svg
     className={`${className}`}
     role='img'

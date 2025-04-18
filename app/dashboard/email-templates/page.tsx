@@ -20,13 +20,7 @@ import {
   Template as ServiceTemplate,
 } from '@/utils/template-manager';
 import { toast } from 'sonner';
-import {
-  Loader,
-  Save,
-  RefreshCw,
-  HelpCircle,
-  ArrowUpRight,
-} from 'lucide-react';
+import { Save, RefreshCw, HelpCircle, ArrowUpRight } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -37,6 +31,7 @@ import {
 } from '@/components/ui/dialog';
 import { getUser } from '@/hooks/user-auth';
 import { useSearchParams } from 'next/navigation';
+import { Loader } from '@/components/ui/loader';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -400,7 +395,7 @@ export default function EmailTemplateEditor() {
   if (isPageLoading) {
     return (
       <div className='flex justify-center items-center h-screen'>
-        <Loader className='w-10 h-10 text-center animate-spin' />
+        <Loader text='Loading...' />
       </div>
     );
   }
@@ -422,10 +417,7 @@ export default function EmailTemplateEditor() {
               >
                 <SelectTrigger className='w-[200px]'>
                   {isWebhooksLoading ? (
-                    <div className='flex items-center gap-2'>
-                      <Loader className='h-4 w-4 animate-spin' />
-                      <span>Loading...</span>
-                    </div>
+                    <Loader text='Loading...' />
                   ) : (
                     <SelectValue placeholder='Select Webhook' />
                   )}

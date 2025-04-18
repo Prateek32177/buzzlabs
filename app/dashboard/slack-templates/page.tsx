@@ -23,9 +23,10 @@ import { slackTemplates } from '@/lib/slack-templates';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TemplateService, TemplateType } from '@/utils/template-manager';
-import { Save, RefreshCw, Loader, ArrowUpRight } from 'lucide-react';
+import { Save, RefreshCw, ArrowUpRight } from 'lucide-react';
 import { getUser } from '@/hooks/user-auth';
 import { useSearchParams } from 'next/navigation';
+import { Loader } from '@/components/ui/loader';
 
 type TemplateId = { templateId: string };
 
@@ -367,7 +368,7 @@ export default function SlackTemplateEditor() {
   if (isPageLoading) {
     return (
       <div className='h-[50vh] flex items-center justify-center'>
-        <Loader className='h-8 w-8 animate-spin text-white' />
+        <Loader />
       </div>
     );
   }
@@ -392,10 +393,7 @@ export default function SlackTemplateEditor() {
               >
                 <SelectTrigger className='w-[200px]'>
                   {isWebhooksLoading ? (
-                    <div className='flex items-center gap-2'>
-                      <Loader className='h-4 w-4 animate-spin' />
-                      <span>Loading...</span>
-                    </div>
+                    <Loader text='Loading...' />
                   ) : (
                     <SelectValue placeholder='Select Webhook' />
                   )}

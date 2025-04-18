@@ -26,7 +26,6 @@ import {
   Trash2,
   Slack,
   Mail,
-  Loader2,
   ArrowUpRight,
   PlugZap,
   Plus,
@@ -36,6 +35,7 @@ import { EmailConfigDialog } from './EmailConfigDialog';
 import { SlackConfigDialog } from './SlackConfigDialog';
 import { Webhook } from './types';
 import { WebhookDetails } from './WebhookDetails';
+import { Loader } from '@/components/ui/loader';
 
 export function WebhookManagement() {
   const [webhooks, setWebhooks] = useState<Webhook[]>([]);
@@ -269,10 +269,7 @@ export function WebhookManagement() {
                 className='whitespace-nowrap'
               >
                 {isLoading ? (
-                  <>
-                    <Loader2 className='h-4 w-4 animate-spin' />
-                    Creating...
-                  </>
+                  <Loader text='Creating...' />
                 ) : (
                   <>
                     <Plus className='h-4 w-4' />
@@ -294,7 +291,7 @@ export function WebhookManagement() {
           <CardContent>
             {isFetching ? (
               <div className='flex justify-center items-center py-8'>
-                <Loader2 className='h-8 w-8 animate-spin' />
+                <Loader text='Fetching webhooks' />
               </div>
             ) : webhooks.length === 0 ? (
               <div className='text-center py-8 text-muted-foreground'>
@@ -397,7 +394,7 @@ export function WebhookManagement() {
                               disabled={isLoadingId === webhook.id}
                             >
                               {isLoadingId === webhook.id ? (
-                                <Loader2 className='h-4 w-4 animate-spin' />
+                                <Loader />
                               ) : (
                                 <Trash2 className='h-4 w-4' />
                               )}

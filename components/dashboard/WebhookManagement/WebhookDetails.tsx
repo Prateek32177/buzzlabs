@@ -10,15 +10,8 @@ import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  Check,
-  Clipboard,
-  Loader2,
-  Mail,
-  Slack,
-  EyeOff,
-  Eye,
-} from 'lucide-react';
+import { Check, Clipboard, Mail, Slack, EyeOff, Eye } from 'lucide-react';
+import { Loader } from '@/components/ui/loader';
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -127,11 +120,7 @@ export function WebhookDetailsComp({
               disabled={isLoading || name === webhook.name}
               size={'sm'}
             >
-              {isLoading ? (
-                <Loader2 className='h-4 w-4 animate-spin' />
-              ) : (
-                'Save'
-              )}
+              {isLoading ? <Loader text='Saving...' /> : 'Save'}
             </Button>
           </div>
         </div>
@@ -296,9 +285,7 @@ export function WebhookDetailsComp({
                     disabled={isLoading}
                     size={'sm'}
                   >
-                    {isLoading ? (
-                      <Loader2 className='h-4 w-4 animate-spin mr-2' />
-                    ) : null}
+                    {isLoading ? <Loader text='Saving...' /> : null}
                     Save Configuration
                   </Button>
                 </div>

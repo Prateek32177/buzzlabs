@@ -46,7 +46,6 @@ import {
 import {
   AlertCircle,
   CheckCircle2,
-  Loader,
   Search,
   CalendarDays,
   FilterX,
@@ -61,6 +60,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import StatusBadge from '@/components/ui/status-badges';
+import { Loader } from '@/components/ui/loader';
 
 type WebhookLogData = {
   id: string;
@@ -193,11 +193,7 @@ export function NotificationLogs() {
           </CardDescription>
         </CardHeader>
         <CardContent className='flex items-center justify-center h-64'>
-          <div className='flex flex-col items-center gap-4 text-gray-400'>
-            <Loader className='w-8 h-8 text-center animate-spin' />
-
-            <p className=''>Loading notification logs...</p>
-          </div>
+          <Loader text='Loading notification logs...' />
         </CardContent>
       </Card>
     );

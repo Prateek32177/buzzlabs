@@ -34,24 +34,30 @@ interface UserType {
   subscription_tier?: string;
 }
 
- const tierLimits: Record<string, any> = {
+const tierLimits: Record<string, any> = {
   free: {
-    dailyRequests: 100,
-    dailyEmails: 50,
-    dailySlackNotifications: 5,
+    dailyRequests: 10,
+    dailyEmails: 10,
+    dailySlackNotifications: 100,
     dailyDataVolumeMB: 10,
+    webhookLimit: 5,
+    notificationLimit: 100,
   },
   pro: {
-    dailyRequests: 1000,
+    dailyRequests: 100,
     dailyEmails: 500,
-    dailySlackNotifications: 500,
+    dailySlackNotifications: 2000,
     dailyDataVolumeMB: 100,
+    webhookLimit: 20,
+    notificationLimit: 4000,
   },
   enterprise: {
-    dailyRequests: 10000,
-    dailyEmails: 5000,
-    dailySlackNotifications: 5000,
+    dailyRequests: 1000,
+    dailyEmails: 1000,
+    dailySlackNotifications: 4000,
     dailyDataVolumeMB: 1000,
+    webhookLimit: 100,
+    notificationLimit: 5000,
   },
 };
 
@@ -61,7 +67,7 @@ export async function GET() {
     if (!user || !user?.userId) {
       return NextResponse.json(
         { error: 'Authentication required' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -83,19 +89,18 @@ export async function GET() {
     const { count: activeWebhooks } = await supabase
       .from('webhooks')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('active', true);
+      .eq('user_id', userId);
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const fromDate = thirtyDaysAgo.toISOString().split('T')[0];
 
-    const { data: historicalData = [] } = await supabase
+    const { data: historicalData = [] } = (await supabase
       .from('usage_daily')
       .select('*')
       .eq('user_id', userId)
       .gte('date', fromDate)
-      .order('date', { ascending: true }) as { data: UsageRow[] };
+      .order('date', { ascending: true })) as { data: UsageRow[] };
 
     const emailSlackData = processEmailSlackData(historicalData);
     const webhookData = processWebhookData(historicalData);
@@ -127,7 +132,7 @@ export async function GET() {
     console.error('Failed to fetch usage data:', error);
     return NextResponse.json(
       { error: 'Failed to fetch usage data' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -137,7 +142,10 @@ export async function GET() {
 function processEmailSlackData(historicalData: UsageRow[]) {
   if (!historicalData || historicalData.length === 0) return [];
 
-  const dateMap = new Map<string, { date: string; Email: number; Slack: number }>();
+  const dateMap = new Map<
+    string,
+    { date: string; Email: number; Slack: number }
+  >();
 
   historicalData.forEach(day => {
     const date = new Date(day.date);

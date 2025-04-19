@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Table,
   TableBody,
@@ -29,6 +28,7 @@ import {
   ArrowUpRight,
   PlugZap,
   Plus,
+  Loader2,
 } from 'lucide-react';
 import { WebhookContext } from './WebhookContext';
 import { EmailConfigDialog } from './EmailConfigDialog';
@@ -156,6 +156,7 @@ export function WebhookManagement() {
   };
 
   const deleteWebhook = async (id: string) => {
+    setIsLoadingId(id);
     try {
       const response = await fetch(`/api/webhooks/${id}`, {
         method: 'DELETE',
@@ -172,6 +173,8 @@ export function WebhookManagement() {
       toast.error('Error', {
         description: 'Failed to delete webhook',
       });
+    } finally {
+      setIsLoadingId(null);
     }
   };
 
@@ -269,7 +272,7 @@ export function WebhookManagement() {
                 className='whitespace-nowrap'
               >
                 {isLoading ? (
-                  <Loader text='Creating...' />
+                  <Loader2 className='h-4 w-4 animate-spin' />
                 ) : (
                   <>
                     <Plus className='h-4 w-4' />
@@ -394,7 +397,7 @@ export function WebhookManagement() {
                               disabled={isLoadingId === webhook.id}
                             >
                               {isLoadingId === webhook.id ? (
-                                <Loader />
+                                <Loader className='w-4 h-4 text-gray-300' />
                               ) : (
                                 <Trash2 className='h-4 w-4' />
                               )}

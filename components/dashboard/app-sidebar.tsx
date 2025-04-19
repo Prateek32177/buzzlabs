@@ -2,11 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  AudioWaveform,
   BookOpen,
   Bot,
-  Command,
-  GalleryVerticalEnd,
   Settings2,
   LayoutPanelTop,
   Mails,
@@ -156,7 +153,7 @@ export function UsageBar({
 
   return (
     <div
-      onClick={handleClick}
+      onPointerUp={handleClick}
       className={`w-full px-4 mb-2 cursor-pointer group transition-opacity duration-300 ${
         isCollapsed
           ? 'opacity-0 pointer-events-none h-0 overflow-hidden'

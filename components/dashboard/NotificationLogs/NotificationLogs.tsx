@@ -329,12 +329,12 @@ export function NotificationLogs() {
                   </TableRow>
                 </TableHeader>
               </Table>
-              <div className='flex flex-col items-center justify-center py-16 px-4 border-t border-gray-700'>
-                <Inbox className='h-12 w-12 text-gray-600 mb-4' />
-                <h3 className='text-lg font-medium  mb-1'>
+              <div className='flex flex-col items-center justify-center py-16 px-4'>
+                <Inbox className='h-10 w-10 text-gray-400 mb-4' />
+                <h3 className='text-base font-medium  mb-1 text-gray-400'>
                   No notification logs found
                 </h3>
-                <p className=' text-center max-w-md mb-6'>
+                <p className=' text-center max-w-md mb-6 text-gray-400'>
                   {search || timeFilter !== 'all' || statusFilter !== 'all'
                     ? "Try adjusting your filters or search criteria to find what you're looking for."
                     : 'There are no notification logs recorded in the system yet.'}

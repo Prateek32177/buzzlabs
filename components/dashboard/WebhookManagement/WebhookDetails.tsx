@@ -10,8 +10,15 @@ import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Check, Clipboard, Mail, Slack, EyeOff, Eye } from 'lucide-react';
-import { Loader } from '@/components/ui/loader';
+import {
+  Check,
+  Clipboard,
+  Mail,
+  Slack,
+  EyeOff,
+  Eye,
+  Loader2,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -120,7 +127,7 @@ export function WebhookDetailsComp({
               disabled={isLoading || name === webhook.name}
               size={'sm'}
             >
-              {isLoading ? <Loader text='Saving...' /> : 'Save'}
+              {isLoading ? <Loader2 className='animate-spin' /> : 'Save'}
             </Button>
           </div>
         </div>
@@ -157,7 +164,7 @@ export function WebhookDetailsComp({
         </div>
       </div>
 
-      <div className='grid gap-2 my-8'>
+      <div className='grid gap-4 my-8'>
         <Label>Webhook URL</Label>
         <div className='flex'>
           <Input
@@ -168,17 +175,24 @@ export function WebhookDetailsComp({
           <Button
             variant='secondary'
             className='rounded-l-none'
-            onClick={() =>
+            onClick={() => {
               copyToClipboard(
-                `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}`,
-              )
-            }
+                `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`,
+              );
+              const button = document.activeElement as HTMLButtonElement;
+              const originalContent = button.innerHTML;
+              button.innerHTML =
+                '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+              setTimeout(() => {
+                button.innerHTML = originalContent;
+              }, 2000);
+            }}
           >
             <Clipboard className='h-4 w-4' />
           </Button>
         </div>
         <div className='space-y-4 '>
-          <Card className='py-4 bg-zinc-700/10'>
+          <Card className='py-4 bg-zinc-900/10'>
             <CardContent>
               <CardTitle>Configuration</CardTitle>
               <CardDescription className='mt-1 mb-3'>
@@ -257,19 +271,15 @@ export function WebhookDetailsComp({
                         size={'icon'}
                         onClick={() => {
                           const textToCopy = currentValues?.[field.key] || '';
-                          navigator.clipboard
-                            .writeText(textToCopy)
-                            .then(() => {
-                              toast.success('Copied to clipboard', {
-                                description:
-                                  'The value has been copied to your clipboard.',
-                              });
-                            })
-                            .catch(() => {
-                              toast.error('Failed to copy', {
-                                description: 'Unable to copy to clipboard.',
-                              });
-                            });
+                          copyToClipboard(textToCopy);
+                          const button =
+                            document.activeElement as HTMLButtonElement;
+                          const originalContent = button.innerHTML;
+                          button.innerHTML =
+                            '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                          setTimeout(() => {
+                            button.innerHTML = originalContent;
+                          }, 2000);
                         }}
                       >
                         <Clipboard className='h-4 w-4' />
@@ -285,8 +295,11 @@ export function WebhookDetailsComp({
                     disabled={isLoading}
                     size={'sm'}
                   >
-                    {isLoading ? <Loader text='Saving...' /> : null}
-                    Save Configuration
+                    {isLoading ? (
+                      <Loader2 className='animate-spin' />
+                    ) : (
+                      'Save Configuration'
+                    )}
                   </Button>
                 </div>
               )}
@@ -294,16 +307,16 @@ export function WebhookDetailsComp({
           </Card>
         </div>
 
-        <div className='grid gap-4'>
+        <div className='grid gap-4 my-4'>
           <div className='flex items-center justify-between'>
-            <Label>Notification Templates</Label>
+            <Label>Configure Notifications</Label>
           </div>
           <div className='space-y-4 p-4 border rounded-lg'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-2'>
                 <div className='flex items-center gap-2'>
                   <Mail className='h-4 w-4' />
-                  <span>Email Notifications</span>
+                  <span className='text-sm'>Email Notifications</span>
                 </div>
                 <Switch
                   checked={webhook.notify_email}
@@ -323,7 +336,7 @@ export function WebhookDetailsComp({
               </div>
               <div className='flex items-center gap-2'>
                 {webhook?.email_config?.recipient_email && (
-                  <Badge variant='outline' className='text-xs'>
+                  <Badge variant='outline' className='text-xs hidden sm:block'>
                     {webhook.email_config.recipient_email}
                   </Badge>
                 )}
@@ -340,7 +353,7 @@ export function WebhookDetailsComp({
               <div className='flex items-center gap-2'>
                 <div className='flex items-center gap-2'>
                   <Slack className='h-4 w-4' />
-                  <span>Slack Notifications</span>
+                  <span className='text-sm'>Slack Notifications</span>
                 </div>
                 <Switch
                   checked={webhook.notify_slack}
@@ -360,7 +373,7 @@ export function WebhookDetailsComp({
               </div>
               <div className='flex items-center gap-2'>
                 {webhook?.slack_config?.channel_name && (
-                  <Badge variant='outline' className='text-xs'>
+                  <Badge variant='outline' className='text-xs hidden sm:block'>
                     {webhook.slack_config.channel_name}
                   </Badge>
                 )}
@@ -397,7 +410,7 @@ export function WebhookDetails({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side='right'
-        className='w-[90vw] md:w-[80vw] h-full overflow-y-auto border-l border-zinc-700 bg-zinc-900/80 backdrop-blur-lg shadow-xl rounded-none lg:rounded-tl-2xl lg:rounded-bl-2xl'
+        className='w-[80%] md:w-[80vw] h-full overflow-y-auto border-l border-zinc-700 bg-zinc-900/80 backdrop-blur-lg shadow-xl rounded-none lg:rounded-tl-2xl lg:rounded-bl-2xl'
       >
         <SheetHeader className='mb-4'>
           <SheetTitle>Webhook Details</SheetTitle>

@@ -33,7 +33,7 @@ export const platformConfigs: Partial<
         key: 'webhook_token',
         label: 'x-webhook-token',
         description: 'Set x-webhook-token in header',
-        type: 'text',
+        type: 'secret',
         placeholder: 'webhook secret',
         required: true,
         readOnly: true,
@@ -42,39 +42,39 @@ export const platformConfigs: Partial<
     verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
     showSaveButton: false,
   },
-  custom: {
-    id: 'custom',
-    name: 'Custom Integration',
-    description: 'Use custom headers for webhook authentication',
-    icon: Webhook,
-    fields: [
-      {
-        key: 'webhook_id',
-        label: 'Webhook ID',
-        description: 'Your unique webhook identifier',
-        type: 'text',
-        required: true,
-        readOnly: false,
-      },
-      {
-        key: 'webhook_token',
-        label: 'Webhook Token',
-        description: 'Secret token for webhook authentication',
-        type: 'secret',
-        required: true,
-        readOnly: false,
-      },
-    ],
-    verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
-    exampleCode: {
-      curl: `curl -X POST https://api.SuperHook.dev/webhook \
-  -H "x-webhook-id: your_webhook_id" \
-  -H "x-webhook-token: your_webhook_token" \
-  -H "Content-Type: application/json" \
-  -d '{"event":"test"}'`,
-    },
-    showSaveButton: true,
-  },
+  // custom: {
+  //   id: 'custom',
+  //   name: 'Custom Integration',
+  //   description: 'Use custom headers for webhook authentication',
+  //   icon: Webhook,
+  //   fields: [
+  //     {
+  //       key: 'webhook_id',
+  //       label: 'Webhook ID',
+  //       description: 'Your unique webhook identifier',
+  //       type: 'text',
+  //       required: true,
+  //       readOnly: false,
+  //     },
+  //     {
+  //       key: 'webhook_token',
+  //       label: 'Webhook Token',
+  //       description: 'Secret token for webhook authentication',
+  //       type: 'secret',
+  //       required: true,
+  //       readOnly: false,
+  //     },
+  //   ],
+  //   verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
+  //   exampleCode: {
+  //     curl: `curl -X POST https://api.SuperHook.dev/webhook \
+  // -H "x-webhook-id: your_webhook_id" \
+  // -H "x-webhook-token: your_webhook_token" \
+  // -H "Content-Type: application/json" \
+  // -d '{"event":"test"}'`,
+  //   },
+  //   showSaveButton: true,
+  // },
   clerk: {
     id: 'clerk',
     name: 'Clerk',

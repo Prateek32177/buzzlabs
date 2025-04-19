@@ -17,6 +17,7 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
+  Loader2,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
@@ -275,7 +276,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   placeholder='Webhook name'
                 />
                 <Button onClick={handleNameUpdate} disabled={isLoading}>
-                  {isLoading ? <Loader text='Saving...' /> : 'Save'}
+                  {isLoading ? 'Saving...' : 'Save'}
                 </Button>
               </div>
             </div>
@@ -291,11 +292,18 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 <Button
                   variant='secondary'
                   className='rounded-l-none'
-                  onClick={() =>
+                  onClick={() => {
                     copyToClipboard(
-                      `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}`,
-                    )
-                  }
+                      `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`,
+                    );
+                    const button = document.activeElement as HTMLButtonElement;
+                    const originalContent = button.innerHTML;
+                    button.innerHTML =
+                      '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    setTimeout(() => {
+                      button.innerHTML = originalContent;
+                    }, 2000);
+                  }}
                 >
                   <Clipboard className='h-4 w-4' />
                 </Button>
@@ -423,19 +431,15 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                         size={'icon'}
                         onClick={() => {
                           const textToCopy = currentValues?.[field.key] || '';
-                          navigator.clipboard
-                            .writeText(textToCopy)
-                            .then(() => {
-                              toast.success('Copied to clipboard', {
-                                description:
-                                  'The value has been copied to your clipboard.',
-                              });
-                            })
-                            .catch(() => {
-                              toast.error('Failed to copy', {
-                                description: 'Unable to copy to clipboard.',
-                              });
-                            });
+                          copyToClipboard(textToCopy);
+                          const button =
+                            document.activeElement as HTMLButtonElement;
+                          const originalContent = button.innerHTML;
+                          button.innerHTML =
+                            '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                          setTimeout(() => {
+                            button.innerHTML = originalContent;
+                          }, 2000);
                         }}
                       >
                         <Clipboard className='h-4 w-4' />
@@ -451,8 +455,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     disabled={isLoading}
                     size={'sm'}
                   >
-                    {isLoading ? <Loader text='Loading...' /> : null}
-                    Save Configuration
+                    {isLoading ? <Loader2 className='animate-spin' /> : 'Save Configuration'}
                   </Button>
                 </div>
               )}
@@ -470,7 +473,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 <div className='flex items-center gap-2'>
                   <div className='flex items-center gap-2'>
                     <Mail className='h-4 w-4' />
-                    <span>Email Notifications</span>
+                    <span className='text-sm'>Email Notifications</span>
                   </div>
                   <Switch
                     checked={webhook.notify_email}
@@ -494,7 +497,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 <div className='flex items-center gap-2'>
                   <div className='flex items-center gap-2'>
                     <Slack className='h-4 w-4' />
-                    <span>Slack Notifications</span>
+                    <span className='text-sm'>Slack Notifications</span>
                   </div>
                   <Switch
                     checked={webhook.notify_slack}

@@ -1,5 +1,3 @@
-// @/lib/usage.ts
-
 import { getUser } from '@/hooks/user-auth';
 import { createClient } from '@/utils/supabase/server';
 import { tierLimits } from '@/config';
@@ -16,55 +14,34 @@ interface UsageMetrics {
   status: string;
 }
 
-/**
- * Track usage metrics for rate limiting and subscription purposes
- */
-export async function trackUsage(metrics: UsageMetrics): Promise<void> {
-  if (!metrics.userId) {
-    console.warn('No user ID provided for usage tracking');
-    return;
-  }
-
+export async function trackUsage(metrics: UsageMetrics) {
   try {
-    const supabase = await createClient();
+    const apiUrl = `${process.env.PROD_URL}/api/usage/track`;
+    const internalApiSecret = process.env.INTERNAL_API_SECRET;
 
-    // Update aggregated usage counters (daily)
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-
-    // Get existing usage record for today if it exists
-    const { data: existingUsage } = await supabase
-      .from('usage_daily')
-      .select('*')
-      .eq('user_id', metrics.userId)
-      .eq('date', today)
-      .single();
-
-    if (existingUsage) {
-      // Update existing usage record
-      await supabase
-        .from('usage_daily')
-        .update({
-          request_count: existingUsage.request_count + metrics.requestCount,
-          email_count: existingUsage.email_count + metrics.emailCount,
-          slack_count: existingUsage.slack_count + metrics.slackCount,
-          total_payload_bytes:
-            existingUsage.total_payload_bytes + metrics.payloadSize,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existingUsage.id);
-    } else {
-      // Create new usage record for today
-      await supabase.from('usage_daily').insert({
-        user_id: metrics.userId,
-        date: today,
-        request_count: metrics.requestCount,
-        email_count: metrics.emailCount,
-        slack_count: metrics.slackCount,
-        total_payload_bytes: metrics.payloadSize,
-      });
+    if (!internalApiSecret) {
+      return { success: false, error: 'Missing API configuration' };
     }
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${internalApiSecret}`,
+      },
+      body: JSON.stringify(metrics),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Usage tracking API error:', errorData);
+      return { success: false, error: errorData };
+    }
+
+    return { success: true };
   } catch (error) {
-    console.error('Failed to track usage metrics:', error);
+    console.error('Failed to track usage:', error);
+    return { success: false, error };
   }
 }
 

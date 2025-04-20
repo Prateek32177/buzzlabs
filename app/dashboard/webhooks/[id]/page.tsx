@@ -455,7 +455,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     disabled={isLoading}
                     size={'sm'}
                   >
-                    {isLoading ? <Loader2 className='animate-spin' /> : 'Save Configuration'}
+                    {isLoading ? (
+                      <Loader2 className='animate-spin' />
+                    ) : (
+                      'Save Configuration'
+                    )}
                   </Button>
                 </div>
               )}

@@ -712,27 +712,24 @@ function PreviewPanel({
           />
         ) : (
           // Show error message when character limit is exceeded
-          <div className='border border-red-500 rounded-md p-4 min-h-[400px] bg-zinc-900 flex flex-col items-center justify-center text-red-500'>
+            <div className='border border-red-400/30 rounded-md p-4 min-h-[400px] bg-zinc-900/50 flex flex-col items-center justify-center text-red-400/70'>
             <div className='text-center p-6'>
               <svg
-                className='mx-auto h-12 w-12 text-red-500'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
+              className='mx-auto h-8 w-8'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
               >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
-                />
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={1.5}
+                d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
+              />
               </svg>
-              <h3 className='mt-2 text-lg font-medium '>Preview Unavailable</h3>
-              <p className='mt-1 text-sm text-muted-foreground'>
-                Content exceeds the 1500 character limit.
-              </p>
-              <p className='mt-3 text-sm text-muted-foreground'>
-                Please reduce your HTML content to see the preview.
+              <h3 className='mt-2 text-sm font-medium'>Character Limit Exceeded</h3>
+              <p className='mt-1 text-xs text-muted-foreground'>
+              Please reduce HTML content size to save changes
               </p>
             </div>
           </div>

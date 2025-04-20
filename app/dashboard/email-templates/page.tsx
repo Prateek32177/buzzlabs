@@ -67,6 +67,7 @@ export default function EmailTemplateEditor() {
   const [webhooksList, setWebhooksList] = useState<any[]>([]);
   const [webhookId, setSelectedWebhookId] = useState<string>();
   const [isWebhooksLoading, setIsWebhooksLoading] = useState(true);
+  const [isContentValid, setIsContentValid] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -78,7 +79,9 @@ export default function EmailTemplateEditor() {
     fetchUser();
     fetchWebhooksList();
   }, []);
-
+  useEffect(() => {
+    setIsContentValid(editedContent.length <= 1500);
+  }, [editedContent]);
   const fetchWebhooksList = async () => {
     try {
       setIsWebhooksLoading(true);
@@ -249,6 +252,13 @@ export default function EmailTemplateEditor() {
   const saveTemplate = async () => {
     if (!selectedTemplate?.id || !userId) {
       toast.error('No template selected', { id: 'no-template-selected' });
+      return;
+    }
+    // Check if content is valid(less than 1500 characters)
+    if (editedContent.length > 1500) {
+      toast.error('Content exceeds 1500 character limit', {
+        id: 'character-limit-exceeded',
+      });
       return;
     }
 
@@ -510,7 +520,9 @@ export default function EmailTemplateEditor() {
             <Button
               size={'sm'}
               onClick={saveTemplate}
-              disabled={isSaving || webhooksList.length === 0}
+              disabled={
+                isSaving || webhooksList.length === 0 || !isContentValid
+              }
               className='flex items-center gap-2'
             >
               <Save className='h-4 w-4' />
@@ -554,6 +566,7 @@ export default function EmailTemplateEditor() {
                   <PreviewPanel
                     editedSubject={editedSubject}
                     previewContent={getPreviewContent()}
+                    isContentValid={isContentValid}
                   />
                 </TabsContent>
               </Tabs>
@@ -573,6 +586,7 @@ export default function EmailTemplateEditor() {
               <PreviewPanel
                 editedSubject={editedSubject}
                 previewContent={getPreviewContent()}
+                isContentValid={isContentValid}
               />
             </div>
           </>
@@ -628,6 +642,11 @@ function EditorPanel({
             autoIndent: 'advanced',
           }}
         />
+        <div
+          className={`text-xs flex justify-end ${editedContent.length > 1500 ? 'text-red-500 font-medium' : 'text-muted-foreground'}`}
+        >
+          {editedContent.length} / 1500 characters
+        </div>
       </div>
 
       <div className='space-y-2'>
@@ -668,9 +687,14 @@ function EditorPanel({
 interface PreviewPanelProps {
   editedSubject: string;
   previewContent: string;
+  isContentValid: boolean;
 }
 
-function PreviewPanel({ editedSubject, previewContent }: PreviewPanelProps) {
+function PreviewPanel({
+  editedSubject,
+  previewContent,
+  isContentValid = true,
+}: PreviewPanelProps & { isContentValid?: boolean }) {
   return (
     <Card className='p-4 space-y-4'>
       <div className='space-y-2'>
@@ -679,10 +703,40 @@ function PreviewPanel({ editedSubject, previewContent }: PreviewPanelProps) {
       </div>
       <div className='space-y-2'>
         <Label>Email Preview</Label>
-        <div
-          className='border rounded-md p-4 min-h-[400px] bg-white overflow-auto text-black'
-          dangerouslySetInnerHTML={{ __html: previewContent }}
-        />
+
+        {isContentValid ? (
+          // Show preview content when valid
+          <div
+            className='border rounded-md p-4 min-h-[400px] bg-white overflow-auto text-black'
+            dangerouslySetInnerHTML={{ __html: previewContent }}
+          />
+        ) : (
+          // Show error message when character limit is exceeded
+          <div className='border border-red-500 rounded-md p-4 min-h-[400px] bg-zinc-900 flex flex-col items-center justify-center text-red-500'>
+            <div className='text-center p-6'>
+              <svg
+                className='mx-auto h-12 w-12 text-red-500'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
+                />
+              </svg>
+              <h3 className='mt-2 text-lg font-medium '>Preview Unavailable</h3>
+              <p className='mt-1 text-sm text-muted-foreground'>
+                Content exceeds the 1500 character limit.
+              </p>
+              <p className='mt-3 text-sm text-muted-foreground'>
+                Please reduce your HTML content to see the preview.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );

@@ -311,7 +311,7 @@ function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
     case 'stripe':
       return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'github':
-      return webhook.platformConfig[detectedPlatform].github_secret;
+      return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'supabase':
       return webhook.platformConfig[detectedPlatform];
     default:

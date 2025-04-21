@@ -61,6 +61,7 @@ import {
 import Link from 'next/link';
 import StatusBadge from '@/components/ui/status-badges';
 import { Loader } from '@/components/ui/loader';
+import { useClipboard } from '../WebhookManagement/useClipboard';
 
 type WebhookLogData = {
   id: string;
@@ -101,7 +102,7 @@ export function NotificationLogs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedLog, setSelectedLog] = useState<WebhookLogData | null>(null);
-
+  const { copyToClipboard } = useClipboard();
   const fetchLogs = useCallback(async () => {
     try {
       setLoading(true);
@@ -447,8 +448,9 @@ export function NotificationLogs() {
                                 Details
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className='sm:max-w-[550px]'>
-                              <ScrollArea className='h-[500px] w-full  overflow-auto'>
+
+                            <DialogContent className='sm:max-w-[550px] max-h-[80vh] overflow-y-auto'>
+                              <div className='mt-4 space-y-6 overflow-y-auto max-h-full'>
                                 <DialogHeader>
                                   <DialogTitle className='text-xl font-semibold text-white flex items-center gap-2'>
                                     <Badge
@@ -492,23 +494,27 @@ export function NotificationLogs() {
                                         <p className='text-sm text-gray-400 mb-1'>
                                           Platform
                                         </p>
-                                        <Badge
-                                          variant='outline'
-                                          className='bg-purple-900/50 text-purple-300 border-purple-700'
-                                        >
-                                          {log.platform}
-                                        </Badge>
+                                        {log?.platform && (
+                                          <Badge
+                                            variant='outline'
+                                            className='bg-purple-900/50 text-purple-300 border-purple-700'
+                                          >
+                                            {log.platform}
+                                          </Badge>
+                                        )}
                                       </div>
                                       <div className='min-w-0'>
                                         <p className='text-sm text-gray-400 mb-1'>
                                           Channel
                                         </p>
-                                        <Badge
-                                          variant='secondary'
-                                          className='bg-blue-900/50 text-blue-300 border-blue-700'
-                                        >
-                                          {log.channel}
-                                        </Badge>
+                                        {log?.channel && (
+                                          <Badge
+                                            variant='secondary'
+                                            className='bg-blue-900/50 text-blue-300 border-blue-700'
+                                          >
+                                            {log.channel}
+                                          </Badge>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
@@ -559,33 +565,82 @@ export function NotificationLogs() {
 
                                   {/* Error Message */}
                                   {log.error_message && (
-                                    <div className='space-y-3'>
+                                    <div className='space-y-3 w-full'>
                                       <h4 className='font-medium text-white flex items-center gap-2'>
                                         <AlertCircle className='h-4 w-4 text-red-400' />
                                         Error Details
                                       </h4>
-                                      <ScrollArea className='h-[100px] w-full rounded-md border border-gray-700 bg-red-900/20 p-4'>
-                                        <p className='text-red-300 font-medium'>
-                                          {log.error_message}
-                                        </p>
+                                      <ScrollArea className='max-h-[200px] w-full rounded-md border border-gray-700 bg-red-900/20'>
+                                        <div className='p-4'>
+                                          <pre className='text-sm font-mono text-gray-200 whitespace-pre-wrap break-words'>
+                                            {log.error_message}
+                                          </pre>
+                                        </div>
                                       </ScrollArea>
                                     </div>
                                   )}
 
                                   {/* Payload */}
                                   <div className='space-y-3 w-full'>
-                                    <h4 className='font-medium text-white flex items-center gap-2'>
-                                      <FileJson className='h-4 w-4' />
-                                      Payload
-                                    </h4>
-                                    <ScrollArea className='h-[200px] w-full rounded-md border border-gray-700 p-4 bg-gray-800/20 overflow-auto'>
+                                    <div className='flex items-center justify-between'>
+                                      <h4 className='font-medium text-white flex items-center gap-2'>
+                                        <FileJson className='h-4 w-4' />
+                                        Payload
+                                      </h4>
+                                      <Button
+                                        variant='ghost'
+                                        size='sm'
+                                        onClick={() => {
+                                          copyToClipboard(
+                                            JSON.stringify(
+                                              log.payload,
+                                              null,
+                                              2,
+                                            ),
+                                          );
+                                          const button =
+                                            document.activeElement as HTMLButtonElement;
+                                          button.innerHTML =
+                                            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg>';
+                                          setTimeout(() => {
+                                            button.innerHTML =
+                                              '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+                                          }, 2000);
+                                        }}
+                                        className='text-gray-400 hover:text-white'
+                                      >
+                                        <svg
+                                          xmlns='http://www.w3.org/2000/svg'
+                                          width='16'
+                                          height='16'
+                                          viewBox='0 0 24 24'
+                                          fill='none'
+                                          stroke='currentColor'
+                                          stroke-width='2'
+                                          stroke-linecap='round'
+                                          stroke-linejoin='round'
+                                          className='lucide lucide-copy'
+                                        >
+                                          <rect
+                                            width='14'
+                                            height='14'
+                                            x='8'
+                                            y='8'
+                                            rx='2'
+                                            ry='2'
+                                          />
+                                          <path d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2' />
+                                        </svg>
+                                      </Button>
+                                    </div>
+                                    <ScrollArea className='max-h-[300px] w-full rounded-md border border-gray-700 bg-gray-800/20 p-4 overflow-auto'>
                                       <pre className='text-sm font-mono text-gray-200 whitespace-pre-wrap break-words'>
                                         {JSON.stringify(log.payload, null, 2)}
                                       </pre>
                                     </ScrollArea>
                                   </div>
                                 </div>
-                              </ScrollArea>
+                              </div>
                             </DialogContent>
                           </Dialog>
                         </div>

@@ -54,6 +54,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const [showSlackConfig, setShowSlackConfig] = useState(false);
   const { copyToClipboard } = useClipboard();
   const [showSecret, setShowSecret] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (webhookId) {
@@ -61,6 +62,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     }
   }, [webhookId]);
 
+  // This effect initializes the platform and configValues when webhook data is loaded
   useEffect(() => {
     if (webhook?.platformConfig) {
       try {
@@ -69,19 +71,17 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             ? JSON.parse(webhook.platformConfig)
             : webhook.platformConfig || {};
 
+        setConfigValues(prevValues => ({
+          ...prevValues,
+          ...platformConfig,
+        }));
+
         const availablePlatforms = Object.keys(platformConfig);
-        const platformValue =
-          availablePlatforms.length > 0
-            ? (availablePlatforms[0] as WebhookPlatform)
-            : 'supabase';
-
-        setPlatform(platformValue);
-
-        setConfigValues(platformConfig);
+        if (availablePlatforms.length > 0 && !platform) {
+          setPlatform(availablePlatforms[0] as WebhookPlatform);
+        }
       } catch (error) {
         console.error('Error parsing platform config:', error);
-        setPlatform('supabase');
-        setConfigValues({});
       }
     }
   }, [webhook]);
@@ -103,7 +103,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   };
 
   const updateWebhookConfig = async (id: string, config: Partial<Webhook>) => {
-    setIsLoading(true);
+    setIsSaving(true);
     try {
       const response = await fetch(`/api/webhooks/${id}`, {
         method: 'PATCH',
@@ -117,32 +117,42 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       }
 
       const updatedWebhook = await response.json();
-      setWebhook(prev =>
-        prev && prev.id === id ? { ...prev, ...updatedWebhook } : prev,
-      );
+
+      setWebhook(prev => {
+        if (!prev || prev.id !== id) return prev;
+        return { ...prev, ...updatedWebhook };
+      });
+
+      if (config.platformConfig) {
+        const newPlatformConfig =
+          typeof config.platformConfig === 'string'
+            ? JSON.parse(config.platformConfig)
+            : config.platformConfig;
+
+        setConfigValues(prev => ({
+          ...prev,
+          ...newPlatformConfig,
+        }));
+      }
 
       toast.success('Success', {
         description: 'Webhook configuration updated',
       });
+
+      return updatedWebhook;
     } catch (error) {
       toast.error('Error', {
         description:
           error instanceof Error ? error.message : 'Failed to update webhook',
       });
+      throw error;
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
   const handlePlatformChange = (newPlatform: WebhookPlatform) => {
     setPlatform(newPlatform);
-
-    if (!configValues[newPlatform]) {
-      setConfigValues(prev => ({
-        ...prev,
-        [newPlatform]: {},
-      }));
-    }
   };
 
   const handleNameUpdate = async () => {
@@ -157,17 +167,16 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   };
 
   const handleConfigUpdate = async () => {
-    if (!webhook) return;
-
     try {
-      const currentValues = configValues[platform] || {};
-      const currentConfig = platformConfigs[platform];
-
-      const missingFields = currentConfig?.fields
+      const currentValues = (configValues[platform] || {}) as Record<
+        string,
+        any
+      >;
+      const missingFields = currentConfig!.fields
         .filter(field => field.required && !currentValues[field.key])
         .map(field => field.label);
 
-      if (missingFields && missingFields.length > 0) {
+      if (missingFields.length > 0) {
         toast.error('Error', {
           description: `Missing required fields: ${missingFields.join(', ')}`,
         });
@@ -183,7 +192,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         platformConfig: updatedConfigValues,
       };
 
-      await updateWebhookConfig(webhook.id, updatedConfig);
+      if (webhook?.id) {
+        await updateWebhookConfig(webhook.id, updatedConfig);
+      }
 
       toast.success('Configuration updated successfully');
     } catch (error) {
@@ -212,7 +223,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     }
   };
 
-  if (isLoading && !webhook) {
+  // Determine whether to show loading state
+  const isPageLoading = isLoading && !webhook;
+
+  if (isPageLoading) {
     return (
       <div className='flex items-center justify-center h-screen'>
         <Loader />
@@ -262,7 +276,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     });
                   }
                 }}
-                disabled={isLoading}
+                disabled={isLoading || isSaving}
               />
             </div>
             <div className='grid gap-2'>
@@ -275,8 +289,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   }
                   placeholder='Webhook name'
                 />
-                <Button onClick={handleNameUpdate} disabled={isLoading}>
-                  {isLoading ? 'Saving...' : 'Save'}
+                <Button
+                  onClick={handleNameUpdate}
+                  disabled={isLoading || isSaving}
+                >
+                  {isLoading || isSaving ? 'Saving...' : 'Save'}
                 </Button>
               </div>
             </div>
@@ -317,10 +334,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             </h3>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
               {Object.values(platformConfigs).map(config => (
-                <motion.div
+                <div
                   key={config.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                   onClick={() => handlePlatformChange(config.id)}
                   className={`cursor-pointer p-4 rounded-lg border ${
                     platform === config.id
@@ -337,7 +352,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   {platform === config.id && (
                     <Check className='h-5 w-5 text-green-400' />
                   )}
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -415,7 +430,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                       {field.type === 'secret' && (
                         <button
                           type='button'
-                          className='bg-muted p-2 border border-l-0 border-input  hover:bg-muted/70'
+                          className='bg-muted p-2 border border-l-0 border-input hover:bg-muted/70'
                           onClick={() => setShowSecret(prev => !prev)}
                         >
                           {!showSecret ? (
@@ -452,14 +467,13 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 <div className='mt-4'>
                   <Button
                     onClick={handleConfigUpdate}
-                    disabled={isLoading}
+                    disabled={isLoading || isSaving}
                     size={'sm'}
                   >
-                    {isLoading ? (
-                      <Loader2 className='animate-spin' />
-                    ) : (
-                      'Save Configuration'
-                    )}
+                    {isLoading || isSaving ? (
+                      <Loader2 className='h-4 w-4 animate-spin mr-2' />
+                    ) : null}
+                    {isLoading || isSaving ? 'Saving...' : 'Save Configuration'}
                   </Button>
                 </div>
               )}
@@ -484,7 +498,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     onCheckedChange={() =>
                       handleNotificationToggle('notify_email')
                     }
-                    disabled={isLoading}
+                    disabled={isLoading || isSaving}
                   />
                 </div>
                 <div className='flex items-center gap-2'>
@@ -508,7 +522,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     onCheckedChange={() =>
                       handleNotificationToggle('notify_slack')
                     }
-                    disabled={isLoading}
+                    disabled={isLoading || isSaving}
                   />
                 </div>
                 <div className='flex items-center gap-2'>
@@ -663,7 +677,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 setShowEmailConfig(false);
               }}
               onCancel={() => setShowEmailConfig(false)}
-              isLoading={isLoading}
+              isLoading={isLoading || isSaving}
             />
           </DialogContent>
         </Dialog>
@@ -685,7 +699,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 setShowSlackConfig(false);
               }}
               onCancel={() => setShowSlackConfig(false)}
-              isLoading={isLoading}
+              isLoading={isLoading || isSaving}
             />
           </DialogContent>
         </Dialog>

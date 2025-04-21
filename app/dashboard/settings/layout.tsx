@@ -16,11 +16,11 @@ const tabs = [
     label: 'Usage',
     icon: <BarChart className='h-4 w-4 mr-2' />,
   },
-  {
-    value: 'plans',
-    label: 'Plans & Billing',
-    icon: <CreditCard className='h-4 w-4 mr-2' />,
-  },
+  // {
+  //   value: 'plans',
+  //   label: 'Plans & Billing',
+  //   icon: <CreditCard className='h-4 w-4 mr-2' />,
+  // },
 ];
 
 const SettingsLayout = ({ children }: { children: React.ReactNode }) => {

@@ -75,13 +75,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [username, setUsername] = useState('');
   const [avatarSeed, setAvatarSeed] = useState('');
   const { usageData, isLoading, error } = useUsageData();
+  const [subscriptionTier, setSubscriptionTier] = useState('');
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { userEmail, username, avatar_seed } = await getUser();
+      const { userEmail, username, avatar_seed, subscription_tier } =
+        await getUser();
       setEmail(userEmail || '');
       setUsername(username || '');
       setAvatarSeed(avatar_seed || '');
+      setSubscriptionTier(subscription_tier || '');
     };
     fetchUser();
   }, []);
@@ -99,7 +102,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </div>
           ) : (
             <div className='w-full flex items-center justify-between gap-2'>
-              <Logo size='2xl' />
+              <Logo size='2xl' showBeta={true} />
               <SidebarTrigger className='-ml-1' />
             </div>
           )}
@@ -108,7 +111,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className='my-2'>
         <>
           <UsageBar
             label='Emails left'
@@ -127,6 +130,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             user={{
               name: username || '',
               email: email || '',
+              subscription_tier: subscriptionTier || 'Free',
               avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${avatarSeed}&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede`,
             }}
           />

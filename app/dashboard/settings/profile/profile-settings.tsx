@@ -163,6 +163,7 @@ const ProfileTab = () => {
               variant={'default'}
               onClick={handleSave}
               disabled={isLoading}
+              size={'sm'}
             >
               {isLoading ? (
                 <>
@@ -180,6 +181,7 @@ const ProfileTab = () => {
               variant='link'
               className='h-auto p-0 text-hookflo-accent'
               asChild
+              size={'sm'}
             >
               <Link href='/protected/reset-password'>Reset password</Link>
             </Button>

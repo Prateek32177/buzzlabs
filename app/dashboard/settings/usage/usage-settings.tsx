@@ -24,7 +24,7 @@ import EmailSlackCharts from './EmailSlackCharts';
 import { useUsageData } from '@/hooks/use-usage-data';
 import { formatBytes } from '@/lib/utils';
 import { Loader } from '@/components/ui/loader';
-
+import { Badge } from '@/components/ui/badge';
 const UsageTab = () => {
   const { usageData, isLoading, error } = useUsageData();
 
@@ -91,12 +91,12 @@ const UsageTab = () => {
             <h3 className='text-lg font-medium text-white'>
               Consumption Summary
             </h3>
-            <p className='text-sm text-gray-400'>
-              {tierName} plan
+            <>
+              <Badge className='bg-purple-300/70 my-2'>{tierName} plan</Badge>
               {usage.hasReachedLimit && (
                 <span className='text-red-500 font-medium'>Limit reached</span>
               )}
-            </p>
+            </>
           </div>
           <div className='text-sm flex items-center text-hookflo-green'>
             <Clock className='h-4 w-4 mr-1' />

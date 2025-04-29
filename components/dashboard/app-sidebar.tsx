@@ -24,6 +24,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { HookfloIcon } from '../Logos/Hookflo';
 import { useRouter } from 'next/navigation';
 import { useUsageData } from '@/hooks/use-usage-data';
+import { usePathname } from 'next/navigation';
 
 type UsageBarProps = {
   label?: string;
@@ -76,6 +77,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [avatarSeed, setAvatarSeed] = useState('');
   const { usageData, isLoading, error } = useUsageData();
   const [subscriptionTier, setSubscriptionTier] = useState('');
+  const pathname = usePathname();
+
+  const navItemsWithActive = data.navMain.map(item => ({
+    ...item,
+    isActive: pathname === item.url,
+  }));
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -109,7 +116,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navItemsWithActive} />
       </SidebarContent>
       <SidebarFooter className='my-2'>
         <>

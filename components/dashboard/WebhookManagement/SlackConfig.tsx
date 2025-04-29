@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { SlackTemplateOptions } from '@/const';
 import { randomSlackChannelName } from '@/lib/utils';
 import { slackTemplates } from '@/lib/slack-templates';
-import { Loader } from '@/components/ui/loader';
+import { Loader2 } from 'lucide-react';
 
 export function SlackConfig({
   webhook,
@@ -148,7 +148,11 @@ export function SlackConfig({
           size={'sm'}
           disabled={isLoading || !slackConfig.webhook_url}
         >
-          {isLoading ? <Loader text='Saving...' /> : 'Save Configuration'}
+          {isLoading ? (
+            <Loader2 className='animate-spin w-4 h-4' />
+          ) : (
+            'Save Configuration'
+          )}
         </Button>
       </DialogFooter>
     </form>

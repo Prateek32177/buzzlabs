@@ -15,7 +15,8 @@ import { ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { EmailTemplateOptions } from '@/const';
 import { emailTemplates } from '@/lib/templates';
-import { Loader } from '@/components/ui/loader';
+import { Loader2 } from 'lucide-react';
+
 export function EmailConfig({
   webhook,
   onUpdate,
@@ -111,7 +112,11 @@ export function EmailConfig({
           size={'sm'}
           disabled={isLoading || !emailConfig.recipient_email}
         >
-          {isLoading ? <Loader text='Saving...' /> : 'Save Configuration'}
+          {isLoading ? (
+            <Loader2 className='animate-spin w-4 h-4' />
+          ) : (
+            'Save Configuration'
+          )}
         </Button>
       </DialogFooter>
     </form>

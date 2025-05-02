@@ -1,7 +1,7 @@
 export const tierLimits: Record<string, any> = {
   free: {
     dailyRequests: 60,
-    dailyEmails: 10,
+    dailyEmails: 20,
     dailySlackNotifications: 50,
     dailyDataVolumeMB: 10,
     webhookLimit: 5,

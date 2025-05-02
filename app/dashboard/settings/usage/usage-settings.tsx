@@ -25,8 +25,9 @@ import { useUsageData } from '@/hooks/use-usage-data';
 import { formatBytes } from '@/lib/utils';
 import { Loader } from '@/components/ui/loader';
 import { Badge } from '@/components/ui/badge';
+
 const UsageTab = () => {
-  const { usageData, isLoading, error } = useUsageData();
+  const { usageData, isLoading, error,limitMessages, hasReachedAnyLimit } = useUsageData();
 
   if (isLoading) {
     return (
@@ -93,9 +94,12 @@ const UsageTab = () => {
             </h3>
             <>
               <Badge className='bg-purple-300/70 my-2'>{tierName} plan</Badge>
-              {usage.hasReachedLimit && (
-                <span className='text-red-500 font-medium'>Limit reached</span>
-              )}
+                {hasReachedAnyLimit && (
+                <div className='flex items-center gap-2 mt-2 p-2 bg-red-500/10 rounded-md border border-red-500/20'>
+                  <AlertTriangle className='h-4 w-4 text-red-500' />
+                  <span className='text-red-400 text-xs'>{limitMessages}</span>
+                </div>
+                )}
             </>
           </div>
           <div className='text-sm flex items-center text-hookflo-green'>

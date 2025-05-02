@@ -1,6 +1,7 @@
 import { getUser } from '@/hooks/user-auth';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
+import { tierLimits } from '@/config';
 
 interface UsageRow {
   date: string;
@@ -33,33 +34,6 @@ interface UserType {
   userId: string;
   subscription_tier?: string;
 }
-
-const tierLimits: Record<string, any> = {
-  free: {
-    dailyRequests: 10,
-    dailyEmails: 10,
-    dailySlackNotifications: 100,
-    dailyDataVolumeMB: 10,
-    webhookLimit: 5,
-    notificationLimit: 100,
-  },
-  pro: {
-    dailyRequests: 100,
-    dailyEmails: 500,
-    dailySlackNotifications: 2000,
-    dailyDataVolumeMB: 100,
-    webhookLimit: 20,
-    notificationLimit: 4000,
-  },
-  enterprise: {
-    dailyRequests: 1000,
-    dailyEmails: 1000,
-    dailySlackNotifications: 4000,
-    dailyDataVolumeMB: 1000,
-    webhookLimit: 100,
-    notificationLimit: 5000,
-  },
-};
 
 export async function GET() {
   try {

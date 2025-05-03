@@ -55,11 +55,18 @@ export function useUsageData() {
 
   const checkLimits = (data: UsageData) => {
     const newLimitStatus = {
-      requests: data.usage.current.requests >= data.subscription.limits.dailyRequests,
+      requests:
+        data.usage.current.requests >= data.subscription.limits.dailyRequests,
       emails: data.usage.current.emails >= data.subscription.limits.dailyEmails,
-      slack: data.usage.current.slackNotifications >= data.subscription.limits.dailySlackNotifications,
-      webhooks: data.usage.current.activeWebhooks >= data.subscription.limits.webhookLimit,
-      notifications: data.usage.current.totalNotifications >= data.subscription.limits.notificationLimit,
+      slack:
+        data.usage.current.slackNotifications >=
+        data.subscription.limits.dailySlackNotifications,
+      webhooks:
+        data.usage.current.activeWebhooks >=
+        data.subscription.limits.webhookLimit,
+      notifications:
+        data.usage.current.totalNotifications >=
+        data.subscription.limits.notificationLimit,
     };
     setLimitStatus(newLimitStatus);
   };
@@ -101,19 +108,19 @@ export function useUsageData() {
 
     if (limitTypes.length === 0) return '';
     if (limitTypes.length === 1) return `Daily ${limitTypes[0]} limit reached`;
-    
+
     const lastType = limitTypes.pop();
     return `Daily limits reached for ${limitTypes.join(', ')} and ${lastType}`;
   };
 
   const hasReachedAnyLimit = Object.values(limitStatus).some(status => status);
 
-  return { 
-    usageData, 
-    isLoading, 
-    error, 
-    limitStatus, 
+  return {
+    usageData,
+    isLoading,
+    error,
+    limitStatus,
     limitMessages: getLimitMessages(),
-    hasReachedAnyLimit 
+    hasReachedAnyLimit,
   };
 }

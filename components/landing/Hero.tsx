@@ -1,49 +1,40 @@
 'use client';
-import { BarChart3, CircleGauge } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BarChart3, GaugeCircle as CircleGauge, Sparkles } from 'lucide-react';
 import { WaitlistForm } from './Waitlist';
 import { Badge } from '../ui/badge';
-import { Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import { Ripple } from '../magicui/ripple';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
+import { CountdownTimer } from './CountdownTimer';
 
 export default function Hero() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
-  const scrollToTryItYourself = () => {
-    const element = document.getElementById('tryityourself');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
   return (
     <>
       <NoiseGradientBackground />
-      <section className='pt-52 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen  relative z-2  '>
+      <section className='pt-44 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen relative z-2'>
         <div className='absolute inset-0 z-0'>
           <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
         </div>
-        <div className='px-2 m-auto   max-w-6xl relative'>
+        <div className='px-2 m-auto max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
-            <Badge
+            {/* <Badge
               variant={'default'}
-              className='mb-4 hover:bg-purple-500/10 bg-purple-500/10 border border-purple-500/20  text-white/80 shadow-md  text-xs sm:text-sm px-2 py-1 sm:px-3 hover:none'
+              className='mb-4 hover:bg-purple-500/10 bg-purple-500/10 border border-purple-500/20 text-white/80 shadow-md text-xs sm:text-sm px-2 py-1 sm:px-3 hover:none'
             >
-              <Sparkles className='w-4 h-4  text-purple-400 mr-2' />
-              <span className='text-purple-400 mr-1 '>Simplifying Alerts:</span>
+              <Sparkles className='w-4 h-4 text-purple-400 mr-2' />
+              <span className='text-purple-400 mr-1'>Simplifying Alerts:</span>
               <span className='hidden sm:inline'>No Code, Just Hook it</span>
               <span className='sm:hidden'>Just Hook it</span>
-            </Badge>
+            </Badge> */}
+
+            <CountdownTimer compact />
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -52,7 +43,7 @@ export default function Hero() {
             >
               <span className='text-white'>Transform</span>
 
-              <span className='relative mx-2  bg-gradient-to-r from-[#FFE599]  to-[#FFD866] text-transparent bg-clip-text font-medium'>
+              <span className='relative mx-2 bg-gradient-to-r from-[#FFE599] to-[#FFD866] text-transparent bg-clip-text font-medium'>
                 events
               </span>
               <div className='flex items-center justify-center gap-3 my-2'>
@@ -86,7 +77,8 @@ export default function Hero() {
             </p>
 
             <WaitlistForm />
-            <div className='relative z-10 mt-16 md:mt-20 w-full '>
+
+            <div className='relative z-10 mt-10 md:mt-14 w-full'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
                 <motion.div
                   initial={{ opacity: 0, y: 50 }}
@@ -95,7 +87,7 @@ export default function Hero() {
                     y: isVisible ? 0 : 50,
                   }}
                   transition={{ duration: 0.8, delay: 0.9 }}
-                  className='rounded-lg  bg-gradient-to-b from-zinc-800/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg bg-gradient-to-b from-zinc-800/40 to-transparent p-4 backdrop-blur-sm text-left'
                 >
                   <div className='flex items-center gap-2 text-purple-400'>
                     <CircleGauge className='h-4 w-4' />

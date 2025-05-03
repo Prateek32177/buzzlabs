@@ -73,7 +73,10 @@ export function WaitlistForm() {
         </Alert>
       ) : (
         <>
-          <form onSubmit={handleSubmit} className='max-w-md mx-auto'>
+          <form
+            onSubmit={handleSubmit}
+            className='max-w-[400px] sm:max-w-md mx-auto'
+          >
             <div className='relative flex items-center'>
               <Input
                 type='email'

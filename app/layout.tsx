@@ -22,6 +22,9 @@ export const metadata = {
     'infrastructure',
     'api',
     'integration',
+    'observability',
+    'developer tools',
+    'software'
   ],
   authors: [{ name: 'Hookflo' }],
   creator: 'Hookflo',
@@ -74,6 +77,7 @@ export default function RootLayout({
         <link rel='shortcut icon' href='/favicon.ico' />
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link rel='preconnect' href='https://fonts.gstatic.com' />
+        <link rel='canonical' href='https://www.hookflo.com' />
         <link
           href='https://fonts.googleapis.com/css2?family=Boldonse&display=swap'
           rel='stylesheet'
@@ -98,6 +102,17 @@ export default function RootLayout({
           href='/icon-48x48.png'
         />
         <link rel='manifest' href='/manifest.json' />
+        <script type='application/ld+json'>
+          {`
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Hookflo",
+  "url": "https://www.hookflo.com",
+  "logo": "https://www.hookflo.com/icon-192x192.png",
+}
+`}
+        </script>
       </head>
       <body
         className={cn(

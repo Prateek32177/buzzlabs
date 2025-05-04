@@ -318,8 +318,6 @@ export function WebhookManagement() {
                           <div className='flex items-center flex-start gap-2 justify-start'>
                             <a
                               href={`/dashboard/webhooks/${webhook.id}`}
-                              target='_blank'
-                              rel='noopener noreferrer'
                               className='text-gray-300 hover:text-gray-100 hover:underline flex items-center gap-1.5 opacity-100 hover:opacity-80 transition-all'
                             >
                               {webhook.name}

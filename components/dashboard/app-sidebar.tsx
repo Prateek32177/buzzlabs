@@ -60,7 +60,7 @@ const data = {
     },
     {
       title: 'Integration Guide',
-      url: '/dashboard/integration-guide',
+      url: 'https://docs.hookflo.com',
       icon: BookOpen,
     },
     {

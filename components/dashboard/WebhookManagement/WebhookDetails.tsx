@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
 import {
   Check,
   Clipboard,
@@ -115,12 +116,13 @@ export function WebhookDetailsComp({
     <>
       <div className='grid gap-6 py-4'>
         <div className='grid gap-2'>
-          <Label>Name</Label>
+          <Label>Webhook Name</Label>
           <div className='flex gap-2'>
             <Input
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder='Webhook name'
+              className='text-sm'
             />
             <Button
               onClick={handleNameUpdate}
@@ -165,10 +167,26 @@ export function WebhookDetailsComp({
         <div className='space-y-4 my-8'>
           <Card className='py-4 bg-zinc-900/10'>
             <CardContent>
-              <CardTitle className='mb-2'>Configuration</CardTitle>
-              <CardDescription className=' mb-4'>
-                {currentConfig!.description}
-              </CardDescription>
+              <div className='flex items-center justify-between mb-4 flex-wrap'>
+                <div>
+                  <CardTitle className='mb-2'>Configuration</CardTitle>
+                  <CardDescription className=' mb-4'>
+                    {currentConfig!.description}
+                  </CardDescription>
+                </div>
+                {currentConfig?.docs && (
+                  <Button variant='outline' size='sm' asChild>
+                    <a
+                      href={currentConfig.docs}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      <ExternalLink className='h-4 w-4' />
+                      View Docs
+                    </a>
+                  </Button>
+                )}
+              </div>
               <div className='grid gap-2 mt-4'>
                 <Label className='font-mono'>Webhook URL</Label>
                 <p className='text-sm text-muted-foreground'>
@@ -311,87 +329,107 @@ export function WebhookDetailsComp({
           </Card>
         </div>
 
-        <div className='grid gap-4 my-4'>
-          <div className='flex items-center justify-between'>
-            <Label>Configure Notifications</Label>
-          </div>
-          <div className='space-y-4 p-4 border rounded-lg'>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-2'>
-                <div className='flex items-center gap-2'>
-                  <Mail className='h-4 w-4' />
-                  <span className='text-sm'>Email Notifications</span>
-                </div>
-                <Switch
-                  checked={webhook.notify_email}
-                  onCheckedChange={() => {
-                    if (!webhook.email_config?.recipient_email) {
-                      toast.error('Email configuration required', {
-                        description: 'Please configure email settings first',
-                      });
-                      return;
-                    }
-                    onUpdate(webhook.id, {
-                      notify_email: !webhook.notify_email,
-                    });
-                  }}
-                  disabled={isLoading}
-                />
-              </div>
-              <div className='flex items-center gap-2'>
-                {webhook?.email_config?.recipient_email && (
-                  <Badge variant='outline' className='text-xs hidden sm:block'>
-                    {webhook.email_config.recipient_email}
-                  </Badge>
-                )}
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => setShowEmailConfig(webhook.id)}
+        <Card className='py-4 bg-zinc-900/10'>
+          <CardContent>
+            <div className='flex items-center justify-between mb-4 flex-wrap'>
+              <CardTitle className='mb-2'>Configure Notifications</CardTitle>
+              <Button variant='outline' size='sm' asChild>
+                <a
+                  href={
+                    'https://docs.hookflo.com/notification-channels/overview'
+                  }
+                  target='_blank'
+                  rel='noopener noreferrer'
                 >
-                  {webhook.email_config ? 'Edit' : 'Configure'}
-                </Button>
+                  <ExternalLink className='h-4 w-4' />
+                  View Docs
+                </a>
+              </Button>
+            </div>
+            <div className='space-y-4'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                  <div className='flex items-center gap-2'>
+                    <Mail className='h-4 w-4' />
+                    <span className='text-sm'>Email Notifications</span>
+                  </div>
+                  <Switch
+                    checked={webhook.notify_email}
+                    onCheckedChange={() => {
+                      if (!webhook.email_config?.recipient_email) {
+                        toast.error('Email configuration required', {
+                          description: 'Please configure email settings first',
+                        });
+                        return;
+                      }
+                      onUpdate(webhook.id, {
+                        notify_email: !webhook.notify_email,
+                      });
+                    }}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className='flex items-center gap-2'>
+                  {webhook?.email_config?.recipient_email && (
+                    <Badge
+                      variant='outline'
+                      className='text-xs hidden sm:block'
+                    >
+                      {webhook.email_config.recipient_email}
+                    </Badge>
+                  )}
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    onClick={() => setShowEmailConfig(webhook.id)}
+                  >
+                    {webhook.email_config ? 'Edit' : 'Configure'}
+                  </Button>
+                </div>
+              </div>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                  <div className='flex items-center gap-2'>
+                    <Slack className='h-4 w-4' />
+                    <span className='text-sm'>Slack Notifications</span>
+                  </div>
+                  <Switch
+                    checked={webhook.notify_slack}
+                    onCheckedChange={() => {
+                      if (!webhook.slack_config?.channel_name) {
+                        toast.error('Slack configuration required', {
+                          description: 'Please configure Slack settings first',
+                        });
+                        return;
+                      }
+                      onUpdate(webhook.id, {
+                        notify_slack: !webhook.notify_slack,
+                      });
+                    }}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className='flex items-center gap-2'>
+                  {webhook?.slack_config?.channel_name && (
+                    <Badge
+                      variant='outline'
+                      className='text-xs hidden sm:block'
+                    >
+                      {webhook.slack_config.channel_name}
+                    </Badge>
+                  )}
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    onClick={() => setShowSlackConfig(webhook.id)}
+                  >
+                    {webhook.slack_config ? 'Edit' : 'Configure'}
+                  </Button>
+                </div>
               </div>
             </div>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-2'>
-                <div className='flex items-center gap-2'>
-                  <Slack className='h-4 w-4' />
-                  <span className='text-sm'>Slack Notifications</span>
-                </div>
-                <Switch
-                  checked={webhook.notify_slack}
-                  onCheckedChange={() => {
-                    if (!webhook.slack_config?.channel_name) {
-                      toast.error('Slack configuration required', {
-                        description: 'Please configure Slack settings first',
-                      });
-                      return;
-                    }
-                    onUpdate(webhook.id, {
-                      notify_slack: !webhook.notify_slack,
-                    });
-                  }}
-                  disabled={isLoading}
-                />
-              </div>
-              <div className='flex items-center gap-2'>
-                {webhook?.slack_config?.channel_name && (
-                  <Badge variant='outline' className='text-xs hidden sm:block'>
-                    {webhook.slack_config.channel_name}
-                  </Badge>
-                )}
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => setShowSlackConfig(webhook.id)}
-                >
-                  {webhook.slack_config ? 'Edit' : 'Configure'}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </>
   );

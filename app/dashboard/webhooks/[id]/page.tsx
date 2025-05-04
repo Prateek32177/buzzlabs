@@ -257,7 +257,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
         <div className='lg:col-span-2 space-y-6'>
           <div className='grid gap-6 py-4 bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <h3 className='text-lg font-medium'>Basic Information</h3>
+            <h3 className='text-base font-medium'>Basic Information</h3>
             <div className='flex items-center justify-between '>
               <span className='text-sm text-muted-foreground'>
                 Status: {webhook.is_active ? 'Active' : 'Disabled'}
@@ -300,7 +300,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           </div>
 
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <h3 className='text-lg font-medium text-white mb-4'>
+            <h3 className='text-base font-medium text-white mb-4'>
               Select an Application to integrate with
             </h3>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
@@ -329,7 +329,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           </div>
 
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <h3 className='text-lg font-medium text-white mb-1'>
+            <h3 className='text-base font-medium text-white mb-1'>
               Configuration
             </h3>
             <p className='text-sm text-muted-foreground mb-4'>
@@ -487,9 +487,21 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
         <div className='space-y-6'>
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <h3 className='text-lg font-medium text-white mb-4'>
-              Notification Settings
-            </h3>
+            <div className='flex items-center justify-between mb-4'>
+              <h3 className='text-base font-medium'>Configure Notifications</h3>
+              <Button variant='outline' size='sm' asChild>
+                <a
+                  href={
+                    'https://docs.hookflo.com/notification-channels/overview'
+                  }
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  <ExternalLink className='h-4 w-4' />
+                  View Docs
+                </a>
+              </Button>
+            </div>
             <div className='space-y-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-2'>
@@ -544,7 +556,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
             <div className='flex items-center justify-between mb-4'>
-              <h3 className='text-lg font-medium'>Integration Guide</h3>
+              <h3 className='text-base font-medium'>Integration Guide</h3>
               {currentConfig?.docs && (
                 <Button variant='outline' size='sm' asChild>
                   <a
@@ -552,7 +564,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     target='_blank'
                     rel='noopener noreferrer'
                   >
-                    <ExternalLink className='h-4 w-4 mr-2' />
+                    <ExternalLink className='h-4 w-4' />
                     View Docs
                   </a>
                 </Button>
@@ -861,7 +873,19 @@ function SlackConfigForm({
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div className='space-y-4'>
         <div className='grid w-full gap-2'>
-          <Label htmlFor='slackWebhookUrl'>Webhook URL *</Label>
+          <div className='flex items-center justify-between'>
+            <Label htmlFor='slackWebhookUrl'>Slack Webhook URL *</Label>
+            <Button variant='link' size='sm' asChild>
+              <a
+                href='https://docs.hookflo.com/notification-channels/slack'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <ExternalLink className='h-4 w-4' />
+                View Docs
+              </a>
+            </Button>
+          </div>
           <Input
             id='slackWebhookUrl'
             required

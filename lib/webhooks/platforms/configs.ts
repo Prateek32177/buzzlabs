@@ -39,6 +39,7 @@ export const platformConfigs: Partial<
         readOnly: true,
       },
     ],
+    docs: 'https://docs.hookflo.com/webhook-platforms/supabase',
     verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
     showSaveButton: false,
   },
@@ -92,7 +93,7 @@ export const platformConfigs: Partial<
       },
     ],
     verificationHeaders: ['svix-id', 'svix-timestamp', 'svix-signature'],
-    docs: 'https://clerk.com/docs/integration/webhooks',
+    docs: 'https://docs.hookflo.com/webhook-platforms/clerk',
     exampleCode: {
       curl: `curl -X POST https://api.SuperHook.dev/webhook \
   -H "svix-id: msg_..." \
@@ -120,7 +121,7 @@ export const platformConfigs: Partial<
       },
     ],
     verificationHeaders: ['stripe-signature'],
-    docs: 'https://stripe.com/docs/webhooks/signatures',
+    docs: 'https://docs.hookflo.com/webhook-platforms/stripe',
     exampleCode: {
       curl: `curl -X POST https://api.SuperHook.dev/webhook \
   -H "stripe-signature: t=1234567890,v1=..." \
@@ -150,7 +151,7 @@ export const platformConfigs: Partial<
       'x-github-event',
       'x-github-delivery',
     ],
-    docs: 'https://docs.github.com/en/developers/webhooks-and-events/webhooks/securing-your-webhooks',
+    docs: 'https://docs.hookflo.com/webhook-platforms/github',
     exampleCode: {
       curl: `curl -X POST https://api.SuperHook.dev/webhook \
   -H "x-hub-signature-256: sha256=..." \

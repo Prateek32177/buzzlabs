@@ -58,7 +58,19 @@ export function SlackConfig({
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div className='space-y-4'>
         <div className='grid w-full gap-2'>
-          <Label htmlFor='slackWebhookUrl'>Webhook URL *</Label>
+          <div className='flex items-center justify-between'>
+            <Label htmlFor='slackWebhookUrl'>Slack Webhook URL *</Label>
+            <Button variant='link' size='sm' asChild>
+              <a
+                href='https://docs.hookflo.com/notification-channels/slack'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <ExternalLink className='h-4 w-4' />
+                View Docs
+              </a>
+            </Button>
+          </div>
           <Input
             id='slackWebhookUrl'
             required

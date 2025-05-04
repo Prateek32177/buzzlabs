@@ -23,10 +23,10 @@ export default function Layout({
         </div>
         <div className='mx-4 my-8'>{children}</div>
         <a
-          href="https://discord.gg/SNmCjU97nr"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="fixed bottom-4 right-4 flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-1.5 rounded-full shadow-lg transition-colors"
+          href='https://discord.gg/SNmCjU97nr'
+          target='_blank'
+          rel='noopener noreferrer'
+          className='fixed bottom-4 right-4 flex items-center gap-1.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs px-3 py-1.5 rounded-full shadow-lg transition-colors'
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'

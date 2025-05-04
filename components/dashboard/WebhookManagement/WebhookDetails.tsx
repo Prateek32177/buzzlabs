@@ -162,44 +162,48 @@ export function WebhookDetailsComp({
             </motion.div>
           ))}
         </div>
-      </div>
-
-      <div className='grid gap-4 my-8'>
-        <Label>Webhook URL</Label>
-        <div className='flex'>
-          <Input
-            value={`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`}
-            readOnly
-            className='rounded-r-none font-mono text-sm'
-          />
-          <Button
-            variant='secondary'
-            className='rounded-l-none'
-            onClick={() => {
-              copyToClipboard(
-                `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`,
-              );
-              const button = document.activeElement as HTMLButtonElement;
-              const originalContent = button.innerHTML;
-              button.innerHTML =
-                '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-              setTimeout(() => {
-                button.innerHTML = originalContent;
-              }, 2000);
-            }}
-          >
-            <Clipboard className='h-4 w-4' />
-          </Button>
-        </div>
-        <div className='space-y-4 '>
+        <div className='space-y-4 my-8'>
           <Card className='py-4 bg-zinc-900/10'>
             <CardContent>
-              <CardTitle>Configuration</CardTitle>
-              <CardDescription className='mt-1 mb-3'>
+              <CardTitle className='mb-2'>Configuration</CardTitle>
+              <CardDescription className=' mb-4'>
                 {currentConfig!.description}
               </CardDescription>
+              <div className='grid gap-2 mt-4'>
+                <Label className='font-mono'>Webhook URL</Label>
+                <p className='text-sm text-muted-foreground'>
+                  Set this as HTTP POST request URL
+                </p>
+                <div className='flex'>
+                  <Input
+                    value={`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`}
+                    readOnly
+                    className='rounded-r-none font-mono text-sm'
+                  />
+                  <Button
+                    variant='secondary'
+                    className='rounded-l-none'
+                    size={'icon'}
+                    onClick={() => {
+                      copyToClipboard(
+                        `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`,
+                      );
+                      const button =
+                        document.activeElement as HTMLButtonElement;
+                      const originalContent = button.innerHTML;
+                      button.innerHTML =
+                        '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                      setTimeout(() => {
+                        button.innerHTML = originalContent;
+                      }, 2000);
+                    }}
+                  >
+                    <Clipboard className='h-4 w-4' />
+                  </Button>
+                </div>
+              </div>
               {currentConfig!.fields.map(field => (
-                <div key={field.key} className='space-y-2'>
+                <div key={field.key} className='grid gap-2 mt-4'>
                   <Label htmlFor={field.key}>
                     {field.label}
                     {field.required && <span className='text-red-500'>*</span>}

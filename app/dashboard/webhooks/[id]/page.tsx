@@ -297,35 +297,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 </Button>
               </div>
             </div>
-
-            <div className='grid gap-2'>
-              <Label>Webhook URL</Label>
-              <div className='flex'>
-                <Input
-                  value={`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`}
-                  readOnly
-                  className='rounded-r-none font-mono text-sm'
-                />
-                <Button
-                  variant='secondary'
-                  className='rounded-l-none'
-                  onClick={() => {
-                    copyToClipboard(
-                      `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`,
-                    );
-                    const button = document.activeElement as HTMLButtonElement;
-                    const originalContent = button.innerHTML;
-                    button.innerHTML =
-                      '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-                    setTimeout(() => {
-                      button.innerHTML = originalContent;
-                    }, 2000);
-                  }}
-                >
-                  <Clipboard className='h-4 w-4' />
-                </Button>
-              </div>
-            </div>
           </div>
 
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
@@ -358,7 +329,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           </div>
 
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <h3 className='text-lg font-medium text-white mb-4'>
+            <h3 className='text-lg font-medium text-white mb-1'>
               Configuration
             </h3>
             <p className='text-sm text-muted-foreground mb-4'>
@@ -366,6 +337,39 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             </p>
 
             <div className='space-y-4'>
+              <div className='space-y-2'>
+                <Label className='font-mono'>Webhook URL</Label>
+                <p className='text-sm text-muted-foreground'>
+                  Set this as HTTP POST request URL
+                </p>
+                <div className='flex'>
+                  <Input
+                    value={`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`}
+                    readOnly
+                    className='rounded-r-none font-mono text-sm'
+                  />
+                  <Button
+                    variant='secondary'
+                    size={'icon'}
+                    className='rounded-l-none'
+                    onClick={() => {
+                      copyToClipboard(
+                        `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`,
+                      );
+                      const button =
+                        document.activeElement as HTMLButtonElement;
+                      const originalContent = button.innerHTML;
+                      button.innerHTML =
+                        '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                      setTimeout(() => {
+                        button.innerHTML = originalContent;
+                      }, 2000);
+                    }}
+                  >
+                    <Clipboard className='h-4 w-4' />
+                  </Button>
+                </div>
+              </div>
               {currentConfig?.fields.map(field => (
                 <div key={field.key} className='space-y-2'>
                   <Label htmlFor={field.key}>

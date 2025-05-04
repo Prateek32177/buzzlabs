@@ -33,7 +33,7 @@ export function Footer() {
                 <Slack size={20} />
               </a> */}
               <a
-                href='https://discord.gg/BpFsasfX'
+                href='https://discord.gg/SNmCjU97nr'
                 title='Join our Discord'
                 target='_blank'
                 rel='noopener noreferrer'

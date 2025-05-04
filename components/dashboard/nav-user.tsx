@@ -91,7 +91,7 @@ export function NavUser({
             <DropdownMenuItem
               onSelect={e => {
                 e.preventDefault();
-                window.open('https://discord.gg/BpFsasfX', '_blank');
+                window.open('https://discord.gg/SNmCjU97nr', '_blank');
               }}
               className='flex w-full items-center cursor-pointer text-xs'
             >

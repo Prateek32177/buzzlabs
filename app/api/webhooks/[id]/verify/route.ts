@@ -1,5 +1,5 @@
 import { WebhookVerificationService } from '@/lib/webhooks';
-import { createClient } from '@/utils/supabase/server';
+import { supabaseCont } from '@/utils/supabase/client';
 import { sendEmail } from '@/lib/email';
 import { sendSlackNotification } from '@/lib/slack';
 import { v4 as uuidv4 } from 'uuid';
@@ -80,7 +80,7 @@ export async function POST(
   };
 
   try {
-    const supabase = createClient();
+    const supabase = supabaseCont();
 
     const clonedReq = req.clone();
     data = await clonedReq.json();

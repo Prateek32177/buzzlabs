@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { WebhookPlatform } from '@/lib/webhooks/types';
 import { trackUsage } from '@/lib/analytics/usage';
 
-// Import the rate limit checking function
 import { checkUsageLimits } from '@/lib/analytics/usage';
 
 class PlatformDetector {

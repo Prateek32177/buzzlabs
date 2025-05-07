@@ -12,7 +12,7 @@ class PlatformDetector {
   static detectFromHeaders(headers: Headers): string | null {
     if (headers.get('x-github-event')) return 'github';
     if (headers.get('Stripe-Signature')) return 'stripe';
-    if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk'; 
+    if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk';
     if (headers.get('x-webhook-token')) return 'supabase';
     if (headers.get('x-webhook-id')) return 'supabase';
 

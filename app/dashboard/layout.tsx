@@ -4,6 +4,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { Logo } from '@/components/Logo';
 
 export default function Layout({
   children,
@@ -18,15 +19,20 @@ export default function Layout({
         className='sidebar-background'
       />
       <SidebarInset>
-        <div className='max-[768px]:block hidden '>
-          <SidebarTrigger className='ml-4' />
+        <div className='hidden max-[768px]:block max-[768px]:sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+          <div className='flex h-14 items-center px-4'>
+            <div className='flex w-full items-center justify-between'>
+              <Logo size='2xl' showBeta={true} />
+              <SidebarTrigger className='inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground' />
+            </div>
+          </div>
         </div>
         <div className='mx-4 my-8'>{children}</div>
         <a
           href='https://discord.gg/SNmCjU97nr'
           target='_blank'
           rel='noopener noreferrer'
-          className='fixed bottom-4 right-4 flex items-center gap-1.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs px-3 py-1.5 rounded-full shadow-lg transition-colors'
+          className='fixed bottom-4 right-4 flex items-center gap-1.5 bg-[#A692E5] text-black/80 text-xs px-3 py-1.5 rounded-full shadow-lg transition-colors'
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'

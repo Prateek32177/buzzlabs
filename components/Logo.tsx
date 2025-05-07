@@ -14,14 +14,14 @@ interface LogoProps {
   size?: string;
   showAlpha?: boolean;
   hideText?: boolean;
-  showBeta?: boolean; // New prop for beta badge
+  showBeta?: boolean;
 }
 
 export function Logo({
   variant = 'green',
   size = 'text-sm',
   hideText = false,
-  showBeta = false, // Default to false
+  showBeta = false,
 }: LogoProps) {
   const text = 'hookflo';
 
@@ -39,9 +39,8 @@ export function Logo({
             -ml-1
             mb-[3px]
             text-lg
-            ${hideText ? 'hidden' : 'flex'}
-            sm:flex
-          `}
+            ${hideText ? 'hidden' : 'block'}
+            `}
           >
             {text}
           </h1>
@@ -49,8 +48,7 @@ export function Logo({
         {showBeta && (
           <span
             className='
-            hidden
-            sm:inline-flex
+            inline-flex
             items-center
             px-1.5
             py-0.5
@@ -64,7 +62,7 @@ export function Logo({
             backdrop-blur-sm
             border
             border-purple-400/40
-          '
+            '
           >
             BETA
           </span>

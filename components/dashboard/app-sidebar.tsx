@@ -32,7 +32,7 @@ type UsageBarProps = {
   total: number;
   colorFrom?: string;
   colorTo?: string;
-  isCollapsed?: boolean; // whether sidebar is collapsed
+  isCollapsed?: boolean;
 };
 
 const data = {
@@ -98,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const { state, open } = useSidebar();
   return (
-    <Sidebar collapsible='icon' {...props}>
+    <Sidebar collapsible='icon' {...props} variant='inset'>
       <SidebarHeader>
         <div className='flex justify-center items-left w-full h-full my-4'>
           {state === 'collapsed' && !open ? (
@@ -109,8 +109,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </div>
           ) : (
             <div className='w-full flex items-center justify-between gap-2'>
-              <Logo size='2xl' showBeta={true} />
-              <SidebarTrigger className='-ml-1' />
+              <Logo size='xl' showBeta={true} />
+              <div className='hidden items-center justify-center md:block'>
+                <SidebarTrigger className='-ml-1' />
+              </div>
             </div>
           )}
         </div>
@@ -137,7 +139,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             user={{
               name: username || '',
               email: email || '',
-              subscription_tier: subscriptionTier || 'Free',
+              subscription_tier: subscriptionTier || '',
               avatar: `https://api.dicebear.com/9.x/adventurer/svg?seed=${avatarSeed}&backgroundType=gradientLinear&backgroundColor=ffd5dc,ffdfbf,transparent,d1d4f9,c0aede`,
             }}
           />
@@ -165,7 +167,7 @@ export function UsageBar({
   return (
     <div
       onPointerUp={handleClick}
-      className={`w-full px-4 mb-2 cursor-pointer group transition-opacity duration-300 ${
+      className={`w-full px-2 mb-2 cursor-pointer group transition-opacity duration-300 ${
         isCollapsed
           ? 'opacity-0 pointer-events-none h-0 overflow-hidden'
           : 'opacity-100'

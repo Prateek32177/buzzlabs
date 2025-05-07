@@ -2,10 +2,10 @@ import { ThemeProvider } from 'next-themes';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
-import { Open_Sans } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
+import { Geist } from 'next/font/google';
 
-const openSans = Open_Sans({ subsets: ['latin'] });
+const geist = Geist({ subsets: ['latin'] });
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -106,7 +106,7 @@ export default function RootLayout({
       <body
         className={cn(
           'min-h-screen bg-background antialiased dark',
-          openSans.className,
+          geist.className,
         )}
       >
         <ThemeProvider

@@ -1,5 +1,5 @@
 import { WebhookVerificationService } from '@/lib/webhooks';
-import { supabaseCont } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { sendEmail } from '@/lib/email';
 import { sendSlackNotification } from '@/lib/slack';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,9 +12,7 @@ class PlatformDetector {
   static detectFromHeaders(headers: Headers): string | null {
     if (headers.get('x-github-event')) return 'github';
     if (headers.get('Stripe-Signature')) return 'stripe';
-    if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk'; // Clerk uses Svix
-
-    // Supabase webhook headers
+    if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk'; 
     if (headers.get('x-webhook-token')) return 'supabase';
     if (headers.get('x-webhook-id')) return 'supabase';
 
@@ -22,14 +20,11 @@ class PlatformDetector {
   }
 
   static detectFromUrl(url: string): string | null {
-    // Check URL patterns
     const urlObj = new URL(url);
     const pathParts = urlObj.pathname.split('/');
 
-    // Some platforms might embed their name in the URL
     const lastPathPart = pathParts[pathParts.length - 1].toLowerCase();
 
-    // Common patterns
     if (lastPathPart === 'github') return 'github';
     if (lastPathPart === 'stripe') return 'stripe';
     if (lastPathPart === 'clerk') return 'clerk';
@@ -79,12 +74,11 @@ export async function POST(
   };
 
   try {
-    const supabase = supabaseCont();
+    const supabase = createClient();
 
     const clonedReq = req.clone();
     data = await clonedReq.json();
 
-    // Track payload size (useful for rate limiting based on data volume)
     usageMetrics.payloadSize = new TextEncoder().encode(
       JSON.stringify(data),
     ).length;
@@ -103,10 +97,8 @@ export async function POST(
       );
     }
 
-    // Set user ID for usage tracking
     usageMetrics.userId = webhook[0].user_id;
 
-    // Check if the user has reached their usage limits
     const { hasReachedLimit, currentUsage } = await checkUsageLimits(
       webhook[0].user_id,
     );
@@ -130,7 +122,6 @@ export async function POST(
         body: JSON.stringify(log),
       });
 
-      // Track rate limit exceeded
       usageMetrics.status = 'failed';
       await trackUsage(usageMetrics);
 
@@ -174,7 +165,6 @@ export async function POST(
         body: JSON.stringify(log),
       });
 
-      // Track verification failure
       usageMetrics.status = 'failed';
       await trackUsage(usageMetrics);
 
@@ -199,7 +189,7 @@ export async function POST(
             data,
           });
           channels.push('email');
-          usageMetrics.emailCount = 1; // Track email notification
+          usageMetrics.emailCount = 1;
           status = 'success';
         } catch (err) {
           const error = err as Error;
@@ -218,7 +208,7 @@ export async function POST(
             data,
           });
           channels.push('slack');
-          usageMetrics.slackCount = 1; // Track slack notification
+          usageMetrics.slackCount = 1;
           status = 'success';
         } catch (err) {
           const error = err as Error;
@@ -254,11 +244,9 @@ export async function POST(
       });
     }
 
-    // Calculate response time
     usageMetrics.responseTimeMs = Date.now() - startTime;
     usageMetrics.status = status;
 
-    // Track the usage metrics
     await trackUsage(usageMetrics);
 
     return Response.json({
@@ -287,7 +275,6 @@ export async function POST(
         body: JSON.stringify(log),
       });
 
-      // Track error in metrics
       usageMetrics.status = 'failed';
       usageMetrics.responseTimeMs = Date.now() - startTime;
       await trackUsage(usageMetrics);
@@ -303,7 +290,6 @@ export async function POST(
 }
 
 function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
-  // Use platform-specific secrets when available
   switch (detectedPlatform) {
     case 'clerk':
       return webhook.platformConfig[detectedPlatform].signing_secret;

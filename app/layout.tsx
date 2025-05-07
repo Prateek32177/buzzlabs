@@ -24,7 +24,7 @@ export const metadata = {
     'integration',
     'observability',
     'developer tools',
-    'software'
+    'software',
   ],
   authors: [{ name: 'Hookflo' }],
   creator: 'Hookflo',
@@ -102,17 +102,6 @@ export default function RootLayout({
           href='/icon-48x48.png'
         />
         <link rel='manifest' href='/manifest.json' />
-        <script type='application/ld+json'>
-          {`
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Hookflo",
-  "url": "https://www.hookflo.com",
-  "logo": "https://www.hookflo.com/icon-192x192.png",
-}
-`}
-        </script>
       </head>
       <body
         className={cn(

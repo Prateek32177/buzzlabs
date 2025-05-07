@@ -414,10 +414,20 @@ export function WebhookManagement() {
         {showDetails && (
           <WebhookDetails
             webhook={webhooks.find(w => w.id === showDetails)!}
-            onUpdate={(id, config) => updateWebhookConfig(id, config)}
+            onUpdate={async (id, config) => {
+              await updateWebhookConfig(id, config);
+              await fetchWebhooks();
+            }}
             isLoading={isLoadingId === showDetails}
             open={showDetails !== null}
-            onOpenChange={open => !open && setShowDetails(null)}
+            onOpenChange={async open => {
+              if (open) {
+                await fetchWebhooks();
+              }
+              if (!open) {
+                setShowDetails(null);
+              }
+            }}
           />
         )}
 

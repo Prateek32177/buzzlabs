@@ -37,6 +37,18 @@ import { Webhook } from './types';
 import { WebhookDetails } from './WebhookDetails';
 import { Loader } from '@/components/ui/loader';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+
 export function WebhookManagement() {
   const [webhooks, setWebhooks] = useState<Webhook[]>([]);
   const [newWebhookName, setNewWebhookName] = useState('');
@@ -259,28 +271,39 @@ export function WebhookManagement() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='flex flex-col sm:flex-row gap-4'>
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                if (newWebhookName.length >= 3) {
+                  addWebhook();
+                } else {
+                  toast.error('Validation Error', {
+                    description:
+                      'Webhook name must be at least 3 characters long',
+                  });
+                }
+              }}
+              className='flex flex-col sm:flex-row gap-4'
+            >
               <Input
                 placeholder='Enter webhook name to create'
                 value={newWebhookName}
                 onChange={e => setNewWebhookName(e.target.value)}
                 className='flex-1'
+                required
+                minLength={3}
               />
-              <Button
-                onClick={addWebhook}
-                disabled={!newWebhookName || isLoading}
-                className='whitespace-nowrap'
-              >
+              <Button type='submit' className='whitespace-nowrap'>
                 {isLoading ? (
                   <Loader2 className='h-4 w-4 animate-spin' />
                 ) : (
                   <>
                     <Plus className='h-4 w-4' />
-                    <span className='tracking-tight'>Create Webhook</span>
+                    <span>Create Webhook</span>
                   </>
                 )}
               </Button>
-            </div>
+            </form>
           </CardContent>
         </Card>
 
@@ -301,7 +324,7 @@ export function WebhookManagement() {
                 No webhooks found. Add one to get started.
               </div>
             ) : (
-              <div className='overflow-x-auto'>
+              <div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -388,18 +411,47 @@ export function WebhookManagement() {
                               </span>
                               <span className='md:flex hidden'>connect</span>
                             </Button>
-                            <Button
-                              variant='outline'
-                              size='icon'
-                              onClick={() => deleteWebhook(webhook.id)}
-                              disabled={isLoadingId === webhook.id}
-                            >
-                              {isLoadingId === webhook.id ? (
-                                <Loader className='w-4 h-4 text-gray-300' />
-                              ) : (
-                                <Trash2 className='h-4 w-4' />
-                              )}
-                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant='outline'
+                                  size='icon'
+                                  disabled={isLoadingId === webhook.id}
+                                >
+                                  {isLoadingId === webhook.id ? (
+                                    <Loader className='w-4 h-4 text-gray-300' />
+                                  ) : (
+                                    <Trash2 className='h-4 w-4' />
+                                  )}
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className='text-left'>
+                                <AlertDialogHeader className='text-left'>
+                                  <AlertDialogTitle>
+                                    Delete Webhook
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. All webhook
+                                    details and associated logs will be
+                                    permanently deleted.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => deleteWebhook(webhook.id)}
+                                    disabled={isLoadingId === webhook.id}
+                                  >
+                                    {isLoadingId === webhook.id ? (
+                                      <Loader2 className='h-4 w-4 animate-spin' />
+                                    ) : (
+                                      <Trash2 className='h-4 w-4' />
+                                    )}
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </div>
                         </TableCell>
                       </TableRow>

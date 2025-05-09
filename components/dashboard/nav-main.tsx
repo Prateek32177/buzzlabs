@@ -43,13 +43,15 @@ export function NavMain({
                     className={cn(
                       item.isActive
                         ? 'text-accent-foreground'
-                        : 'text-muted-foreground',
+                        : 'text-muted-foreground/80',
                     )}
                   />
                 )}
                 <span
                   className={cn(
-                    item.isActive ? 'font-semibold' : 'font-normal',
+                    item.isActive
+                      ? 'text-accent-foreground'
+                      : 'text-muted-foreground/80',
                   )}
                 >
                   {item.title}

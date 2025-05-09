@@ -16,12 +16,10 @@ export async function middleware(request: NextRequest) {
   const isWaitlistMode = getWaitlistMode();
   const requestPathName = request.nextUrl.pathname;
 
-  // Maintenance mode check
   if (isMaintenanceMode && !requestPathName.startsWith('/maintenance')) {
     return NextResponse.redirect(new URL('/maintenance', request.url));
   }
 
-  // Waitlist mode check
   if (isWaitlistMode) {
     const allowedPaths = [
       '/',
@@ -36,7 +34,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Rest of your existing authentication logic
   const supbase = createClient();
   const {
     data: { user },
@@ -44,13 +41,14 @@ export async function middleware(request: NextRequest) {
   } = await (await supbase).auth.getUser();
 
   const isAuthenticated = user?.role === 'authenticated';
-  const pathToAuthorize = ['/api/webhooks'];
+  const pathToAuthorize = ['/api/logs', '/api/usage', '/api/webhooks'];
 
   const isProtectedPath = pathToAuthorize.some(
     path =>
       requestPathName.startsWith(path) &&
       !(
-        requestPathName.startsWith('/api/webhooks') && request.method === 'POST'
+        requestPathName.match(/^\/api\/webhooks\/[^/]+\/verify$/) &&
+        request.method === 'POST'
       ),
   );
 
@@ -62,7 +60,10 @@ export async function middleware(request: NextRequest) {
   }
   if (requestPathName.startsWith('/dashboard')) {
     if (!isAuthenticated) {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL('/sign-in', request.url));
+    }
+    if (requestPathName === '/dashboard') {
+      return NextResponse.redirect(new URL('/dashboard/webhooks', request.url));
     }
     return NextResponse.next();
   }

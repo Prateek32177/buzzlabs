@@ -39,6 +39,7 @@ export function Logo({
             -ml-1
             mb-[3px]
             text-lg
+            ${size}
             ${hideText ? 'hidden' : 'block'}
             `}
           >

@@ -12,9 +12,10 @@ function getWaitlistMode(): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+  const requestPathName = request.nextUrl.pathname;
+
   const isMaintenanceMode = getMaintenanceMode();
   const isWaitlistMode = getWaitlistMode();
-  const requestPathName = request.nextUrl.pathname;
 
   if (isMaintenanceMode && !requestPathName.startsWith('/maintenance')) {
     return NextResponse.redirect(new URL('/maintenance', request.url));
@@ -27,58 +28,98 @@ export async function middleware(request: NextRequest) {
       '/api/verify-email',
       '/verification-success',
       '/verification-failed',
+      '/maintenance',
     ];
-    if (!allowedPaths.some(path => requestPathName === path)) {
-      return NextResponse.rewrite(new URL('/unauthorized', request.url));
+
+    if (
+      allowedPaths.includes(requestPathName) ||
+      requestPathName.startsWith('/_next/') ||
+      requestPathName.match(/\.(css|js|ico)$/)
+    ) {
+      return NextResponse.next();
     }
-    return NextResponse.next();
+
+    return NextResponse.rewrite(new URL('/unauthorized', request.url));
   }
 
-  const supbase = createClient();
+  const protectedRoutes = {
+    '/api/logs': {
+      allowedMethods: ['GET', 'POST'],
+      allowInternalCalls: true,
+    },
+    '/api/usage': {
+      allowedMethods: ['GET'],
+      allowInternalCalls: true,
+    },
+    '/api/webhooks': {
+      allowedMethods: ['GET', 'POST', 'PATCH', 'DELETE'],
+      allowInternalCalls: false,
+    },
+  };
+
+  const supabase = createClient();
   const {
     data: { user },
     error,
-  } = await (await supbase).auth.getUser();
+  } = await (await supabase).auth.getUser();
+  const isAuthenticated = !!user;
 
-  const isAuthenticated = user?.role === 'authenticated';
-  const pathToAuthorize = ['/api/logs', '/api/usage', '/api/webhooks'];
+  const isWebhookVerifyRequest =
+    requestPathName.match(/^\/api\/webhooks\/[^/]+\/verify$/) &&
+    request.method === 'POST';
 
-  const isVerifyWebhookRequest = requestPathName.match(
-    /^\/api\/webhooks\/[^/]+\/verify$/,
-  );
-  const isProtectedPath = pathToAuthorize.some(
-    path =>
-      requestPathName.startsWith(path) &&
-      !(
-        (isVerifyWebhookRequest && request.method === 'POST') ||
-        (request.headers.get('referer')?.includes('/api/webhooks/') &&
-          ['GET', 'POST', 'PATCH'].includes(request.method))
-      ),
+  if (isWebhookVerifyRequest) {
+    return NextResponse.next();
+  }
+
+  const matchedProtectedRoute = Object.entries(protectedRoutes).find(
+    ([route]) =>
+      requestPathName === route || requestPathName.startsWith(`${route}/`),
   );
 
-  if (isProtectedPath) {
+  if (matchedProtectedRoute) {
+    const [path, config] = matchedProtectedRoute;
+
+    if (!config.allowedMethods.includes(request.method)) {
+      return new NextResponse(null, { status: 405 });
+    }
+
+    const internalCallSignature = request.headers.get(
+      'x-webhook-internal-call',
+    );
+    const isInternalWebhookCall =
+      internalCallSignature === process.env.INTERNAL_WEBHOOK_SECRET;
+
+    if (isInternalWebhookCall && config.allowInternalCalls) {
+      return NextResponse.next();
+    }
+
     if (!isAuthenticated) {
       return NextResponse.rewrite(new URL('/unauthorized', request.url));
     }
+
     return NextResponse.next();
   }
+
   if (requestPathName.startsWith('/dashboard')) {
     if (!isAuthenticated) {
       return NextResponse.redirect(new URL('/sign-in', request.url));
     }
+
     if (requestPathName === '/dashboard') {
       return NextResponse.redirect(new URL('/dashboard/webhooks', request.url));
     }
+
     return NextResponse.next();
   }
+
   if (
     isAuthenticated &&
-    ['/sign-in', '/sign-up', '/forgot-password'].includes(
-      request.nextUrl.pathname,
-    )
+    ['/sign-in', '/sign-up', '/forgot-password'].includes(requestPathName)
   ) {
-    return NextResponse.redirect(new URL(`/`, request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
+
   return await updateSession(request);
 }
 

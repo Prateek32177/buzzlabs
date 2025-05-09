@@ -118,7 +118,10 @@ export async function POST(
 
       await fetch(`${process.env.PROD_URL}/api/logs`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-webhook-internal-call': process.env.INTERNAL_WEBHOOK_SECRET || '',
+        },
         body: JSON.stringify(log),
       });
 
@@ -161,7 +164,10 @@ export async function POST(
 
       await fetch(`${process.env.PROD_URL}/api/logs`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-webhook-internal-call': process.env.INTERNAL_WEBHOOK_SECRET || '',
+        },
         body: JSON.stringify(log),
       });
 
@@ -239,7 +245,10 @@ export async function POST(
 
       await fetch(`${process.env.PROD_URL}/api/logs`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-webhook-internal-call': process.env.INTERNAL_WEBHOOK_SECRET || '',
+        },
         body: JSON.stringify(log),
       });
     }
@@ -271,7 +280,10 @@ export async function POST(
     try {
       await fetch(`${process.env.PROD_URL}/api/logs`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-webhook-internal-call': process.env.INTERNAL_WEBHOOK_SECRET || '',
+        },
         body: JSON.stringify(log),
       });
 

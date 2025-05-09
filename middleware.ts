@@ -43,12 +43,16 @@ export async function middleware(request: NextRequest) {
   const isAuthenticated = user?.role === 'authenticated';
   const pathToAuthorize = ['/api/logs', '/api/usage', '/api/webhooks'];
 
+  const isVerifyWebhookRequest = requestPathName.match(
+    /^\/api\/webhooks\/[^/]+\/verify$/,
+  );
   const isProtectedPath = pathToAuthorize.some(
     path =>
       requestPathName.startsWith(path) &&
       !(
-        requestPathName.match(/^\/api\/webhooks\/[^/]+\/verify$/) &&
-        request.method === 'POST'
+        (isVerifyWebhookRequest && request.method === 'POST') ||
+        (request.headers.get('referer')?.includes('/api/webhooks/') &&
+          ['GET', 'POST', 'PATCH'].includes(request.method))
       ),
   );
 

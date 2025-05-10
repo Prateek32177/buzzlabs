@@ -1,7 +1,9 @@
+// /api/usage/route.ts
 import { getUser } from '@/hooks/user-auth';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
-import { tierLimits } from '@/config';
+import { getUserLimits, TierLimits } from '@/lib/subscription/limits';
+import { checkUsageLimits } from '@/lib/analytics/usage';
 
 interface UsageRow {
   date: string;
@@ -12,22 +14,23 @@ interface UsageRow {
   total_payload_bytes: number;
 }
 
-interface Limits {
-  dailyRequests: number;
-  dailyEmails: number;
-  dailySlackNotifications: number;
-  dailyDataVolumeMB: number;
-  webhookLimit: number;
-  notificationLimit: number;
-}
-
 interface CurrentUsage {
-  requests: number;
-  emails: number;
-  slackNotifications: number;
-  totalDataVolume: number;
-  activeWebhooks: number;
-  totalNotifications: number;
+  requests: { current: number; limit: number; percentage: number };
+  dailyEmails: { current: number; limit: number; percentage: number };
+  dailySlackNotifications: {
+    current: number;
+    limit: number;
+    percentage: number;
+  };
+  dataVolume: { current: number; limitMB: number; percentage: number };
+  webhooks: { current: number; limit: number; percentage: number };
+  monthlyEmails: { current: number; limit: number; percentage: number };
+  monthlySlackNotifications: {
+    current: number;
+    limit: number;
+    percentage: number;
+  };
+  totalNotifications: number; // For backwards compatibility
 }
 
 interface UserType {
@@ -35,84 +38,12 @@ interface UserType {
   subscription_tier?: string;
 }
 
-export async function GET() {
-  try {
-    const user = (await getUser()) as UserType | null;
-    if (!user || !user?.userId) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 },
-      );
-    }
+// Helper functions - preserved from original implementation
 
-    const userId = user.userId;
-    const supabase = await createClient();
-
-    const today = new Date().toISOString().split('T')[0];
-    const subscription_tier = user.subscription_tier || 'free';
-
-    const limits = tierLimits[subscription_tier] || tierLimits.free;
-
-    const { data: todayUsage } = await supabase
-      .from('usage_daily')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('date', today)
-      .single<UsageRow>();
-
-    const { count: activeWebhooks } = await supabase
-      .from('webhooks')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId);
-
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const fromDate = thirtyDaysAgo.toISOString().split('T')[0];
-
-    const { data: historicalData = [] } = (await supabase
-      .from('usage_daily')
-      .select('*')
-      .eq('user_id', userId)
-      .gte('date', fromDate)
-      .order('date', { ascending: true })) as { data: UsageRow[] };
-
-    const emailSlackData = processEmailSlackData(historicalData);
-    const webhookData = processWebhookData(historicalData);
-
-    const currentUsage: CurrentUsage = {
-      requests: todayUsage?.request_count || 0,
-      emails: todayUsage?.email_count || 0,
-      slackNotifications: todayUsage?.slack_count || 0,
-      totalDataVolume: todayUsage?.total_payload_bytes || 0,
-      activeWebhooks: activeWebhooks || 0,
-      totalNotifications: calculateTotalNotifications(historicalData),
-    };
-
-    const hasReachedLimit = checkLimits(currentUsage, limits);
-
-    return NextResponse.json({
-      subscription: {
-        tier: subscription_tier,
-        limits,
-      },
-      usage: {
-        current: currentUsage,
-        hasReachedLimit,
-        emailSlackData,
-        webhookData,
-      },
-    });
-  } catch (error) {
-    console.error('Failed to fetch usage data:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch usage data' },
-      { status: 500 },
-    );
-  }
-}
-
-// Helper functions
-
+/**
+ * Process historical data for email and slack notifications
+ * Returns data formatted for charts
+ */
 function processEmailSlackData(historicalData: UsageRow[]) {
   if (!historicalData || historicalData.length === 0) return [];
 
@@ -138,6 +69,10 @@ function processEmailSlackData(historicalData: UsageRow[]) {
   return Array.from(dateMap.values());
 }
 
+/**
+ * Process webhook data by month
+ * Returns monthly aggregated webhook request data
+ */
 function processWebhookData(historicalData: UsageRow[]) {
   if (!historicalData || historicalData.length === 0) return [];
 
@@ -160,6 +95,9 @@ function processWebhookData(historicalData: UsageRow[]) {
   return monthlyData;
 }
 
+/**
+ * Calculate total notifications (email + slack) for current month
+ */
 function calculateTotalNotifications(historicalData: UsageRow[]) {
   if (!historicalData) return 0;
 
@@ -176,13 +114,187 @@ function calculateTotalNotifications(historicalData: UsageRow[]) {
   return total;
 }
 
-function checkLimits(usage: CurrentUsage, limits: Limits) {
-  return (
-    usage.requests >= limits.dailyRequests ||
-    usage.emails >= limits.dailyEmails ||
-    usage.slackNotifications >= limits.dailySlackNotifications ||
-    usage.totalDataVolume >= limits.dailyDataVolumeMB * 1024 * 1024 ||
-    usage.activeWebhooks >= limits.webhookLimit ||
-    usage.totalNotifications >= limits.notificationLimit
-  );
+export async function GET() {
+  try {
+    const user = (await getUser()) as UserType | null;
+    if (!user || !user?.userId) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 },
+      );
+    }
+
+    const userId = user.userId;
+    const supabase = await createClient();
+
+    const today = new Date().toISOString().split('T')[0];
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    const subscription_tier = user.subscription_tier || 'free';
+
+    // Get user's limits based on their subscription tier
+    const limits = await getUserLimits(userId, subscription_tier);
+
+    // Get today's usage
+    const { data: todayUsage } = await supabase
+      .from('usage_daily')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('date', today)
+      .single();
+
+    // Count active webhooks
+    const { count: activeWebhooks } = await supabase
+      .from('webhooks')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
+
+    // Get month-to-date usage for current month (detailed)
+    const startOfMonth = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-01`;
+    const { data: monthUsage } = await supabase
+      .from('usage_daily')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('date', startOfMonth)
+      .lte('date', today);
+
+    // Calculate month-to-date totals
+    let monthlyEmailCount = 0;
+    let monthlySlackCount = 0;
+
+    if (monthUsage && monthUsage.length > 0) {
+      monthUsage.forEach(day => {
+        monthlyEmailCount += day.email_count || 0;
+        monthlySlackCount += day.slack_count || 0;
+      });
+    }
+
+    // Calculate total notifications for the current month (for backwards compatibility)
+    const totalNotifications = calculateTotalNotifications(monthUsage || []);
+
+    // Calculate current usage percentages
+    const todayRequestCount = todayUsage?.request_count || 0;
+    const todayEmailCount = todayUsage?.email_count || 0;
+    const todaySlackCount = todayUsage?.slack_count || 0;
+    const todayDataVolume = todayUsage?.total_payload_bytes || 0;
+
+    const currentUsage: CurrentUsage = {
+      requests: {
+        current: todayRequestCount,
+        limit: limits.dailyRequests,
+        percentage: Math.min(
+          100,
+          Math.round((todayRequestCount / limits.dailyRequests) * 100),
+        ),
+      },
+      dailyEmails: {
+        current: todayEmailCount,
+        limit: limits.dailyEmails,
+        percentage: Math.min(
+          100,
+          Math.round((todayEmailCount / limits.dailyEmails) * 100),
+        ),
+      },
+      dailySlackNotifications: {
+        current: todaySlackCount,
+        limit: limits.dailySlackNotifications,
+        percentage: Math.min(
+          100,
+          Math.round((todaySlackCount / limits.dailySlackNotifications) * 100),
+        ),
+      },
+      dataVolume: {
+        current: todayDataVolume,
+        limitMB: limits.dailyDataVolumeMB,
+        percentage: Math.min(
+          100,
+          Math.round(
+            (todayDataVolume / (limits.dailyDataVolumeMB * 1024 * 1024)) * 100,
+          ),
+        ),
+      },
+      webhooks: {
+        current: activeWebhooks || 0,
+        limit: limits.webhookLimit,
+        percentage: Math.min(
+          100,
+          Math.round(((activeWebhooks || 0) / limits.webhookLimit) * 100),
+        ),
+      },
+      monthlyEmails: {
+        current: monthlyEmailCount,
+        limit: limits.emailNotificationLimit,
+        percentage: Math.min(
+          100,
+          Math.round((monthlyEmailCount / limits.emailNotificationLimit) * 100),
+        ),
+      },
+      monthlySlackNotifications: {
+        current: monthlySlackCount,
+        limit: limits.slackNotificationLimit,
+        percentage: Math.min(
+          100,
+          Math.round((monthlySlackCount / limits.slackNotificationLimit) * 100),
+        ),
+      },
+      totalNotifications: totalNotifications, // For backwards compatibility
+    };
+
+    // Check if user has exceeded any limits
+    const { hasReachedLimit, limitInfo } = await checkUsageLimits(userId);
+
+    // Get usage history (last 30 days for charts)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const formattedDate = thirtyDaysAgo.toISOString().split('T')[0];
+
+    const { data: usageHistory } = await supabase
+      .from('usage_daily')
+      .select(
+        'date, user_id, request_count, email_count, slack_count, total_payload_bytes',
+      )
+      .eq('user_id', userId)
+      .gte('date', formattedDate)
+      .order('date', { ascending: true });
+
+    // Process data for charts (using helper functions)
+    const emailSlackChartData = processEmailSlackData(usageHistory || []);
+    const webhookChartData = processWebhookData(usageHistory || []);
+
+    // Get recent usage (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgoFormatted = sevenDaysAgo.toISOString().split('T')[0];
+
+    const { data: recentUsage } = await supabase
+      .from('usage_daily')
+      .select(
+        'date, request_count, email_count, slack_count, total_payload_bytes',
+      )
+      .eq('user_id', userId)
+      .gte('date', sevenDaysAgoFormatted)
+      .order('date', { ascending: false });
+
+    return NextResponse.json({
+      currentUsage,
+      hasReachedLimit,
+      limitInfo,
+      usageHistory: recentUsage || [],
+      chartData: {
+        emailSlack: emailSlackChartData,
+        webhooks: webhookChartData,
+      },
+      totalNotifications,
+      subscription: {
+        tier: subscription_tier,
+        limits,
+      },
+    });
+  } catch (error) {
+    console.error('Failed to fetch usage data:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch usage data' },
+      { status: 500 },
+    );
+  }
 }

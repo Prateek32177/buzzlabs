@@ -21,15 +21,13 @@ export default function UnauthorizedPage() {
           </svg>
         </div>
 
-        <h1 className='text-3xl font-light text-gray-400 mb-4'>
-          Unauthorized
-        </h1>
+        <h1 className='text-3xl font-light text-gray-400 mb-4'>Unauthorized</h1>
 
         <p className='text-gray-400 mb-8'>
           Access Denied. You are not authorized to view this page.
         </p>
 
-        <Button asChild  >
+        <Button asChild>
           <Link href='/'>Return to Home</Link>
         </Button>
       </div>

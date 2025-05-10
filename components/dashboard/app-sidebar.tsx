@@ -124,13 +124,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <>
           <UsageBar
             label='Emails left'
-            used={usageData?.usage.current.emails || 0}
+            used={usageData?.currentUsage.dailyEmails.current || 0}
             total={usageData?.subscription.limits.dailyEmails || 0}
             isCollapsed={!open}
           />
           <UsageBar
             label='Slack alerts left'
-            used={usageData?.usage.current.slackNotifications || 0}
+            used={usageData?.currentUsage.dailySlackNotifications.current || 0}
             total={usageData?.subscription.limits.dailySlackNotifications || 0}
             isCollapsed={!open}
           />

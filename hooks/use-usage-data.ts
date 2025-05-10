@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 
-export interface UsageData {
+interface UsageMetric {
+  current: number;
+  limit: number;
+  percentage: number;
+}
+
+interface UsageData {
   subscription: {
     tier: string;
     limits: {
@@ -9,28 +15,26 @@ export interface UsageData {
       dailySlackNotifications: number;
       dailyDataVolumeMB: number;
       webhookLimit: number;
-      notificationLimit: number;
+      emailNotificationLimit: number;
+      slackNotificationLimit: number;
     };
   };
-  usage: {
-    current: {
-      requests: number;
-      emails: number;
-      slackNotifications: number;
-      totalDataVolume: number;
-      activeWebhooks: number;
-      totalNotifications: number;
-    };
-    emailSlackData: Array<{
-      date: string;
-      Email: number;
-      Slack: number;
-    }>;
-    webhookData: Array<{
-      name: string;
-      value: number;
-    }>;
+  currentUsage: {
+    requests: UsageMetric;
+    dailyEmails: UsageMetric;
+    dailySlackNotifications: UsageMetric;
+    dataVolume: { current: number; limitMB: number; percentage: number };
+    webhooks: UsageMetric;
+    monthlyEmails: UsageMetric;
+    monthlySlackNotifications: UsageMetric;
+    totalNotifications: number;
   };
+  chartData: {
+    emailSlack: Array<{ date: string; Email: number; Slack: number }>;
+    webhooks: Array<{ name: string; value: number }>;
+  };
+  hasReachedLimit: boolean;
+  limitInfo: any;
 }
 
 interface LimitStatus {
@@ -54,19 +58,18 @@ export function useUsageData() {
   });
 
   const checkLimits = (data: UsageData) => {
+    const usage = data.currentUsage;
     const newLimitStatus = {
-      requests:
-        data.usage.current.requests >= data.subscription.limits.dailyRequests,
-      emails: data.usage.current.emails >= data.subscription.limits.dailyEmails,
+      requests: usage.requests.current >= usage.requests.limit,
+      emails: usage.dailyEmails.current >= usage.dailyEmails.limit,
       slack:
-        data.usage.current.slackNotifications >=
-        data.subscription.limits.dailySlackNotifications,
-      webhooks:
-        data.usage.current.activeWebhooks >=
-        data.subscription.limits.webhookLimit,
+        usage.dailySlackNotifications.current >=
+        usage.dailySlackNotifications.limit,
+      webhooks: usage.webhooks.current >= usage.webhooks.limit,
       notifications:
-        data.usage.current.totalNotifications >=
-        data.subscription.limits.notificationLimit,
+        usage.totalNotifications >=
+        data.subscription.limits.emailNotificationLimit +
+          data.subscription.limits.slackNotificationLimit,
     };
     setLimitStatus(newLimitStatus);
   };

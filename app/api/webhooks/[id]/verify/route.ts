@@ -4,9 +4,7 @@ import { sendEmail } from '@/lib/email';
 import { sendSlackNotification } from '@/lib/slack';
 import { v4 as uuidv4 } from 'uuid';
 import { WebhookPlatform } from '@/lib/webhooks/types';
-import { trackUsage } from '@/lib/analytics/usage';
-
-import { checkUsageLimits } from '@/lib/analytics/usage';
+import { checkActionAllowed, trackUsage } from '@/lib/analytics/usage';
 
 class PlatformDetector {
   static detectFromHeaders(headers: Headers): string | null {
@@ -89,7 +87,6 @@ export async function POST(
       .eq('id', id);
     if (error || !webhook || webhook.length === 0) {
       usageMetrics.status = 'failed';
-      await trackUsage(usageMetrics);
 
       return Response.json(
         { error: `Webhook not found ${error?.message}` },
@@ -99,9 +96,11 @@ export async function POST(
 
     usageMetrics.userId = webhook[0].user_id;
 
-    const { hasReachedLimit } = await checkUsageLimits(webhook[0].user_id);
-
-    if (hasReachedLimit) {
+    const { allowed, reason } = await checkActionAllowed(
+      webhook[0].user_id,
+      'request',
+    );
+    if (!allowed) {
       const log = {
         id: logId,
         webhook_id: id,
@@ -110,7 +109,7 @@ export async function POST(
         channel: '',
         status: 'failed' as const,
         payload: data,
-        error_message: 'Rate limit exceeded',
+        error_message: reason,
         processed_at: new Date(),
       };
 
@@ -184,16 +183,21 @@ export async function POST(
     if (webhook[0].is_active) {
       if (webhook[0].notify_email) {
         try {
-          await sendEmail({
+          const { success, message } = await sendEmail({
             userId: webhook[0].user_id,
             from: 'Superhook Alerts <alerts@brokersify.in>',
             to: webhook[0].email_config.recipient_email,
             templateId: webhook[0].email_config.template_id,
             data,
           });
-          channels.push('email');
-          usageMetrics.emailCount = 1;
-          status = 'success';
+          if (success) {
+            channels.push('email');
+            usageMetrics.emailCount = 1;
+            status = 'success';
+          } else {
+            errorMessage += `Slack error: ${message}; `;
+            status = 'failed';
+          }
         } catch (err) {
           const error = err as Error;
           errorMessage += `Email error: ${error.message}; `;
@@ -203,16 +207,21 @@ export async function POST(
 
       if (webhook[0].notify_slack) {
         try {
-          await sendSlackNotification({
+          const { success, message } = await sendSlackNotification({
             userId: webhook[0].user_id,
             webhookUrl: webhook[0].slack_config.webhook_url,
             channelName: webhook[0].slack_config.channel_name,
             templateId: webhook[0].slack_config.template_id,
             data,
           });
-          channels.push('slack');
-          usageMetrics.slackCount = 1;
-          status = 'success';
+          if (success) {
+            channels.push('slack');
+            usageMetrics.slackCount = 1;
+            status = 'success';
+          } else {
+            errorMessage += `Slack error: ${message}; `;
+            status = 'failed';
+          }
         } catch (err) {
           const error = err as Error;
           errorMessage += `Slack error: ${error.message}; `;

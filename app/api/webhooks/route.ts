@@ -1,6 +1,7 @@
 import { WebhookSecurity } from '@/utils/webhook-security';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
+import { checkActionAllowed } from '@/lib/analytics/usage';
 
 export async function GET(req: Request) {
   try {
@@ -68,6 +69,20 @@ export async function POST(req: Request) {
     } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { allowed, reason, usageDetails } = await checkActionAllowed(
+      user.id,
+      'webhook',
+    );
+    if (!allowed) {
+      return NextResponse.json(
+        {
+          error: 'Rate limit exceeded',
+          details: reason,
+        },
+        { status: 429 },
+      );
     }
 
     const webhookSecret = WebhookSecurity.generateSecret();

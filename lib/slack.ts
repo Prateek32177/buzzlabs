@@ -1,4 +1,5 @@
 import { TemplateService, TemplateType } from '@/utils/template-manager';
+import { checkActionAllowed } from './analytics/usage';
 
 export async function sendSlackNotification({
   userId,
@@ -13,6 +14,17 @@ export async function sendSlackNotification({
   templateId?: string;
   data: any;
 }) {
+  const checkResult = await checkActionAllowed(userId, 'slack');
+
+  if (!checkResult.allowed) {
+    return {
+      success: false,
+      message:
+        checkResult.reason ||
+        'Slack Rate limit exceeded. Please upgrade your plan or try again tomorrow.',
+    };
+  }
+
   try {
     // Get the template using TemplateService
     const templateService = new TemplateService();
@@ -23,7 +35,10 @@ export async function sendSlackNotification({
     );
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      return {
+        success: false,
+        message: `Template not found: ${templateId}`,
+      };
     }
 
     // If we have customized content, use it directly
@@ -46,16 +61,21 @@ export async function sendSlackNotification({
     });
 
     if (response.status !== 200) {
-      throw new Error(
-        `Slack notification failed with status ${response.status}: ${await response.text()}`,
-      );
+      return {
+        success: false,
+        message: `Failed to send Slack notification: ${response.status}`,
+      };
     }
 
-    const text = await response.text();
-    return text === 'ok' ? { ok: true } : JSON.parse(text);
+    return {
+      success: true,
+      message: 'Slack notification sent successfully',
+    };
   } catch (error) {
-    console.error('Failed to send Slack notification:', error);
-    throw error;
+    return {
+      success: false,
+      message: 'Failed to send Slack notification.',
+    };
   }
 }
 

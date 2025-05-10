@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { TemplateService, TemplateType } from '@/utils/template-manager';
+import { checkActionAllowed } from './analytics/usage';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,6 +17,18 @@ export async function sendEmail({
   templateId?: string;
   data: any;
 }) {
+  // Check if action is allowed before attempting to send
+  const checkResult = await checkActionAllowed(userId, 'email');
+
+  if (!checkResult.allowed) {
+    return {
+      success: false,
+      message:
+        checkResult.reason ||
+        'Email Rate limit exceeded. Please upgrade your plan or try again tomorrow.',
+    };
+  }
+
   try {
     // Get the template using TemplateService
     const templateService = new TemplateService();
@@ -26,7 +39,10 @@ export async function sendEmail({
     );
 
     if (!template) {
-      throw new Error(`Template not found: ${templateId}`);
+      return {
+        success: false,
+        message: `Template not found: ${templateId}`,
+      };
     }
 
     // If we have customized content, use it directly
@@ -50,11 +66,22 @@ export async function sendEmail({
       html,
     });
 
-    if (error) throw error;
-    return result;
+    if (error) {
+      return {
+        success: false,
+        message: 'Failed to send email!',
+      };
+    }
+    return {
+      success: true,
+      message: 'Email notification sent successfully',
+    };
   } catch (error) {
     console.error('Failed to send email:', error);
-    throw error;
+    return {
+      success: false,
+      message: 'Failed to send email!',
+    };
   }
 }
 

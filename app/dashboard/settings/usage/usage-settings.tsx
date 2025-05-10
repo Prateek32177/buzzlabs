@@ -3,16 +3,20 @@
 import type React from 'react';
 
 import { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Mail,
   Slack,
   Clock,
   TrendingUp,
+  TrendingDown,
   AlertTriangle,
   Info,
   HelpCircle,
   BarChart3,
+  Activity,
+  Database,
+  RefreshCw,
 } from 'lucide-react';
 import { useUsageData } from '@/hooks/use-usage-data';
 import { formatBytes } from '@/lib/utils';
@@ -33,15 +37,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { ChartContainer, ChartTooltip } from '@/components/ui/chart';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-} from 'recharts';
+import { UsageChart } from './usagechart';
+import { Button } from '@/components/ui/button';
 
 // Define types to avoid type errors
 interface UsageMetricProps {
@@ -77,27 +74,31 @@ const UsageTab = () => {
     subscription.tier.charAt(0).toUpperCase() + subscription.tier.slice(1);
 
   return (
-    <div className='space-y-8 mb-16'>
+    <div className='space-y-8 mb-16 animate-in fade-in duration-500'>
       {/* Header */}
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
         <div>
-          <h2 className='text-xl font-medium text-white'>Usage</h2>
-          <p className='text-sm text-zinc-400 mt-1'>
+          <h2 className='text-2xl font-semibold text-white'>Usage Dashboard</h2>
+          <p className='text-sm text-white/70 mt-1'>
             Monitor your resource consumption and limits
           </p>
         </div>
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-3'>
           <Badge
             variant='outline'
-            className='text-xs font-normal border-zinc-700 bg-zinc-900'
+            className='text-xs font-medium border-white/10 bg-secondary text-white px-3 py-1'
           >
             {tierName} Plan
           </Badge>
           <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <button className='text-xs text-zinc-400 hover:text-white'>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='text-white/70 hover:text-white hover:bg-secondary'
+              >
                 <HelpCircle className='w-4 h-4' />
-              </button>
+              </Button>
             </DialogTrigger>
             <DialogContent className='sm:max-w-md'>
               <DialogHeader>
@@ -106,35 +107,33 @@ const UsageTab = () => {
                   Your current usage limits based on the {tierName} plan.
                 </DialogDescription>
               </DialogHeader>
-              <div className='grid grid-cols-2 gap-4 py-4'>
-                <div className='space-y-1'>
-                  <h4 className='text-sm font-medium text-zinc-200'>
-                    Resources
-                  </h4>
-                  <p className='text-sm text-zinc-400'>
+              <div className='grid grid-cols-2 gap-6 py-4'>
+                <div className='space-y-2'>
+                  <h4 className='text-sm font-medium text-white'>Resources</h4>
+                  <p className='text-sm text-white/70'>
                     Webhooks: {subscription.limits.webhookLimit}
                   </p>
-                  <p className='text-sm text-zinc-400'>
+                  <p className='text-sm text-white/70'>
                     Daily Requests: {subscription.limits.dailyRequests}
                   </p>
-                  <p className='text-sm text-zinc-400'>
+                  <p className='text-sm text-white/70'>
                     Data Volume: {subscription.limits.dailyDataVolumeMB} MB
                   </p>
                 </div>
-                <div className='space-y-1'>
-                  <h4 className='text-sm font-medium text-zinc-200'>
+                <div className='space-y-2'>
+                  <h4 className='text-sm font-medium text-white'>
                     Notifications
                   </h4>
-                  <p className='text-sm text-zinc-400'>
+                  <p className='text-sm text-white/70'>
                     Daily Emails: {subscription.limits.dailyEmails}
                   </p>
-                  <p className='text-sm text-zinc-400'>
+                  <p className='text-sm text-white/70'>
                     Daily Slack: {subscription.limits.dailySlackNotifications}
                   </p>
-                  <p className='text-sm text-zinc-400'>
+                  <p className='text-sm text-white/70'>
                     Monthly Email: {subscription.limits.emailNotificationLimit}
                   </p>
-                  <p className='text-sm text-zinc-400'>
+                  <p className='text-sm text-white/70'>
                     Monthly Slack: {subscription.limits.slackNotificationLimit}
                   </p>
                 </div>
@@ -146,15 +145,17 @@ const UsageTab = () => {
 
       {/* Warning Banner */}
       {hasReachedAnyLimit && (
-        <div className='flex items-center gap-2 p-3 bg-amber-950/20 border border-amber-900/30 rounded-md'>
-          <AlertTriangle className='h-4 w-4 text-amber-500 flex-shrink-0' />
-          <span className='text-amber-200 text-sm'>{limitMessages}</span>
+        <div className='flex items-center gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-lg shadow-sm'>
+          <AlertTriangle className='h-5 w-5 text-destructive flex-shrink-0' />
+          <span className='text-white text-sm font-medium'>
+            {limitMessages}
+          </span>
         </div>
       )}
 
       {/* Reset Time */}
-      <div className='text-sm flex items-center text-zinc-400 -mt-4'>
-        <Clock className='h-4 w-4 mr-1.5' />
+      <div className='text-sm flex items-center text-white/60 -mt-4'>
+        <Clock className='h-4 w-4 mr-2' />
         Daily limits reset at midnight IST
       </div>
 
@@ -165,8 +166,8 @@ const UsageTab = () => {
           current={currentUsage.webhooks.current}
           max={subscription.limits.webhookLimit}
           percentage={currentUsage.webhooks.percentage}
-          icon={<BarChart3 className='h-4 w-4 text-zinc-400' />}
-          description='Total active webhooks'
+          icon={<BarChart3 className='h-5 w-5 text-white/80' />}
+          description='Total active webhooks in your account'
         />
 
         <UsageMetric
@@ -174,8 +175,8 @@ const UsageTab = () => {
           current={currentUsage.requests.current}
           max={subscription.limits.dailyRequests}
           percentage={currentUsage.requests.percentage}
-          icon={<Activity className='h-4 w-4 text-zinc-400' />}
-          description='API requests today'
+          icon={<Activity className='h-5 w-5 text-white/80' />}
+          description='API requests processed today'
         />
 
         <UsageMetric
@@ -183,57 +184,67 @@ const UsageTab = () => {
           current={formatBytes(currentUsage.dataVolume.current)}
           max={`${subscription.limits.dailyDataVolumeMB} MB`}
           percentage={currentUsage.dataVolume.percentage}
-          icon={<Database className='h-4 w-4 text-zinc-400' />}
-          description='Data processed today'
+          icon={<Database className='h-5 w-5 text-white/80' />}
+          description='Total data processed today'
         />
       </div>
 
       {/* Notification Metrics */}
       <div className='space-y-6'>
-        <h3 className='text-lg font-medium text-white'>Notifications</h3>
+        <h3 className='text-xl font-semibold text-white'>Notifications</h3>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           {/* Email Notifications */}
-          <Card className='p-5 border-zinc-800 bg-zinc-950/50'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='flex items-center gap-2'>
-                <Mail className='h-4 w-4 text-zinc-400' />
-                <h4 className='text-sm font-medium text-white'>Email</h4>
+          <Card className='border-white/10 shadow-sm'>
+            <CardHeader className='pb-2'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                  <div className='p-2 rounded-full bg-secondary'>
+                    <Mail className='h-4 w-4 text-white/80' />
+                  </div>
+                  <CardTitle className='text-sm font-medium'>
+                    Email Notifications
+                  </CardTitle>
+                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        className='h-8 w-8 text-white/70 hover:text-white hover:bg-secondary'
+                      >
+                        <Info className='h-4 w-4' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className='text-xs'>
+                        Email notification usage and limits
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button className='text-zinc-500 hover:text-zinc-400'>
-                      <Info className='h-4 w-4' />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className='text-xs'>
-                      Email notification usage and limits
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            </CardHeader>
 
-            <div className='space-y-5'>
+            <CardContent className='space-y-5 pt-2'>
               <div>
-                <div className='flex justify-between text-xs text-zinc-400 mb-1.5'>
-                  <span>Daily</span>
-                  <span>
+                <div className='flex justify-between text-xs text-white/70 mb-2'>
+                  <span>Daily Usage</span>
+                  <span className='font-medium'>
                     {currentUsage.dailyEmails.current} of{' '}
                     {subscription.limits.dailyEmails}
                   </span>
                 </div>
-                <div className='h-1 w-full bg-zinc-800 rounded-full'>
+                <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
                   <div
                     className={cn(
-                      'h-full rounded-full transition-all',
+                      'h-full rounded-full transition-all duration-500 ease-in-out',
                       currentUsage.dailyEmails.percentage > 90
-                        ? 'bg-red-500'
+                        ? 'bg-destructive'
                         : currentUsage.dailyEmails.percentage > 75
-                          ? 'bg-amber-500'
-                          : 'bg-zinc-400',
+                          ? 'bg-[hsl(var(--chart-5))]'
+                          : 'bg-[hsl(var(--sidebar-primary))]',
                     )}
                     style={{
                       width: `${Math.min(currentUsage.dailyEmails.percentage, 100)}%`,
@@ -243,28 +254,28 @@ const UsageTab = () => {
               </div>
 
               <div>
-                <div className='flex justify-between text-xs text-zinc-400 mb-1.5'>
-                  <span>Monthly</span>
-                  <span>
+                <div className='flex justify-between text-xs text-white/70 mb-2'>
+                  <span>Monthly Usage</span>
+                  <span className='font-medium'>
                     {currentUsage.monthlyEmails.current} of{' '}
                     {subscription.limits.emailNotificationLimit}
                   </span>
                 </div>
-                <div className='h-1 w-full bg-zinc-800 rounded-full'>
+                <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
                   <div
                     className={cn(
-                      'h-full rounded-full transition-all',
+                      'h-full rounded-full transition-all duration-500 ease-in-out',
                       (currentUsage.monthlyEmails.current /
                         subscription.limits.emailNotificationLimit) *
                         100 >
                         90
-                        ? 'bg-red-500'
+                        ? 'bg-destructive'
                         : (currentUsage.monthlyEmails.current /
                               subscription.limits.emailNotificationLimit) *
                               100 >
                             75
-                          ? 'bg-amber-500'
-                          : 'bg-zinc-400',
+                          ? 'bg-[hsl(var(--chart-5))]'
+                          : 'bg-[hsl(var(--sidebar-primary))]',
                     )}
                     style={{
                       width: `${Math.min((currentUsage.monthlyEmails.current / subscription.limits.emailNotificationLimit) * 100, 100)}%`,
@@ -272,50 +283,60 @@ const UsageTab = () => {
                   />
                 </div>
               </div>
-            </div>
+            </CardContent>
           </Card>
 
           {/* Slack Notifications */}
-          <Card className='p-5 border-zinc-800 bg-zinc-950/50'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='flex items-center gap-2'>
-                <Slack className='h-4 w-4 text-zinc-400' />
-                <h4 className='text-sm font-medium text-white'>Slack</h4>
+          <Card className='border-white/10 shadow-sm'>
+            <CardHeader className='pb-2'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                  <div className='p-2 rounded-full bg-secondary'>
+                    <Slack className='h-4 w-4 text-white/80' />
+                  </div>
+                  <CardTitle className='text-sm font-medium'>
+                    Slack Notifications
+                  </CardTitle>
+                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        className='h-8 w-8 text-white/70 hover:text-white hover:bg-secondary'
+                      >
+                        <Info className='h-4 w-4' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className='text-xs'>
+                        Slack notification usage and limits
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button className='text-zinc-500 hover:text-zinc-400'>
-                      <Info className='h-4 w-4' />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className='text-xs'>
-                      Slack notification usage and limits
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            </CardHeader>
 
-            <div className='space-y-5'>
+            <CardContent className='space-y-5 pt-2'>
               <div>
-                <div className='flex justify-between text-xs text-zinc-400 mb-1.5'>
-                  <span>Daily</span>
-                  <span>
+                <div className='flex justify-between text-xs text-white/70 mb-2'>
+                  <span>Daily Usage</span>
+                  <span className='font-medium'>
                     {currentUsage.dailySlackNotifications.current} of{' '}
                     {subscription.limits.dailySlackNotifications}
                   </span>
                 </div>
-                <div className='h-1 w-full bg-zinc-800 rounded-full'>
+                <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
                   <div
                     className={cn(
-                      'h-full rounded-full transition-all',
+                      'h-full rounded-full transition-all duration-500 ease-in-out',
                       currentUsage.dailySlackNotifications.percentage > 90
-                        ? 'bg-red-500'
+                        ? 'bg-destructive'
                         : currentUsage.dailySlackNotifications.percentage > 75
-                          ? 'bg-amber-500'
-                          : 'bg-zinc-400',
+                          ? 'bg-[hsl(var(--chart-5))]'
+                          : 'bg-[hsl(var(--sidebar-primary))]',
                     )}
                     style={{
                       width: `${Math.min(currentUsage.dailySlackNotifications.percentage, 100)}%`,
@@ -325,28 +346,28 @@ const UsageTab = () => {
               </div>
 
               <div>
-                <div className='flex justify-between text-xs text-zinc-400 mb-1.5'>
-                  <span>Monthly</span>
-                  <span>
+                <div className='flex justify-between text-xs text-white/70 mb-2'>
+                  <span>Monthly Usage</span>
+                  <span className='font-medium'>
                     {currentUsage.monthlySlackNotifications.current} of{' '}
                     {subscription.limits.slackNotificationLimit}
                   </span>
                 </div>
-                <div className='h-1 w-full bg-zinc-800 rounded-full'>
+                <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
                   <div
                     className={cn(
-                      'h-full rounded-full transition-all',
+                      'h-full rounded-full transition-all duration-500 ease-in-out',
                       (currentUsage.monthlySlackNotifications.current /
                         subscription.limits.slackNotificationLimit) *
                         100 >
                         90
-                        ? 'bg-red-500'
+                        ? 'bg-destructive'
                         : (currentUsage.monthlySlackNotifications.current /
                               subscription.limits.slackNotificationLimit) *
                               100 >
                             75
-                          ? 'bg-amber-500'
-                          : 'bg-zinc-400',
+                          ? 'bg-[hsl(var(--chart-5))]'
+                          : 'bg-[hsl(var(--sidebar-primary))]',
                     )}
                     style={{
                       width: `${Math.min((currentUsage.monthlySlackNotifications.current / subscription.limits.slackNotificationLimit) * 100, 100)}%`,
@@ -354,190 +375,83 @@ const UsageTab = () => {
                   />
                 </div>
               </div>
-            </div>
+            </CardContent>
           </Card>
         </div>
       </div>
 
       {/* Usage Charts */}
       <div className='space-y-6'>
-        <h3 className='text-lg font-medium text-white'>Usage Trends</h3>
+        <h3 className='text-xl font-semibold text-white'>Usage Trends</h3>
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           {/* Notification Trends Chart */}
-          <Card className='p-5 border-zinc-800 bg-zinc-950/50'>
-            <div className='flex items-center justify-between mb-4'>
-              <h4 className='text-sm font-medium text-white'>
-                Notification Activity
-              </h4>
-              <div className='flex items-center gap-3 text-xs'>
-                <div className='flex items-center gap-1.5'>
-                  <div className='w-2 h-2 rounded-full bg-zinc-400'></div>
-                  <span className='text-zinc-400'>Email</span>
-                </div>
-                <div className='flex items-center gap-1.5'>
-                  <div className='w-2 h-2 rounded-full bg-zinc-600'></div>
-                  <span className='text-zinc-400'>Slack</span>
+          <Card className='border-white/10 shadow-sm'>
+            <CardHeader className='pb-2'>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='text-sm font-medium'>
+                  Notification Activity
+                </CardTitle>
+                <div className='flex items-center gap-4 text-xs'>
+                  <div className='flex items-center gap-1.5'>
+                    <div className='w-2.5 h-2.5 rounded-full bg-[hsl(var(--sidebar-primary))]'></div>
+                    <span className='text-white/70'>Email</span>
+                  </div>
+                  <div className='flex items-center gap-1.5'>
+                    <div className='w-2.5 h-2.5 rounded-full bg-[hsl(var(--chart-2))]'></div>
+                    <span className='text-white/70'>Slack</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </CardHeader>
 
-            <div className='h-[300px] w-full'>
-              <ChartContainer
-                className='h-full w-full'
-                config={{
-                  Email: { label: 'Email', color: '#9CA3AF' },
-                  Slack: { label: 'Slack', color: '#4B5563' },
-                }}
-              >
-                <ResponsiveContainer
-                  className={'w-full h-full'}
-                  width='100%'
-                  height='100%'
-                >
-                  <AreaChart
-                    data={chartData.emailSlack}
-                    margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-                  >
-                    <defs>
-                      <linearGradient
-                        id='emailGradient'
-                        x1='0'
-                        y1='0'
-                        x2='0'
-                        y2='1'
-                      >
-                        <stop
-                          offset='0%'
-                          stopColor='rgba(156, 163, 175, 0.3)'
-                        />
-                        <stop
-                          offset='100%'
-                          stopColor='rgba(156, 163, 175, 0)'
-                        />
-                      </linearGradient>
-                      <linearGradient
-                        id='slackGradient'
-                        x1='0'
-                        y1='0'
-                        x2='0'
-                        y2='1'
-                      >
-                        <stop offset='0%' stopColor='rgba(75, 85, 99, 0.3)' />
-                        <stop offset='100%' stopColor='rgba(75, 85, 99, 0)' />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid
-                      strokeDasharray='3 3'
-                      stroke='rgba(75, 85, 99, 0.2)'
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey='date'
-                      tick={{ fill: 'rgba(156, 163, 175, 0.6)' }}
-                      axisLine={{ stroke: 'rgba(75, 85, 99, 0.3)' }}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fill: 'rgba(156, 163, 175, 0.6)' }}
-                      axisLine={{ stroke: 'rgba(75, 85, 99, 0.3)' }}
-                      tickLine={false}
-                    />
-                    <ChartTooltip />
-                    <Area
-                      type='monotone'
-                      dataKey='Email'
-                      stroke='#9CA3AF'
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill='url(#emailGradient)'
-                    />
-                    <Area
-                      type='monotone'
-                      dataKey='Slack'
-                      stroke='#4B5563'
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill='url(#slackGradient)'
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </div>
+            <CardContent className='pt-0'>
+              <div className='h-[300px] w-full'>
+                <UsageChart
+                  data={chartData.emailSlack}
+                  dataKeys={['Email', 'Slack']}
+                  colors={[
+                    'hsl(var(--sidebar-primary))',
+                    'hsl(var(--chart-2))',
+                  ]}
+                  showGrid={true}
+                  tooltipFormatter={value => `${value} notifications`}
+                />
+              </div>
+            </CardContent>
           </Card>
 
           {/* Webhook Usage Chart */}
-          <Card className='p-5 border-zinc-800 bg-zinc-950/50'>
-            <div className='flex items-center justify-between mb-4'>
-              <h4 className='text-sm font-medium text-white'>Webhook Usage</h4>
-            </div>
-            <div className='h-full w-full'>
-              <ChartContainer
-                className='h-[300px] w-full'
-                config={{
-                  value: { label: 'Webhook Usage', color: '#D1D5DB' },
-                }}
-              >
-                <ResponsiveContainer
-                  className={'w-full h-full'}
-                  width='100%'
-                  height='100%'
-                >
-                  <AreaChart
-                    data={chartData.webhooks}
-                    margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-                  >
-                    <defs>
-                      <linearGradient
-                        id='webhookGradient'
-                        x1='0'
-                        y1='0'
-                        x2='0'
-                        y2='1'
-                      >
-                        <stop
-                          offset='0%'
-                          stopColor='rgba(209, 213, 219, 0.3)'
-                        />
-                        <stop
-                          offset='100%'
-                          stopColor='rgba(209, 213, 219, 0)'
-                        />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid
-                      strokeDasharray='3 3'
-                      stroke='rgba(75, 85, 99, 0.2)'
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey='name'
-                      tick={{ fill: 'rgba(156, 163, 175, 0.6)' }}
-                      axisLine={{ stroke: 'rgba(75, 85, 99, 0.3)' }}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fill: 'rgba(156, 163, 175, 0.6)' }}
-                      axisLine={{ stroke: 'rgba(75, 85, 99, 0.3)' }}
-                      tickLine={false}
-                    />
-                    <ChartTooltip />
-                    <Area
-                      type='monotone'
-                      dataKey='value'
-                      stroke='#D1D5DB'
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill='url(#webhookGradient)'
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </div>
+          <Card className='border-white/10 shadow-sm'>
+            <CardHeader className='pb-2'>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='text-sm font-medium'>
+                  Webhook Usage
+                </CardTitle>
+                <div className='flex items-center gap-1.5'>
+                  <div className='w-2.5 h-2.5 rounded-full bg-[hsl(var(--chart-1))]'></div>
+                  <span className='text-xs text-white/70'>Requests</span>
+                </div>
+              </div>
+            </CardHeader>
 
-            {chartData.webhooks.length > 1 && (
-              <WebhookTrend data={chartData.webhooks} />
-            )}
+            <CardContent className='pt-0'>
+              <div className='h-[300px] w-full'>
+                <UsageChart
+                  data={chartData.webhooks}
+                  dataKeys={['value']}
+                  colors={['hsl(var(--chart-1))']}
+                  showGrid={true}
+                  tooltipFormatter={value => `${value} requests`}
+                  nameKey='name'
+                  valueKey='value'
+                />
+              </div>
+
+              {chartData.webhooks.length > 1 && (
+                <WebhookTrend data={chartData.webhooks} />
+              )}
+            </CardContent>
           </Card>
         </div>
       </div>
@@ -554,60 +468,77 @@ const UsageMetric = ({
   icon,
   description,
 }: UsageMetricProps) => {
+  const getStatusColor = (percent: number) => {
+    if (percent > 90) return 'text-destructive';
+    if (percent > 75) return 'text-[hsl(var(--chart-5))]';
+    if (percent > 50) return 'text-white/70';
+    return 'text-white/70';
+  };
+
+  const getStatusText = (percent: number) => {
+    if (percent > 90) return 'Critical - Near limit';
+    if (percent > 75) return 'Warning - High usage';
+    if (percent > 50) return 'Moderate usage';
+    return 'Good standing';
+  };
+
   return (
-    <Card className='p-5 border-zinc-800 bg-zinc-950/50'>
-      <div className='flex items-center justify-between mb-1'>
-        <div className='flex items-center gap-2'>
-          {icon}
-          <h4 className='text-sm font-medium text-white'>{label}</h4>
+    <Card className='border-white/10 shadow-sm hover:shadow-md transition-all duration-300'>
+      <CardContent className='p-6'>
+        <div className='flex items-center justify-between mb-4'>
+          <div className='flex items-center gap-3'>
+            <div className='p-2.5 rounded-full bg-secondary transition-transform duration-300'>
+              {icon}
+            </div>
+            <h4 className='text-base font-medium text-white'>{label}</h4>
+          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='h-8 w-8 text-white/70 hover:text-white hover:bg-secondary'
+                >
+                  <Info className='h-4 w-4' />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className='text-xs'>{description}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button className='text-zinc-500 hover:text-zinc-400'>
-                <Info className='h-4 w-4' />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className='text-xs'>{description}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
 
-      <div className='mt-4 mb-3'>
-        <div className='flex justify-between text-xs text-zinc-400 mb-1.5'>
-          <span>Used</span>
-          <span>
-            {current} of {max}
-          </span>
+        <div className='mt-2 mb-4'>
+          <div className='flex justify-between text-sm text-white/70 mb-2'>
+            <span>Used</span>
+            <span className='font-medium'>
+              {current} of {max}
+            </span>
+          </div>
+          <div className='h-2.5 w-full bg-secondary rounded-full overflow-hidden'>
+            <div
+              className={cn(
+                'h-full rounded-full transition-all duration-500 ease-in-out',
+                percentage > 90
+                  ? 'bg-destructive'
+                  : percentage > 75
+                    ? 'bg-[hsl(var(--chart-5))]'
+                    : 'bg-[hsl(var(--sidebar-primary))]',
+              )}
+              style={{ width: `${Math.min(percentage, 100)}%` }}
+            />
+          </div>
         </div>
-        <div className='h-1 w-full bg-zinc-800 rounded-full'>
-          <div
-            className={cn(
-              'h-full rounded-full transition-all',
-              percentage > 90
-                ? 'bg-red-500'
-                : percentage > 75
-                  ? 'bg-amber-500'
-                  : 'bg-zinc-400',
-            )}
-            style={{ width: `${Math.min(percentage, 100)}%` }}
-          />
-        </div>
-      </div>
 
-      <div className='text-xs text-zinc-500 mt-2'>
-        {percentage < 50 ? (
-          <span>Good standing</span>
-        ) : percentage < 75 ? (
-          <span>Moderate usage</span>
-        ) : percentage < 90 ? (
-          <span>High usage</span>
-        ) : (
-          <span className='text-amber-500'>Near limit</span>
-        )}
-      </div>
+        <div
+          className={`text-sm ${getStatusColor(percentage)} flex items-center gap-1.5 mt-3`}
+        >
+          <div className='w-2 h-2 rounded-full bg-current'></div>
+          <span>{getStatusText(percentage)}</span>
+        </div>
+      </CardContent>
     </Card>
   );
 };
@@ -628,11 +559,15 @@ const WebhookTrend = ({ data }: WebhookTrendProps) => {
   const isUp = currentMonth >= previousMonth;
 
   return (
-    <div className='mt-3 text-xs flex items-center text-zinc-400'>
-      <TrendingUp
-        className={`h-3.5 w-3.5 mr-1.5 ${isUp ? '' : 'rotate-180 transform'}`}
-      />
-      <span>
+    <div className='mt-4 text-sm flex items-center gap-2 p-3 rounded-lg bg-secondary/50 border border-white/5'>
+      {isUp ? (
+        <TrendingUp className='h-4 w-4 text-[hsl(var(--chart-2))]' />
+      ) : (
+        <TrendingDown className='h-4 w-4 text-destructive' />
+      )}
+      <span
+        className={isUp ? 'text-[hsl(var(--chart-2))]' : 'text-destructive'}
+      >
         {isUp ? 'Up' : 'Down'} {Math.abs(Number(percentageChange))}% from
         previous period
       </span>
@@ -644,82 +579,88 @@ const WebhookTrend = ({ data }: WebhookTrendProps) => {
 const LoadingState = () => (
   <div className='space-y-8'>
     {/* Header Skeleton */}
-    <div className='flex justify-between items-center'>
-      <div className='space-y-2'>
-        <Skeleton className='h-7 w-32 bg-zinc-800/50' />
-        <Skeleton className='h-4 w-48 bg-zinc-800/50' />
+    <div className='flex justify-between items-center overflow-hidden'>
+      <div className='space-y-2 overflow-hidden'>
+        <Skeleton className='h-8 w-48 bg-secondary/50' />
+        <Skeleton className='h-4 w-64 bg-secondary/50' />
       </div>
-      <Skeleton className='h-6 w-24 bg-zinc-800/50' />
+      <Skeleton className='h-8 w-32 bg-secondary/50 rounded-full' />
     </div>
 
     {/* Usage Metrics Skeleton */}
     <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
       {[...Array(3)].map((_, i) => (
-        <Card key={i} className='p-5 border-zinc-800/50 bg-zinc-900/30'>
-          <div className='flex justify-between items-start mb-6'>
-            <div className='flex items-center gap-2'>
-              <Skeleton className='h-4 w-4 rounded-full bg-zinc-800/50' />
-              <Skeleton className='h-4 w-24 bg-zinc-800/50' />
+        <Card key={i} className='border-white/10 shadow-sm'>
+          <CardContent className='p-6'>
+            <div className='flex justify-between items-start mb-6 overflow-hidden'>
+              <div className='flex items-center gap-3 overflow-hidden'>
+                <Skeleton className='h-10 w-10 rounded-full bg-secondary/50' />
+                <Skeleton className='h-5 w-24 bg-secondary/50' />
+              </div>
+              <Skeleton className='h-8 w-8 rounded-full bg-secondary/50' />
             </div>
-            <Skeleton className='h-4 w-4 rounded-full bg-zinc-800/50' />
-          </div>
-          <div className='space-y-4'>
-            <div className='flex justify-between mb-2'>
-              <Skeleton className='h-3 w-12 bg-zinc-800/50' />
-              <Skeleton className='h-3 w-20 bg-zinc-800/50' />
+            <div className='space-y-4 overflow-hidden'>
+              <div className='flex justify-between mb-2 overflow-hidden'>
+                <Skeleton className='h-4 w-16 bg-secondary/50' />
+                <Skeleton className='h-4 w-24 bg-secondary/50' />
+              </div>
+              <Skeleton className='h-2.5 w-full bg-secondary/50 rounded-full' />
+              <Skeleton className='h-5 w-32 bg-secondary/50' />
             </div>
-            <Skeleton className='h-2 w-full bg-zinc-800/50' />
-            <Skeleton className='h-3 w-16 bg-zinc-800/50' />
-          </div>
+          </CardContent>
         </Card>
       ))}
     </div>
 
     {/* Notifications Section Header */}
-    <div className='space-y-2'>
-      <Skeleton className='h-6 w-32 bg-zinc-800/50' />
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+    <div className='space-y-4 overflow-hidden'>
+      <Skeleton className='h-7 w-40 bg-secondary/50' />
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-6 '>
         {[...Array(2)].map((_, i) => (
-          <Card key={i} className='p-5 border-zinc-800/50 bg-zinc-900/30'>
-            <div className='flex items-center justify-between mb-6'>
-              <div className='flex items-center gap-2'>
-                <Skeleton className='h-4 w-4 rounded-full bg-zinc-800/50' />
-                <Skeleton className='h-4 w-20 bg-zinc-800/50' />
+          <Card key={i} className='border-white/10 shadow-sm'>
+            <CardHeader className='pb-2'>
+              <div className='flex items-center justify-between overflow-hidden'>
+                <div className='flex items-center gap-3 overflow-hidden'>
+                  <Skeleton className='h-8 w-8 rounded-full bg-secondary/50' />
+                  <Skeleton className='h-5 w-32 bg-secondary/50' />
+                </div>
+                <Skeleton className='h-8 w-8 rounded-full bg-secondary/50' />
               </div>
-              <Skeleton className='h-4 w-4 rounded-full bg-zinc-800/50' />
-            </div>
-            <div className='space-y-6'>
+            </CardHeader>
+            <CardContent className='space-y-6 pt-2'>
               {[...Array(2)].map((_, j) => (
-                <div key={j} className='space-y-3'>
-                  <div className='flex justify-between'>
-                    <Skeleton className='h-3 w-16 bg-zinc-800/50' />
-                    <Skeleton className='h-3 w-24 bg-zinc-800/50' />
+                <div key={j} className='space-y-3 overflow-hidden'>
+                  <div className='flex justify-between overflow-hidden'>
+                    <Skeleton className='h-4 w-20 bg-secondary/50' />
+                    <Skeleton className='h-4 w-28 bg-secondary/50' />
                   </div>
-                  <Skeleton className='h-2 w-full bg-zinc-800/50' />
+                  <Skeleton className='h-2.5 w-full bg-secondary/50 rounded-full' />
                 </div>
               ))}
-            </div>
+            </CardContent>
           </Card>
         ))}
       </div>
     </div>
 
     {/* Charts Section */}
-    <div className='space-y-4'>
-      <Skeleton className='h-6 w-32 bg-zinc-800/50' />
+    <div className='space-y-4 overflow-hidden'>
+      <Skeleton className='h-7 w-40 bg-secondary/50' />
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
         {[...Array(2)].map((_, i) => (
-          <Card key={i} className='p-5 border-zinc-800/50 bg-zinc-900/30'>
-            <div className='space-y-4'>
-              <div className='flex justify-between items-center'>
-                <Skeleton className='h-4 w-32 bg-zinc-800/50' />
-                <div className='flex gap-4'>
-                  <Skeleton className='h-4 w-16 bg-zinc-800/50' />
-                  <Skeleton className='h-4 w-16 bg-zinc-800/50' />
+          <Card key={i} className='border-white/10 shadow-sm'>
+            <CardHeader className='pb-2'>
+              <div className='flex justify-between items-center overflow-hidden'>
+                <Skeleton className='h-5 w-40 bg-secondary/50' />
+                <div className='flex gap-4 overflow-hidden'>
+                  <Skeleton className='h-4 w-20 bg-secondary/50' />
+                  <Skeleton className='h-4 w-20 bg-secondary/50' />
                 </div>
               </div>
-              <Skeleton className='h-[240px] w-full bg-zinc-800/50' />
-            </div>
+            </CardHeader>
+            <CardContent className='pt-0 overflow-hidden'>
+              <Skeleton className='h-[300px] w-full bg-secondary/50 rounded-lg' />
+            </CardContent>
           </Card>
         ))}
       </div>
@@ -729,54 +670,18 @@ const LoadingState = () => (
 
 // Error State Component
 const ErrorState = ({ error }: { error: string }) => (
-  <Card className='p-6 border-red-900/20 bg-red-950/10'>
+  <Card className='p-8 border-destructive/20 shadow-md'>
     <div className='flex flex-col items-center justify-center h-48 text-center'>
-      <AlertTriangle className='h-8 w-8 text-red-500 mb-2' />
-      <h3 className='text-lg font-medium text-white'>
+      <AlertTriangle className='h-12 w-12 text-destructive mb-4' />
+      <h3 className='text-xl font-medium text-white mb-2'>
         Failed to load usage data
       </h3>
-      <p className='text-sm text-zinc-400 mt-1'>{error}</p>
-      <button
-        className='mt-4 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-md text-white text-sm'
-        onClick={() => window.location.reload()}
-      >
-        Try Again
-      </button>
+      <p className='text-sm text-white/70 mb-6'>{error}</p>
+      <Button onClick={() => window.location.reload()} variant='secondary'>
+        <RefreshCw className='mr-2 h-4 w-4' /> Try Again
+      </Button>
     </div>
   </Card>
-);
-
-// Additional components needed
-const Activity = ({ className }: { className?: string }) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    viewBox='0 0 24 24'
-    fill='none'
-    stroke='currentColor'
-    strokeWidth='2'
-    strokeLinecap='round'
-    strokeLinejoin='round'
-    className={className}
-  >
-    <polyline points='22 12 18 12 15 21 9 3 6 12 2 12' />
-  </svg>
-);
-
-const Database = ({ className }: { className?: string }) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    viewBox='0 0 24 24'
-    fill='none'
-    stroke='currentColor'
-    strokeWidth='2'
-    strokeLinecap='round'
-    strokeLinejoin='round'
-    className={className}
-  >
-    <ellipse cx='12' cy='5' rx='9' ry='3' />
-    <path d='M21 12c0 1.66-4 3-9 3s-9-1.34-9-3' />
-    <path d='M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5' />
-  </svg>
 );
 
 export default UsageTab;

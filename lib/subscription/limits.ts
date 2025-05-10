@@ -38,36 +38,36 @@ export async function getUserLimits(
     const supabase = await createClient();
 
     // First check for user-specific overrides
-    if (userId) {
-      const { data: userOverrides } = await supabase
-        .from('user_subscription_overrides')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
+    // if (userId) {
+    //   const { data: userOverrides } = await supabase
+    //     .from('user_subscription_overrides')
+    //     .select('*')
+    //     .eq('user_id', userId)
+    //     .single();
 
-      if (userOverrides) {
-        // Return user-specific overrides, falling back to defaults for any undefined values
-        return {
-          dailyRequests:
-            userOverrides.daily_requests ?? DEFAULT_LIMITS.dailyRequests,
-          dailyEmails: userOverrides.daily_emails ?? DEFAULT_LIMITS.dailyEmails,
-          dailySlackNotifications:
-            userOverrides.daily_slack_notifications ??
-            DEFAULT_LIMITS.dailySlackNotifications,
-          dailyDataVolumeMB:
-            userOverrides.daily_data_volume_mb ??
-            DEFAULT_LIMITS.dailyDataVolumeMB,
-          webhookLimit:
-            userOverrides.webhook_limit ?? DEFAULT_LIMITS.webhookLimit,
-          emailNotificationLimit:
-            userOverrides.email_notification_limit ??
-            DEFAULT_LIMITS.emailNotificationLimit,
-          slackNotificationLimit:
-            userOverrides.slack_notification_limit ??
-            DEFAULT_LIMITS.slackNotificationLimit,
-        };
-      }
-    }
+    //   if (userOverrides) {
+    //     // Return user-specific overrides, falling back to defaults for any undefined values
+    //     return {
+    //       dailyRequests:
+    //         userOverrides.daily_requests ?? DEFAULT_LIMITS.dailyRequests,
+    //       dailyEmails: userOverrides.daily_emails ?? DEFAULT_LIMITS.dailyEmails,
+    //       dailySlackNotifications:
+    //         userOverrides.daily_slack_notifications ??
+    //         DEFAULT_LIMITS.dailySlackNotifications,
+    //       dailyDataVolumeMB:
+    //         userOverrides.daily_data_volume_mb ??
+    //         DEFAULT_LIMITS.dailyDataVolumeMB,
+    //       webhookLimit:
+    //         userOverrides.webhook_limit ?? DEFAULT_LIMITS.webhookLimit,
+    //       emailNotificationLimit:
+    //         userOverrides.email_notification_limit ??
+    //         DEFAULT_LIMITS.emailNotificationLimit,
+    //       slackNotificationLimit:
+    //         userOverrides.slack_notification_limit ??
+    //         DEFAULT_LIMITS.slackNotificationLimit,
+    //     };
+    //   }
+    // }
 
     // Otherwise, fetch tier limits from the database
     const { data: tierData } = await supabase

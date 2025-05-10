@@ -99,7 +99,7 @@ export async function POST(
 
     usageMetrics.userId = webhook[0].user_id;
 
-    const { hasReachedLimit, currentUsage } = await checkUsageLimits(
+    const { hasReachedLimit, limitInfo } = await checkUsageLimits(
       webhook[0].user_id,
     );
 
@@ -131,7 +131,7 @@ export async function POST(
       return Response.json(
         {
           error: 'Rate limit exceeded',
-          currentUsage,
+          limitInfo,
           message:
             'You have reached your daily usage limit. Please upgrade your plan for higher limits.',
         },

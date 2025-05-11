@@ -183,13 +183,13 @@ export async function POST(
     if (webhook[0].is_active) {
       if (webhook[0].notify_email) {
         try {
-          const { success, message } = await sendEmail({
+            const { success, message } = await sendEmail({
             userId: webhook[0].user_id,
-            from: 'Superhook Alerts <alerts@brokersify.in>',
+            from: `${detectedPlatform === 'unknown' ? 'Hookflo' : detectedPlatform} Alerts <alerts@hookflo.com>`,
             to: webhook[0].email_config.recipient_email,
             templateId: webhook[0].email_config.template_id,
             data,
-          });
+            });
           if (success) {
             channels.push('email');
             usageMetrics.emailCount = 1;

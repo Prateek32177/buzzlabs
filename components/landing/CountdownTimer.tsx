@@ -20,7 +20,10 @@ export function CountdownTimer({ compact = false }: CountdownTimerProps) {
   });
 
   useEffect(() => {
-    const targetDate = new Date(2025, 4, 12);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(19, 0, 0, 0);
+    const targetDate = tomorrow;
 
     const calculateTimeLeft = () => {
       const now = new Date();

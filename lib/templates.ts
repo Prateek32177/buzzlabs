@@ -19,15 +19,35 @@ export const emailTemplates: Template[] = [
     render: data => ({
       subject: 'New Notification',
       html: `
-        <div style="max-width: 600px; margin: 0 auto; font-family: 'Arial', sans-serif; color: #333;">
-          <div style="background: linear-gradient(135deg, #6366F1, #4F46E5); padding: 20px; border-radius: 8px 8px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">New Event</h1>
+     <div style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
+          <div style="background: #1E293B; padding: 24px; border-radius: 12px 12px 0 0;">
+            <h1 style="color: #F8FAFC; margin: 0; font-size: 22px; font-weight: 500;">
+              ${data.platform || 'Platform'} Event
+              ${
+                data.platform === 'Stripe'
+                  ? '💳'
+                  : data.platform === 'Supabase'
+                    ? '⚡'
+                    : data.platform === 'GitHub'
+                      ? '🔧'
+                      : data.platform === 'Clerk'
+                        ? '🔐'
+                        : '📡'
+              }
+            </h1>
           </div>
-          <div style="padding: 20px; border: 1px solid #e5e7eb; border-radius: 0 0 8px 8px;">
-            <p style="font-size: 16px; line-height: 1.5;">Event Type: <strong>${data.type}</strong></p>
-            <pre style="background: #f3f4f6; padding: 15px; border-radius: 4px; overflow-x: auto;">${JSON.stringify(data, null, 2)}</pre>
-            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
-            <p style="color: #6B7280; font-size: 12px; text-align: center;">Delivered by <a href="https://hookflo.com" style="color: #4F46E5; text-decoration: none;">hookflo</a></p>
+          <div style="background: #FFFFFF; padding: 24px; border: 1px solid #E2E8F0; border-radius: 0 0 12px 12px;">
+            <div style="margin-bottom: 20px;">
+              <p style="color: #64748B; font-size: 14px; margin: 0 0 4px;">Event Type</p>
+              <p style="color: #0F172A; font-size: 16px; margin: 0; font-weight: 500;">${data.type}</p>
+            </div>
+            <div style="background: #F1F5F9; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+              <pre style="margin: 0; white-space: pre-wrap; font-family: monospace; font-size: 13px; color: #334155;">${JSON.stringify(data.payload || data, null, 2)}</pre>
+            </div>
+            <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+            <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 0;">
+              Monitored by <a href="https://hookflo.com" style="color: #3B82F6; text-decoration: none; font-weight: 500;">hookflo</a>
+            </p>
           </div>
         </div>
       `,

@@ -294,12 +294,16 @@ export function WebhookManagement() {
                 required
                 minLength={3}
               />
-              <Button type='submit' className='whitespace-nowrap'>
+              <Button
+                type='submit'
+                variant='default'
+                className='whitespace-nowrap'
+              >
                 {isLoading ? (
                   <Loader2 className='h-4 w-4 animate-spin' />
                 ) : (
                   <>
-                    <Plus className='h-4 w-4' />
+                    <Plus className='h-4 w-4 mr-1.5' />
                     <span>Create Webhook</span>
                   </>
                 )}

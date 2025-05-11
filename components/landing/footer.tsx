@@ -37,7 +37,7 @@ export function Footer() {
                 title='Join our Discord'
                 target='_blank'
                 rel='noopener noreferrer'
-                className='text-yellow-300/70 hover:text-white transition-colors'
+                className='text-purple-300/70 hover:text-white transition-colors'
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -52,7 +52,7 @@ export function Footer() {
               <a
                 href='mailto:team.hookflo@gmail.com'
                 title='Email support'
-                className='text-yellow-300/70 hover:text-white transition-colors'
+                className='text-purple-300/70 hover:text-white transition-colors'
               >
                 <Mail size={20} />
               </a>

@@ -17,7 +17,19 @@ export default function Hero() {
 
   return (
     <>
-      <NoiseGradientBackground />
+      <NoiseGradientBackground
+        theme='custom'
+        noiseOpacity={30}
+        primaryBlur={50}
+        vignetteIntensity='strong'
+        style={{
+          background:
+            'radial-gradient(circle at 15% 0%, rgba(88, 28, 255, 0.4), transparent 35%), ' +
+            'radial-gradient(circle at 85% 10%, rgba(255, 78, 205, 0.4), transparent 45%), ' +
+            'radial-gradient(circle at 50% 50%, rgba(49, 98, 255, 0.3), transparent 60%), ' +
+            'radial-gradient(circle at 80% 90%, rgba(145, 85, 255, 0.3), transparent 40%)',
+        }}
+      />
       <section className='pt-44 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen relative z-2'>
         <div className='absolute inset-0 z-0'>
           <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
@@ -25,12 +37,19 @@ export default function Hero() {
         <div className='px-2 m-auto max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
             {/* <Badge
-              variant={'default'}
-              className='mb-4 hover:bg-purple-500/10 bg-purple-500/10 border border-purple-500/20 text-white/80 shadow-md text-xs sm:text-sm px-2 py-1 sm:px-3 hover:none'
+              variant={'secondary'}
+              className='mb-4 text-white/80 text-xs px-3 py-2 sm:px-3 
+          border border-purple-500/20 bg-zinc-900/50 
+          backdrop-blur-sm shadow-lg
+          hover:border-purple-500/40 hover:bg-zinc-900/60
+          transition-all duration-300 ease-in-out
+          rounded-full'
             >
-              <Sparkles className='w-4 h-4 text-purple-400 mr-2' />
-              <span className='text-purple-400 mr-1'>Simplifying Alerts:</span>
-              <span className='hidden sm:inline'>No Code, Just Hook it</span>
+              <Sparkles className='w-4 h-4 text-purple-400 fill-purple-400 mr-2' />
+              <span className='text-purple-300'>Simplifying Alerts</span>
+              <span className='ml-1 text-white/80 hidden sm:inline'>
+                No Code, Just Hook It
+              </span>
               <span className='sm:hidden'>Just Hook it</span>
             </Badge> */}
 
@@ -39,11 +58,10 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className={`text-[2.5rem] lg:text-[4rem] leading-[1] tracking-tighter`}
+              className={`text-[2.5rem] lg:text-[4rem] leading-[1] tracking-tighter font-light`}
             >
               <span className='text-white'>Transform</span>
-
-              <span className='relative mx-2 bg-gradient-to-r from-[#FFE599] to-[#FFD866] text-transparent bg-clip-text font-medium'>
+              <span className='relative mx-2 bg-gradient-to-r from-[#FFE599] to-[#FFD866] text-transparent bg-clip-text font-light'>
                 events
               </span>
               <div className='flex items-center justify-center gap-3 my-2'>
@@ -62,22 +80,28 @@ export default function Hero() {
                     d='M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941'
                   />
                 </svg>
-
-                <span className='bg-gradient-to-r from-purple-300 via-purple-400 to-purple-500 text-transparent bg-clip-text'>
+                <span className='bg-gradient-to-r from-[#FFE599] to-[#FFD866] text-transparent bg-clip-text'>
                   real-time
                 </span>
               </div>
               <span className='text-white block mt-1'>notifications</span>
             </motion.h1>
 
-            <p className='mt-6 text-md md:text-xl leading-6 md:leading-8 text-gray-600 dark:text-gray-500 max-w-sm sm:max-w-2xl mx-auto'>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className='mt-6 text-base md:text-lg leading-7 md:leading-8 
+          tracking-wide font-light
+          bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text
+          max-w-sm sm:max-w-2xl mx-auto'
+            >
               Capture events from multiple platforms and instantly relay
               notifications across various channels with our robust webhook
               infrastructure.
-            </p>
+            </motion.p>
 
             <WaitlistForm />
-
             <div className='relative z-10 mt-10 md:mt-14 w-full'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
                 <motion.div

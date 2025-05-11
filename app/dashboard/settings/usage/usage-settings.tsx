@@ -571,7 +571,13 @@ const NotificationMetricCard = ({
   );
 };
 
-export function PlanLimitsDialog() {
+export function PlanLimitsDialog({ 
+  text,
+  showIcon = true 
+}: { 
+  text?: string;
+  showIcon?: boolean;
+}) {
   const { usageData } = useUsageData();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -586,10 +592,11 @@ export function PlanLimitsDialog() {
       <DialogTrigger asChild>
         <Button
           variant='ghost'
-          size='icon'
+          size={text ? 'sm' : 'icon'}
           className='text-white/70 hover:text-white hover:bg-secondary'
         >
-          <HelpCircle className='w-4 h-4' />
+          {text && <span>{text}</span>}
+          {showIcon && <HelpCircle className={`w-4 h-4`} />}
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-md'>

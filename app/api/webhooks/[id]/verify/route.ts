@@ -185,7 +185,7 @@ export async function POST(
         try {
             const { success, message } = await sendEmail({
             userId: webhook[0].user_id,
-            from: `${detectedPlatform === 'unknown' ? 'Hookflo' : detectedPlatform} Alerts <alerts@hookflo.com>`,
+            from: `${detectedPlatform === 'unknown' ? 'Hookflo' : capitalizeFirstLetter(detectedPlatform)} Alerts <alerts@hookflo.com>`,
             to: webhook[0].email_config.recipient_email,
             templateId: webhook[0].email_config.template_id,
             data,
@@ -324,3 +324,7 @@ function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
       return webhook.secret;
   }
 }
+function capitalizeFirstLetter(detectedPlatform: string): string {
+  return detectedPlatform.charAt(0).toUpperCase() + detectedPlatform.slice(1).toLowerCase();
+}
+

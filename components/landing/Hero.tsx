@@ -24,10 +24,7 @@ export default function Hero() {
         vignetteIntensity='strong'
         style={{
           background:
-            'radial-gradient(circle at 15% 0%, rgba(88, 28, 255, 0.4), transparent 35%), ' +
-            'radial-gradient(circle at 85% 10%, rgba(255, 78, 205, 0.4), transparent 45%), ' +
-            'radial-gradient(circle at 50% 50%, rgba(49, 98, 255, 0.3), transparent 60%), ' +
-            'radial-gradient(circle at 80% 90%, rgba(145, 85, 255, 0.3), transparent 40%)',
+          'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.6), transparent 90%)',
         }}
       />
       <section className='pt-44 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen relative z-2'>

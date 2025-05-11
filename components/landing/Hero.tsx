@@ -18,13 +18,13 @@ export default function Hero() {
   return (
     <>
       <NoiseGradientBackground
-        theme='custom'
-        noiseOpacity={30}
-        primaryBlur={50}
+        theme='purple'
+        noiseOpacity={10}
+        primaryBlur={80}
         vignetteIntensity='strong'
         style={{
           background:
-          'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.6), transparent 90%)',
+            'radial-gradient(circle at 50% 50%, rgba(147, 101, 253, 0.4) 0%, rgba(85, 60, 150, 0.2) 50%, rgba(24, 24, 27, 0.9) 100%)',
         }}
       />
       <section className='pt-44 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen relative z-2'>
@@ -91,7 +91,7 @@ export default function Hero() {
               className='mt-6 text-base md:text-lg leading-7 md:leading-8 
           tracking-wide font-light
           bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text
-          max-w-sm sm:max-w-2xl mx-auto'
+          max-w-sm sm:max-w-xl mx-auto'
             >
               Capture events from multiple platforms and instantly relay
               notifications across various channels with our robust webhook

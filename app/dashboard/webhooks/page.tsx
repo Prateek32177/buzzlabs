@@ -1,5 +1,5 @@
 import { WebhookManagement } from '@/components/dashboard/WebhookManagement';
-import { PlanLimitsDialog } from '../settings/usage/usage-settings'; 
+import { PlanLimitsDialog } from '../settings/usage/usage-settings';
 
 export default function WebhooksPage() {
   return (
@@ -8,10 +8,10 @@ export default function WebhooksPage() {
         <div className='flex flex-col gap-2'>
           <h1 className='text-3xl font-bold tracking-tight'>Welcome back</h1>
           <p className='text-zinc-400'>
-        Here's an overview of your webhook activity
+            Here's an overview of your webhook activity
           </p>
         </div>
-        <PlanLimitsDialog text='Usage Limit'/>
+        <PlanLimitsDialog text='Usage Limit' />
       </div>
       <WebhookManagement />
     </div>

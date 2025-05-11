@@ -571,10 +571,10 @@ const NotificationMetricCard = ({
   );
 };
 
-export function PlanLimitsDialog({ 
+export function PlanLimitsDialog({
   text,
-  showIcon = true 
-}: { 
+  showIcon = true,
+}: {
   text?: string;
   showIcon?: boolean;
 }) {

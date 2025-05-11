@@ -32,15 +32,14 @@ export function Logo({
           <HookfloIcon className='w-8 h-8 inline-flex' />
           <h1
             className={`
-            font-bold
+            font-semibold
             relative
             z-20
             text-white/90
-            -ml-1
             mb-[3px]
             text-lg
             ${size}
-            ${hideText ? 'hidden' : 'block'}
+            ${hideText ? 'hidden sm:block' : 'block'}
             `}
           >
             {text}

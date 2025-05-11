@@ -21,7 +21,7 @@ export function Navbar() {
       <div className='px-6 md:px-16 pt-4'>
         <nav className='floating-nav'>
           <div className='container mx-auto h-16 flex items-center justify-between px-4 md:px-6'>
-            <Logo hideText={true} />
+            <Logo size='xl' hideText={true} />
 
             {/* <div className='hidden md:flex items-center space-x-8'>
               <Link

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRouter, usePathname } from 'next/navigation';
-import { User, BarChart, CreditCard } from 'lucide-react';
+import { User, ChartNoAxesCombined, CreditCard } from 'lucide-react';
 
 const tabs = [
   {
@@ -14,7 +14,7 @@ const tabs = [
   {
     value: 'usage',
     label: 'Usage',
-    icon: <BarChart className='h-4 w-4 mr-2' />,
+    icon: <ChartNoAxesCombined className='h-4 w-4 mr-2' />,
   },
   // {
   //   value: 'plans',

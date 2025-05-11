@@ -437,7 +437,7 @@ export function NotificationLogs() {
                                 className='truncate max-w-[120px]'
                                 title={log.slack_channel}
                               >
-                                {log.slack_channel}
+                                #{log.slack_channel}
                               </span>
                             </Badge>
                           )}

@@ -74,72 +74,22 @@ const UsageTab = () => {
     subscription.tier.charAt(0).toUpperCase() + subscription.tier.slice(1);
 
   return (
-    <div className='space-y-8 mb-16 animate-in fade-in duration-500'>
-      {/* Header */}
+    <Card className='space-y-8 p-6  glass-card rounded-lg  h-full mt-6 mb-16 animate-in fade-in duration-500'>
       <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
         <div>
-          <h2 className='text-2xl font-semibold text-white'>Usage Dashboard</h2>
+          <h2 className='text-2xl font-semibold text-white'>Track Usage</h2>
           <p className='text-sm text-white/70 mt-1'>
             Monitor your resource consumption and limits
           </p>
         </div>
-        <div className='flex items-center gap-3'>
+        <div className='flex items-center gap-1'>
           <Badge
             variant='outline'
             className='text-xs font-medium border-white/10 bg-secondary text-white px-3 py-1'
           >
             {tierName} Plan
           </Badge>
-          <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant='ghost'
-                size='icon'
-                className='text-white/70 hover:text-white hover:bg-secondary'
-              >
-                <HelpCircle className='w-4 h-4' />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className='sm:max-w-md'>
-              <DialogHeader>
-                <DialogTitle>Plan Limits</DialogTitle>
-                <DialogDescription>
-                  Your current usage limits based on the {tierName} plan.
-                </DialogDescription>
-              </DialogHeader>
-              <div className='grid grid-cols-2 gap-6 py-4'>
-                <div className='space-y-2'>
-                  <h4 className='text-sm font-medium text-white'>Resources</h4>
-                  <p className='text-sm text-white/70'>
-                    Webhooks: {subscription.limits.webhookLimit}
-                  </p>
-                  <p className='text-sm text-white/70'>
-                    Daily Requests: {subscription.limits.dailyRequests}
-                  </p>
-                  <p className='text-sm text-white/70'>
-                    Data Volume: {subscription.limits.dailyDataVolumeMB} MB
-                  </p>
-                </div>
-                <div className='space-y-2'>
-                  <h4 className='text-sm font-medium text-white'>
-                    Notifications
-                  </h4>
-                  <p className='text-sm text-white/70'>
-                    Daily Emails: {subscription.limits.dailyEmails}
-                  </p>
-                  <p className='text-sm text-white/70'>
-                    Daily Slack: {subscription.limits.dailySlackNotifications}
-                  </p>
-                  <p className='text-sm text-white/70'>
-                    Monthly Email: {subscription.limits.emailNotificationLimit}
-                  </p>
-                  <p className='text-sm text-white/70'>
-                    Monthly Slack: {subscription.limits.slackNotificationLimit}
-                  </p>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <PlanLimitsDialog />
         </div>
       </div>
 
@@ -152,17 +102,10 @@ const UsageTab = () => {
           </span>
         </div>
       )}
-
-      {/* Reset Time */}
-      <div className='text-sm flex items-center text-white/60 -mt-4'>
-        <Clock className='h-4 w-4 mr-2' />
-        Daily limits reset at midnight IST
-      </div>
-
       {/* Main Usage Metrics */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
         <UsageMetric
-          label='Webhooks'
+          label='Number of Webhooks'
           current={currentUsage.webhooks.current}
           max={subscription.limits.webhookLimit}
           percentage={currentUsage.webhooks.percentage}
@@ -180,7 +123,7 @@ const UsageTab = () => {
         />
 
         <UsageMetric
-          label='Data Volume'
+          label='Payload Volume'
           current={formatBytes(currentUsage.dataVolume.current)}
           max={`${subscription.limits.dailyDataVolumeMB} MB`}
           percentage={currentUsage.dataVolume.percentage}
@@ -195,188 +138,52 @@ const UsageTab = () => {
 
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           {/* Email Notifications */}
-          <Card className='border-white/10 shadow-sm'>
-            <CardHeader className='pb-2'>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <div className='p-2 rounded-full bg-secondary'>
-                    <Mail className='h-4 w-4 text-white/80' />
-                  </div>
-                  <CardTitle className='text-sm font-medium'>
-                    Email Notifications
-                  </CardTitle>
-                </div>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-8 w-8 text-white/70 hover:text-white hover:bg-secondary'
-                      >
-                        <Info className='h-4 w-4' />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className='text-xs'>
-                        Email notification usage and limits
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </CardHeader>
-
-            <CardContent className='space-y-5 pt-2'>
-              <div>
-                <div className='flex justify-between text-xs text-white/70 mb-2'>
-                  <span>Daily Usage</span>
-                  <span className='font-medium'>
-                    {currentUsage.dailyEmails.current} of{' '}
-                    {subscription.limits.dailyEmails}
-                  </span>
-                </div>
-                <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
-                  <div
-                    className={cn(
-                      'h-full rounded-full transition-all duration-500 ease-in-out',
-                      currentUsage.dailyEmails.percentage > 90
-                        ? 'bg-destructive'
-                        : currentUsage.dailyEmails.percentage > 75
-                          ? 'bg-[hsl(var(--chart-5))]'
-                          : 'bg-[hsl(var(--sidebar-primary))]',
-                    )}
-                    style={{
-                      width: `${Math.min(currentUsage.dailyEmails.percentage, 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className='flex justify-between text-xs text-white/70 mb-2'>
-                  <span>Monthly Usage</span>
-                  <span className='font-medium'>
-                    {currentUsage.monthlyEmails.current} of{' '}
-                    {subscription.limits.emailNotificationLimit}
-                  </span>
-                </div>
-                <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
-                  <div
-                    className={cn(
-                      'h-full rounded-full transition-all duration-500 ease-in-out',
-                      (currentUsage.monthlyEmails.current /
-                        subscription.limits.emailNotificationLimit) *
-                        100 >
-                        90
-                        ? 'bg-destructive'
-                        : (currentUsage.monthlyEmails.current /
-                              subscription.limits.emailNotificationLimit) *
-                              100 >
-                            75
-                          ? 'bg-[hsl(var(--chart-5))]'
-                          : 'bg-[hsl(var(--sidebar-primary))]',
-                    )}
-                    style={{
-                      width: `${Math.min((currentUsage.monthlyEmails.current / subscription.limits.emailNotificationLimit) * 100, 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <NotificationMetricCard
+            title='Email Notifications'
+            icon={<Mail className='h-4 w-4 text-white/80' />}
+            tooltipText='Email notification usage and limits'
+            metrics={[
+              {
+                label: 'Daily Usage',
+                current: currentUsage.dailyEmails.current,
+                max: subscription.limits.dailyEmails,
+                percentage: currentUsage.dailyEmails.percentage,
+              },
+              {
+                label: 'Monthly Usage',
+                current: currentUsage.monthlyEmails.current,
+                max: subscription.limits.emailNotificationLimit,
+                percentage:
+                  (currentUsage.monthlyEmails.current /
+                    subscription.limits.emailNotificationLimit) *
+                  100,
+              },
+            ]}
+          />
 
           {/* Slack Notifications */}
-          <Card className='border-white/10 shadow-sm'>
-            <CardHeader className='pb-2'>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <div className='p-2 rounded-full bg-secondary'>
-                    <Slack className='h-4 w-4 text-white/80' />
-                  </div>
-                  <CardTitle className='text-sm font-medium'>
-                    Slack Notifications
-                  </CardTitle>
-                </div>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-8 w-8 text-white/70 hover:text-white hover:bg-secondary'
-                      >
-                        <Info className='h-4 w-4' />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className='text-xs'>
-                        Slack notification usage and limits
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </CardHeader>
-
-            <CardContent className='space-y-5 pt-2'>
-              <div>
-                <div className='flex justify-between text-xs text-white/70 mb-2'>
-                  <span>Daily Usage</span>
-                  <span className='font-medium'>
-                    {currentUsage.dailySlackNotifications.current} of{' '}
-                    {subscription.limits.dailySlackNotifications}
-                  </span>
-                </div>
-                <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
-                  <div
-                    className={cn(
-                      'h-full rounded-full transition-all duration-500 ease-in-out',
-                      currentUsage.dailySlackNotifications.percentage > 90
-                        ? 'bg-destructive'
-                        : currentUsage.dailySlackNotifications.percentage > 75
-                          ? 'bg-[hsl(var(--chart-5))]'
-                          : 'bg-[hsl(var(--sidebar-primary))]',
-                    )}
-                    style={{
-                      width: `${Math.min(currentUsage.dailySlackNotifications.percentage, 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className='flex justify-between text-xs text-white/70 mb-2'>
-                  <span>Monthly Usage</span>
-                  <span className='font-medium'>
-                    {currentUsage.monthlySlackNotifications.current} of{' '}
-                    {subscription.limits.slackNotificationLimit}
-                  </span>
-                </div>
-                <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
-                  <div
-                    className={cn(
-                      'h-full rounded-full transition-all duration-500 ease-in-out',
-                      (currentUsage.monthlySlackNotifications.current /
-                        subscription.limits.slackNotificationLimit) *
-                        100 >
-                        90
-                        ? 'bg-destructive'
-                        : (currentUsage.monthlySlackNotifications.current /
-                              subscription.limits.slackNotificationLimit) *
-                              100 >
-                            75
-                          ? 'bg-[hsl(var(--chart-5))]'
-                          : 'bg-[hsl(var(--sidebar-primary))]',
-                    )}
-                    style={{
-                      width: `${Math.min((currentUsage.monthlySlackNotifications.current / subscription.limits.slackNotificationLimit) * 100, 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <NotificationMetricCard
+            title='Slack Notifications'
+            icon={<Slack className='h-4 w-4 text-white/80' />}
+            tooltipText='Slack notification usage and limits'
+            metrics={[
+              {
+                label: 'Daily Usage',
+                current: currentUsage.dailySlackNotifications.current,
+                max: subscription.limits.dailySlackNotifications,
+                percentage: currentUsage.dailySlackNotifications.percentage,
+              },
+              {
+                label: 'Monthly Usage',
+                current: currentUsage.monthlySlackNotifications.current,
+                max: subscription.limits.slackNotificationLimit,
+                percentage:
+                  (currentUsage.monthlySlackNotifications.current /
+                    subscription.limits.slackNotificationLimit) *
+                  100,
+              },
+            ]}
+          />
         </div>
       </div>
 
@@ -455,7 +262,7 @@ const UsageTab = () => {
           </Card>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
@@ -469,10 +276,16 @@ const UsageMetric = ({
   description,
 }: UsageMetricProps) => {
   const getStatusColor = (percent: number) => {
-    if (percent > 90) return 'text-destructive';
-    if (percent > 75) return 'text-[hsl(var(--chart-5))]';
+    if (percent > 90) return 'text-rose-300';
+    if (percent > 75) return 'text-amber-200';
     if (percent > 50) return 'text-white/70';
     return 'text-white/70';
+  };
+
+  const getProgressColor = (percent: number) => {
+    if (percent > 90) return 'bg-rose-300/70';
+    if (percent > 75) return 'bg-amber-200/70';
+    return 'bg-emerald-300/70';
   };
 
   const getStatusText = (percent: number) => {
@@ -487,7 +300,7 @@ const UsageMetric = ({
       <CardContent className='p-6'>
         <div className='flex items-center justify-between mb-4'>
           <div className='flex items-center gap-3'>
-            <div className='p-2.5 rounded-full bg-secondary transition-transform duration-300'>
+            <div className='p-2.5 rounded-full bg-secondary/80 transition-transform duration-300'>
               {icon}
             </div>
             <h4 className='text-base font-medium text-white'>{label}</h4>
@@ -498,7 +311,7 @@ const UsageMetric = ({
                 <Button
                   variant='ghost'
                   size='icon'
-                  className='h-8 w-8 text-white/70 hover:text-white hover:bg-secondary'
+                  className='h-8 w-8 text-white/70 hover:text-white hover:bg-secondary/80'
                 >
                   <Info className='h-4 w-4' />
                 </Button>
@@ -517,15 +330,11 @@ const UsageMetric = ({
               {current} of {max}
             </span>
           </div>
-          <div className='h-2.5 w-full bg-secondary rounded-full overflow-hidden'>
+          <div className='h-2.5 w-full bg-secondary/50 rounded-full overflow-hidden'>
             <div
               className={cn(
                 'h-full rounded-full transition-all duration-500 ease-in-out',
-                percentage > 90
-                  ? 'bg-destructive'
-                  : percentage > 75
-                    ? 'bg-[hsl(var(--chart-5))]'
-                    : 'bg-[hsl(var(--sidebar-primary))]',
+                getProgressColor(percentage),
               )}
               style={{ width: `${Math.min(percentage, 100)}%` }}
             />
@@ -685,3 +494,141 @@ const ErrorState = ({ error }: { error: string }) => (
 );
 
 export default UsageTab;
+
+const NotificationMetricCard = ({
+  title,
+  icon,
+  tooltipText,
+  metrics,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  tooltipText: string;
+  metrics: Array<{
+    label: string;
+    current: number;
+    max: number;
+    percentage: number;
+  }>;
+}) => {
+  const getProgressColor = (percentage: number) => {
+    if (percentage > 90) return 'bg-red-200';
+    if (percentage > 75) return 'bg-amber-200';
+    return 'bg-emerald-200';
+  };
+
+  return (
+    <Card className='border-white/10 shadow-sm'>
+      <CardHeader className='pb-2'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <div className='p-2 rounded-full bg-secondary'>{icon}</div>
+            <CardTitle className='text-sm font-medium'>{title}</CardTitle>
+          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='h-8 w-8 text-white/70 hover:text-white hover:bg-secondary'
+                >
+                  <Info className='h-4 w-4' />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className='text-xs'>{tooltipText}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </CardHeader>
+
+      <CardContent className='space-y-5 pt-2'>
+        {metrics.map((metric, index) => (
+          <div key={index}>
+            <div className='flex justify-between text-xs text-white/70 mb-2'>
+              <span>{metric.label}</span>
+              <span className='font-medium'>
+                {metric.current} of {metric.max}
+              </span>
+            </div>
+            <div className='h-2 w-full bg-secondary rounded-full overflow-hidden'>
+              <div
+                className={cn(
+                  'h-full rounded-full transition-all duration-500 ease-in-out opacity-80',
+                  getProgressColor(metric.percentage),
+                )}
+                style={{
+                  width: `${Math.min(metric.percentage, 100)}%`,
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+};
+
+export function PlanLimitsDialog() {
+  const { usageData } = useUsageData();
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (!usageData) return null;
+
+  const { subscription } = usageData;
+  const tierName =
+    subscription.tier.charAt(0).toUpperCase() + subscription.tier.slice(1);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant='ghost'
+          size='icon'
+          className='text-white/70 hover:text-white hover:bg-secondary'
+        >
+          <HelpCircle className='w-4 h-4' />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className='sm:max-w-md'>
+        <DialogHeader>
+          <DialogTitle>Plan Limits</DialogTitle>
+          <DialogDescription>
+            Your current usage limits based on the {tierName} plan.
+          </DialogDescription>
+        </DialogHeader>
+        <div className='grid grid-cols-2 gap-6 py-4'>
+          <div className='space-y-2'>
+            <h4 className='text-sm font-medium text-white'>Resources</h4>
+            <p className='text-sm text-white/70'>
+              Total Webhooks: {subscription.limits.webhookLimit}
+            </p>
+            <p className='text-sm text-white/70'>
+              Daily Requests: {subscription.limits.dailyRequests}
+            </p>
+            <p className='text-sm text-white/70'>
+              Payload Volume: {subscription.limits.dailyDataVolumeMB} MB
+            </p>
+          </div>
+          <div className='space-y-2'>
+            <h4 className='text-sm font-medium text-white'>Notifications</h4>
+            <p className='text-sm text-white/70'>
+              Daily Emails Alerts: {subscription.limits.dailyEmails}
+            </p>
+            <p className='text-sm text-white/70'>
+              Daily Slack Alerts: {subscription.limits.dailySlackNotifications}
+            </p>
+            <p className='text-sm text-white/70'>
+              Monthly Email Alerts: {subscription.limits.emailNotificationLimit}
+            </p>
+            <p className='text-sm text-white/70'>
+              Monthly Slack Alerts: {subscription.limits.slackNotificationLimit}
+            </p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

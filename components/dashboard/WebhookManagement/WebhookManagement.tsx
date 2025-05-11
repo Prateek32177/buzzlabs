@@ -36,7 +36,8 @@ import { SlackConfigDialog } from './SlackConfigDialog';
 import { Webhook } from './types';
 import { WebhookDetails } from './WebhookDetails';
 import { Loader } from '@/components/ui/loader';
-
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -306,65 +307,106 @@ export function WebhookManagement() {
             </form>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Manage Webhooks</CardTitle>
-            <CardDescription>
-              View and manage your existing webhooks.
-            </CardDescription>
+        <Card className='border border-border/40 shadow-sm'>
+          <CardHeader className='pb-3 shadow-lg'>
+            <div className='flex justify-between items-center flex-wrap gap-2 '>
+              <div>
+                <CardTitle className='text-xl font-semibold'>
+                  Manage Webhooks
+                </CardTitle>
+                <CardDescription className='text-muted-foreground'>
+                  View and manage your existing webhooks.
+                </CardDescription>
+              </div>
+              {webhooks.length > 0 && (
+                <Badge
+                  variant='outline'
+                  className='h-7 px-3 text-xs whitespace-nowrap'
+                >
+                  {webhooks.length} webhook{webhooks.length !== 1 ? 's' : ''}
+                </Badge>
+              )}
+            </div>
           </CardHeader>
+          <Separator className='mb-0' />
           <CardContent>
             {isFetching ? (
-              <div className='flex justify-center items-center py-8'>
-                <Loader text='Fetching webhooks' />
+              <div className='flex justify-center items-center py-12'>
+                <div className='flex flex-col items-center gap-2'>
+                  <Loader2 className='h-6 w-6 animate-spin text-primary' />
+                  <span className='text-sm text-muted-foreground'>
+                    Loading webhooks...
+                  </span>
+                </div>
               </div>
             ) : webhooks.length === 0 ? (
-              <div className='text-center py-8 text-muted-foreground'>
-                No webhooks found. Add one to get started.
+              <div className='text-center py-16 px-4'>
+                <div className='flex flex-col items-center gap-3'>
+                  <PlugZap className='h-12 w-12 text-muted-foreground/50' />
+                  <div>
+                    <p className='font-medium text-foreground'>
+                      No webhooks found
+                    </p>
+                    <p className='text-sm text-muted-foreground'>
+                      Create a new webhook to get started
+                    </p>
+                  </div>
+                </div>
               </div>
             ) : (
-              <div>
+              <div className='relative overflow-x-auto mt-2'>
                 <Table>
                   <TableHeader>
-                    <TableRow>
+                    <TableRow className='hover:bg-transparent border-none'>
                       <TableHead>Name</TableHead>
-                      <TableHead>Active</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead>Notifications</TableHead>
-                      <TableHead className='w-[100px]'>Actions</TableHead>
+                      <TableHead className='text-right w-[120px]'>
+                        Actions
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {webhooks.map(webhook => (
-                      <TableRow key={webhook.id}>
-                        <TableCell className='pr-8'>
-                          <div className='flex items-center flex-start gap-2 justify-start'>
+                    {webhooks.map((webhook, index) => (
+                      <TableRow
+                        key={webhook.id}
+                        className={`hover:bg-transparent ${index === webhooks.length - 1 ? 'border-none' : ''}`}
+                      >
+                        <TableCell>
+                          <div className='flex items-center gap-2'>
                             <a
                               href={`/dashboard/webhooks/${webhook.id}`}
-                              className='text-gray-300 hover:text-gray-100 hover:underline flex items-center gap-1.5 opacity-100 hover:opacity-80 transition-all'
+                              className='text-gray-200 hover:text-gray-100 hover:underline flex items-center gap-1.5 opacity-100 hover:opacity-80 transition-all'
                             >
                               {webhook.name}
+
+                              <span>
+                                <ArrowUpRight className='h-3.5 w-3.5' />
+                              </span>
                             </a>
-                            <span>
-                              <ArrowUpRight className='h-3.5 w-3.5' />
-                            </span>
                           </div>
                         </TableCell>
-                        <TableCell className='pr-8'>
-                          <div className='flex items-center flex-start gap-4'>
+                        <TableCell className='py-4'>
+                          <div className='flex items-center gap-3'>
                             <Switch
                               checked={webhook.is_active}
                               onCheckedChange={() =>
                                 toggleWebhook(webhook.id, 'isActive')
                               }
                               disabled={isLoadingId === webhook.id}
+                              className='data-[state=checked]:bg-primary data-[state=unchecked]:bg-input'
                             />
+                            <span
+                              className={`text-sm ${webhook.is_active ? 'text-foreground' : 'text-muted-foreground'}`}
+                            >
+                              {webhook.is_active ? 'Active' : 'Inactive'}
+                            </span>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className='py-4'>
                           <div className='flex flex-wrap items-center gap-6'>
-                            <div className='flex items-center gap-2'>
-                              <div className='flex items-center gap-1 text-gray-300'>
+                            <div className='flex items-center gap-3'>
+                              <div className='flex items-center gap-1.5'>
                                 <Mail className='h-4 w-4' />
                                 <span className='text-sm'>Email</span>
                               </div>
@@ -377,10 +419,11 @@ export function WebhookManagement() {
                                   )
                                 }
                                 disabled={isLoadingId === webhook.id}
+                                className='data-[state=checked]:bg-primary data-[state=unchecked]:bg-input'
                               />
                             </div>
-                            <div className='flex items-center gap-2'>
-                              <div className='flex items-center gap-1 text-gray-300'>
+                            <div className='flex items-center gap-3'>
+                              <div className='flex items-center gap-1.5'>
                                 <Slack className='h-4 w-4' />
                                 <span className='text-sm '>Slack</span>
                               </div>
@@ -393,61 +436,65 @@ export function WebhookManagement() {
                                   )
                                 }
                                 disabled={isLoadingId === webhook.id}
+                                className='data-[state=checked]:bg-primary data-[state=unchecked]:bg-input'
                               />
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className='flex items-center gap-2'>
+                        <TableCell className='text-right py-4'>
+                          <div className='flex items-center justify-end gap-2'>
                             <Button
                               variant='outline'
                               size='sm'
                               onClick={() => setShowDetails(webhook.id)}
                               disabled={isLoadingId === webhook.id}
+                              className='h-9 px-3 border-border/60 hover:bg-muted'
                             >
-                              <span>
-                                {' '}
-                                <PlugZap className='h-8 w-8 ' />
-                              </span>
-                              <span className='md:flex hidden'>connect</span>
+                              <PlugZap className='h-4 w-4 mr-1' />
+                              <span className='sm:inline hidden'>Connect</span>
                             </Button>
+
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
                                 <Button
                                   variant='outline'
                                   size='icon'
                                   disabled={isLoadingId === webhook.id}
+                                  className='h-9 w-9 border-border/60 hover:bg-muted hover:text-destructive'
                                 >
                                   {isLoadingId === webhook.id ? (
-                                    <Loader className='w-4 h-4 text-gray-300' />
+                                    <Loader2 className='h-4 w-4 animate-spin' />
                                   ) : (
                                     <Trash2 className='h-4 w-4' />
                                   )}
                                 </Button>
                               </AlertDialogTrigger>
-                              <AlertDialogContent className='text-left'>
-                                <AlertDialogHeader className='text-left'>
-                                  <AlertDialogTitle>
+                              <AlertDialogContent className='border border-border/80'>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle className='text-destructive font-medium'>
                                     Delete Webhook
                                   </AlertDialogTitle>
-                                  <AlertDialogDescription>
+                                  <AlertDialogDescription className='text-muted-foreground'>
                                     This action cannot be undone. All webhook
                                     details and associated logs will be
                                     permanently deleted.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogCancel className='border-border/60'>
+                                    Cancel
+                                  </AlertDialogCancel>
                                   <AlertDialogAction
                                     onClick={() => deleteWebhook(webhook.id)}
                                     disabled={isLoadingId === webhook.id}
+                                    className='bg-destructive hover:bg-destructive/90 text-destructive-foreground'
                                   >
                                     {isLoadingId === webhook.id ? (
-                                      <Loader2 className='h-4 w-4 animate-spin' />
+                                      <Loader2 className='h-4 w-4 mr-2 animate-spin' />
                                     ) : (
-                                      <Trash2 className='h-4 w-4' />
+                                      <Trash2 className='h-4 w-4 mr-2' />
                                     )}
-                                    Delete
+                                    Delete Webhook
                                   </AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>

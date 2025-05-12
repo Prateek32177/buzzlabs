@@ -583,17 +583,21 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     <p>1. Go to your Supabase project dashboard</p>
                     <p>2. Navigate to Database → Webhooks</p>
                     <p>3. Create a new webhook with the following settings:</p>
-                    <p className='text-emerald-400'>
-                      URL: {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}`}
+                    <p className='text-emerald-400 py-2'>
+                      URL:{' '}
+                      {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=supabase`}
                     </p>
-                    <p className='text-emerald-400'>Headers:</p>
-                    <p className='pl-4'>
-                      x-webhook-id:{' '}
-                      {currentValues?.webhook_id || 'your_webhook_id'}
-                    </p>
-                    <p className='pl-4'>
-                      x-webhook-token:{' '}
-                      {currentValues?.webhook_token || 'your_webhook_token'}
+                    <br />
+                    <p className='text-emerald-400 py-2'>
+                      Headers:
+                      <p>
+                        x-webhook-id:{' '}
+                        {currentValues?.webhook_id || 'your_webhook_id'}
+                      </p>
+                      <p>
+                        x-webhook-token:{' '}
+                        {currentValues?.webhook_token || 'your_webhook_token'}
+                      </p>
                     </p>
                     <p>4. Select the events you want to trigger the webhook</p>
                   </div>
@@ -610,15 +614,82 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     <p>1. Go to your Clerk dashboard</p>
                     <p>2. Navigate to Webhooks → Create Webhook</p>
                     <p>3. Set the following:</p>
-                    <p className='text-emerald-400'>
+                    <p className='text-emerald-400 py-2'>
                       Endpoint URL:{' '}
-                      {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}`}
+                      {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=clerk`}
                     </p>
-                    <p className='text-emerald-400'>
+                    <br />
+                    <p className='text-emerald-400 py-2'>
                       Signing Secret:{' '}
                       {currentValues?.signing_secret || 'your_signing_secret'}
                     </p>
                     <p>4. Select the events you want to receive</p>
+                    <p>5. Copy the generated signing secret</p>
+                    <p>
+                      6. Paste the signing secret in the "Signing Secret" field
+                      and save configuration
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {platform === 'stripe' && (
+                <div className='space-y-3'>
+                  <h4 className='text-sm font-medium'>Stripe Integration</h4>
+                  <p className='text-sm text-muted-foreground'>
+                    Configure Stripe to send webhooks to this endpoint.
+                  </p>
+                  <div className='bg-zinc-900 p-3 rounded-md text-xs font-mono overflow-x-auto'>
+                    <p>1. Go to your Stripe Dashboard</p>
+                    <p>2. Navigate to Developers → Webhooks → Add endpoint</p>
+                    <p>3. Configure the following:</p>
+                    <p className='text-emerald-400 py-2'>
+                      Endpoint URL:{' '}
+                      {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=stripe`}
+                    </p>
+                    <br />
+                    <p className='text-emerald-400 py-2'>
+                      Signing Secret:{' '}
+                      {currentValues?.signing_secret || 'your_webhook_secret'}
+                    </p>
+                    <p>4. Choose the events you want to listen to</p>
+                    <p>5. Click "Add endpoint" to save</p>
+                    <p>
+                      6. Reveal and copy the generated webhook signing secret
+                    </p>
+                    <p>
+                      7. Paste the secret in the "Webhook signing Secret" field
+                      and save configuration
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {platform === 'github' && (
+                <div className='space-y-3'>
+                  <h4 className='text-sm font-medium'>GitHub Integration</h4>
+                  <p className='text-sm text-muted-foreground'>
+                    Configure GitHub webhooks for your repository.
+                  </p>
+                  <div className='bg-zinc-900 p-3 rounded-md text-xs font-mono overflow-x-auto'>
+                    <p>1. Go to your GitHub repository</p>
+                    <p>2. Navigate to Settings → Webhooks → Add webhook</p>
+                    <p>3. Enter the following details:</p>
+                    <p className='text-emerald-400 py-2'>
+                      Payload URL:{' '}
+                      {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=github`}
+                    </p>
+                    <br />
+                    <p className='text-emerald-400 py-2'>
+                      Secret: {currentValues?.signing_secret || 'your_secret'}
+                    </p>
+                    <p>4. Set Content type to "application/json"</p>
+                    <p>5. Select the events you want to trigger the webhook</p>
+                    <p>6. Create and copy the webhook secret</p>
+                    <p>
+                      7. Paste the secret in the "Webhook Secret" field and save
+                      configuration
+                    </p>
                   </div>
                 </div>
               )}
@@ -631,16 +702,16 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   </p>
                   <div className='bg-zinc-900 p-3 rounded-md text-xs font-mono overflow-x-auto'>
                     <p>Include these headers in your requests:</p>
-                    <p className='text-emerald-400'>
+                    <p className='text-emerald-400 py-2'>
                       x-webhook-id:{' '}
                       {currentValues?.webhook_id || 'your_webhook_id'}
                     </p>
-                    <p className='text-emerald-400'>
+                    <p className='text-emerald-400 py-2'>
                       x-webhook-token:{' '}
                       {currentValues?.webhook_token || 'your_webhook_token'}
                     </p>
                     <p className='mt-2'>Example request:</p>
-                    <p className='text-emerald-400'>
+                    <p className='text-emerald-400 py-2'>
                       curl -X POST{' '}
                       {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}`} \
                     </p>
@@ -656,22 +727,25 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 </div>
               )}
 
-              {currentConfig?.verificationHeaders && (
-                <div className='mt-4'>
-                  <h4 className='text-sm font-medium mb-2'>Required Headers</h4>
-                  <div className='flex flex-wrap gap-2'>
-                    {currentConfig.verificationHeaders.map(header => (
-                      <Badge
-                        key={header}
-                        variant='outline'
-                        className='font-mono text-xs'
-                      >
-                        {header}
-                      </Badge>
-                    ))}
+              {currentConfig?.verificationHeaders &&
+                currentConfig.verificationHeaders.length > 0 && (
+                  <div className='mt-4'>
+                    <h4 className='text-sm font-medium mb-2'>
+                      Required Headers
+                    </h4>
+                    <div className='flex flex-wrap gap-2'>
+                      {currentConfig.verificationHeaders.map(header => (
+                        <Badge
+                          key={header}
+                          variant='outline'
+                          className='font-mono text-xs'
+                        >
+                          {header}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
         </div>

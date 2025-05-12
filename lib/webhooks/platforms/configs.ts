@@ -92,7 +92,7 @@ export const platformConfigs: Partial<
         readOnly: false,
       },
     ],
-    verificationHeaders: ['svix-id', 'svix-timestamp', 'svix-signature'],
+    verificationHeaders: [],
     docs: 'https://docs.hookflo.com/webhook-platforms/clerk',
     exampleCode: {
       curl: `curl -X POST https://api.SuperHook.dev/webhook \
@@ -120,7 +120,7 @@ export const platformConfigs: Partial<
         readOnly: false,
       },
     ],
-    verificationHeaders: ['stripe-signature'],
+    verificationHeaders: [],
     docs: 'https://docs.hookflo.com/webhook-platforms/stripe',
     exampleCode: {
       curl: `curl -X POST https://api.SuperHook.dev/webhook \
@@ -146,11 +146,7 @@ export const platformConfigs: Partial<
         readOnly: false,
       },
     ],
-    verificationHeaders: [
-      'x-hub-signature-256',
-      'x-github-event',
-      'x-github-delivery',
-    ],
+    verificationHeaders: [],
     docs: 'https://docs.hookflo.com/webhook-platforms/github',
     exampleCode: {
       curl: `curl -X POST https://api.SuperHook.dev/webhook \

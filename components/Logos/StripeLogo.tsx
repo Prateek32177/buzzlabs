@@ -1,4 +1,5 @@
 import * as React from 'react';
+import StripeWordmark from './stripe-wordmark.png';
 const StripeLogo = ({ className }: { className?: string }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
@@ -16,4 +17,14 @@ const StripeLogo = ({ className }: { className?: string }) => (
     />
   </svg>
 );
-export default StripeLogo;
+
+const StripeWordmarkLogo = ({ className }: { className?: string }) => (
+  <img
+    src={StripeWordmark.src}
+    alt='Stripe'
+    className={className}
+    style={{ width: '100px', height: '40px' }}
+  />
+);
+
+export { StripeWordmarkLogo, StripeLogo };

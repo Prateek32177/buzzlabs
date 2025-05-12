@@ -88,8 +88,8 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className='mt-6 text-base md:text-lg leading-7 md:leading-8 
-          tracking-wide font-light
+              className='mt-6 text-sm sm:text-base
+          font-light
           bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text
           max-w-sm sm:max-w-xl mx-auto'
             >

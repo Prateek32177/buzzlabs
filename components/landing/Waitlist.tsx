@@ -90,7 +90,7 @@ export function WaitlistForm() {
               <InteractiveHoverButton
                 type='submit'
                 disabled={isLoading}
-                className='absolute right-1 h-10 rounded-full bg-gradient-to-r from-purple-600 to-purple-800 text-white hover:from-purple-700 hover:to-purple-900 border-none px-4 sm:px-6 text-xs md:text-sm whitespace-nowrap'
+                className='absolute right-1 h-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-700 hover:to-purple-900 border-none px-4 sm:px-6 text-xs md:text-sm whitespace-nowrap'
               >
                 {isLoading ? <Loader /> : <>Join Waitlist</>}
               </InteractiveHoverButton>

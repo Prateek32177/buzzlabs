@@ -8,6 +8,7 @@ import { ClerkLogo } from '../Logos/Clerk';
 import { LoopsLogo } from '../Logos/Loops';
 import { Plug } from 'lucide-react';
 import { GithubLogo } from '../Logos/Github';
+import { StripeWordmarkLogo } from '../Logos/StripeLogo';
 
 export default function Integration() {
   return (
@@ -52,7 +53,8 @@ function IntegrationSection() {
                 { name: 'Polar', icon: PolarLogo, comingSoon: true },
                 { name: '', icon: GithubLogo, comingSoon: false },
                 { name: 'Supabase', icon: SupabaseLogo, comingSoon: false },
-                { name: 'Clerk', icon: ClerkLogo, comingSoon: true },
+                { name: 'Clerk', icon: ClerkLogo, comingSoon: false },
+                { name: '', icon: StripeWordmarkLogo, comingSoon: false },
               ].map((brand, i) => (
                 <div
                   key={`${setIndex}-${i}`}

@@ -14,6 +14,7 @@ import {
   ResendLogo,
   TeamsLogo,
 } from '../Logos';
+import { StripeLogo } from '@/components/Logos/StripeLogo';
 import {
   CreditCardIcon,
   UsersIcon,
@@ -52,7 +53,7 @@ export default function Features() {
     <GitHubLogoIcon className='w-6 h-6' />,
     <ClerkLogo className='w-6 h-6 ' />,
     <PolarLogo className='w-6 h-6 ' />,
-    <LoopsLogo className='w-6 h-6 ' />,
+    <StripeLogo className='w-6 h-6 ' />,
     <SlackLogo className='w-12 h-12' />,
     // <ResendLogo className='w-12 h-12 ' />,
     // <TeamsLogo className='w-6 h-6 text-indigo-400 ' />,

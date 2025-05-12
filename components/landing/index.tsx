@@ -1,6 +1,5 @@
 import { Navbar } from '@/components/landing/navbar';
 import Introduction from './Introduction';
-import WaitlistSection from './Waitlist';
 import IntegrationSection from './inetgration';
 import Features from './Features';
 import { Footer } from './footer';
@@ -16,7 +15,6 @@ const Index = () => {
       <Features />
       <IntegrationSection />
       <TryYourself />
-      <WaitlistSection />
       <Footer />
     </div>
   );

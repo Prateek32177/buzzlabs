@@ -1,12 +1,16 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
-import { BarChart3, GaugeCircle as CircleGauge, Sparkles } from 'lucide-react';
-import { WaitlistForm } from './Waitlist';
-import { Badge } from '../ui/badge';
+import {
+  BarChart3,
+  GaugeCircle as CircleGauge,
+  Sparkles,
+  ArrowUpRight,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Ripple } from '../magicui/ripple';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
-import { CountdownTimer } from './CountdownTimer';
+import { Badge } from '../ui/badge';
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false);
@@ -33,7 +37,7 @@ export default function Hero() {
         </div>
         <div className='px-2 m-auto max-w-6xl relative'>
           <div className='text-center max-w-4xl mx-auto'>
-            {/* <Badge
+            <Badge
               variant={'secondary'}
               className='mb-4 text-white/80 text-xs px-3 py-2 sm:px-3 
           border border-purple-500/20 bg-zinc-900/50 
@@ -43,14 +47,13 @@ export default function Hero() {
           rounded-full'
             >
               <Sparkles className='w-4 h-4 text-purple-400 fill-purple-400 mr-2' />
-              <span className='text-purple-300'>Simplifying Alerts</span>
+              <span className='text-purple-300'>Hookflo Public Beta</span>
               <span className='ml-1 text-white/80 hidden sm:inline'>
-                No Code, Just Hook It
+                is Now Live
               </span>
-              <span className='sm:hidden'>Just Hook it</span>
-            </Badge> */}
+              <span className='sm:hidden ml-1'>is Live</span>
+            </Badge>
 
-            <CountdownTimer compact />
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -98,9 +101,35 @@ export default function Hero() {
               infrastructure.
             </motion.p>
 
-            <WaitlistForm />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className='flex items-center justify-center gap-5 mt-8'
+            >
+              <a
+                href='/sign-in'
+                className='group px-5 py-2.5 text-sm rounded-md transition-all duration-300
+        bg-purple-500/20 text-purple-200 border border-purple-500/30
+        hover:bg-purple-500/30 hover:border-purple-400/40 hover:text-purple-100
+        backdrop-blur-sm shadow-lg flex items-center gap-2'
+              >
+                Try Hookflo Beta
+              </a>
+              <a
+                href='https://docs.hookflo.com'
+                className='group px-5 py-2.5 text-sm rounded-md bg-zinc-900/70 text-zinc-300 font-medium
+        hover:text-white transition-all duration-300 
+        backdrop-blur-sm border border-zinc-800 
+        hover:border-purple-500/30 shadow-lg flex items-center gap-2'
+              >
+                View Documentation
+                <ArrowUpRight className='w-3.5 h-3.5 text-purple-400/80 group-hover:text-purple-300 transition-colors duration-300' />
+              </a>
+            </motion.div>
+
             <div className='relative z-10 mt-10 md:mt-14 w-full'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
+              <div className='grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
                 <motion.div
                   initial={{ opacity: 0, y: 50 }}
                   animate={{

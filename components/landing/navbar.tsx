@@ -3,17 +3,11 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Logo } from '../Logo';
 import { ChevronsRight } from 'lucide-react';
+import Link from 'next/link';
 
 export function Navbar() {
   const pathname = usePathname();
   const isAuthPage = pathname === '/signin' || pathname === '/register';
-
-  const scrollToTryItYourself = () => {
-    const element = document.getElementById('tryityourself');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <div className='fixed w-full z-50'>
@@ -22,56 +16,28 @@ export function Navbar() {
         <nav className='floating-nav'>
           <div className='container mx-auto h-16 flex items-center justify-between px-4 md:px-6'>
             <Logo size='xl' hideText={true} />
-
-            {/* <div className='hidden md:flex items-center space-x-8'>
-              <Link
-                href='#'
-                className='text-white/40 hover:text-white/90 transition-colors text-sm font-medium'
-              >
-                Home
-              </Link>
-              <Link
-                href='#features'
-                className='text-white/40 hover:text-white/90 transition-colors text-sm font-medium'
-              >
-                Features
-              </Link>
-              <Link
-                href='#pricing'
-                className='text-white/40 hover:text-white/90 transition-colors text-sm font-medium'
-              >
-                Pricing
-              </Link>
-              <Link
-                href='#docs'
-                className='text-white/40 hover:text-white/90 transition-colors text-sm font-medium'
-              >
-                Documentation
-              </Link>
-            </div> */}
-            {/* {!isAuthPage && (
-              <div className='flex items-center space-x-4'>
+            {!isAuthPage && (
+              <div className='flex items-center space-x-2'>
                 <Button
-                  variant='outline'
-                  className=' bg-white/5 border-white/10 text-white hover:bg-white/10'
+                  variant='ghost'
+                  className='text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex'
                   size='sm'
                   asChild
                 >
-                  <Link href='/sign-in'>Log in</Link>
+                  <Link href='/sign-up'>Sign up</Link>
                 </Button>
                 <Button
                   size='sm'
-                  className='bg-gradient-to-tr from-purple-400 to-purple-600 text-white hidden md:flex'
+                  className='bg-white/80 text-gray-800 border-none'
                   asChild
                 >
-                  <Link href='/sign-up'>Sign Up</Link>
+                  <Link href='/sign-in' className='flex items-center group'>
+                    Get Started
+                    <ChevronsRight className='-ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 text-zinc-700' />
+                  </Link>
                 </Button>
               </div>
-            )} */}
-            <Button onClick={scrollToTryItYourself} size={'sm'}>
-              Try it yourself
-              <ChevronsRight className='h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 text-zinc-700' />
-            </Button>
+            )}
           </div>
         </nav>
       </div>

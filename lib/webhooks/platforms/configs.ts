@@ -9,7 +9,7 @@ import {
 import { WebhookPlatform } from '../types';
 import { SupabaseLogo } from '@/components/Logos';
 import { ClerkLogo } from '@/components/Logos';
-import StripeLogo from '@/components/Logos/StripeLogo';
+import { StripeLogo } from '@/components/Logos/StripeLogo';
 
 export const platformConfigs: Partial<
   Record<WebhookPlatform, WebhookPlatformConfig>

@@ -599,40 +599,91 @@ export function PlanLimitsDialog({
           {showIcon && <HelpCircle className={`w-4 h-4`} />}
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='sm:max-w-sm'>
         <DialogHeader>
           <DialogTitle>Plan Limits</DialogTitle>
           <DialogDescription>
             Your current usage limits based on the {tierName} plan.
           </DialogDescription>
         </DialogHeader>
-        <div className='grid grid-cols-2 gap-6 py-4'>
-          <div className='space-y-2'>
-            <h4 className='text-sm font-medium text-white'>Resources</h4>
-            <p className='text-sm text-white/70'>
-              Total Webhooks: {subscription.limits.webhookLimit}
-            </p>
-            <p className='text-sm text-white/70'>
-              Daily Requests: {subscription.limits.dailyRequests}
-            </p>
-            <p className='text-sm text-white/70'>
-              Payload Volume: {subscription.limits.dailyDataVolumeMB} MB
-            </p>
+        <div className='py-4'>
+          {/* Notification Limits Table */}
+          <div className='mb-4'>
+            <h4 className='text-sm font-medium text-white/80 mb-3'>
+              Notification Limits
+            </h4>
+            <table className='w-full'>
+              <tbody className='divide-y divide-white/10'>
+                <tr>
+                  <td className='py-2 text-sm text-white/60'>Daily Emails</td>
+                  <td className='py-2 text-right'>
+                    <Badge variant='secondary'>
+                      {subscription.limits.dailyEmails}
+                    </Badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='py-2 text-sm text-white/60'>Daily Slack</td>
+                  <td className='py-2 text-right'>
+                    <Badge variant='secondary'>
+                      {subscription.limits.dailySlackNotifications}
+                    </Badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='py-2 text-sm text-white/60'>Monthly Emails</td>
+                  <td className='py-2 text-right'>
+                    <Badge variant='secondary'>
+                      {subscription.limits.emailNotificationLimit}
+                    </Badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='py-2 text-sm text-white/60'>Monthly Slack</td>
+                  <td className='py-2 text-right'>
+                    <Badge variant='secondary'>
+                      {subscription.limits.slackNotificationLimit}
+                    </Badge>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div className='space-y-2'>
-            <h4 className='text-sm font-medium text-white'>Notifications</h4>
-            <p className='text-sm text-white/70'>
-              Daily Emails Alerts: {subscription.limits.dailyEmails}
-            </p>
-            <p className='text-sm text-white/70'>
-              Daily Slack Alerts: {subscription.limits.dailySlackNotifications}
-            </p>
-            <p className='text-sm text-white/70'>
-              Monthly Email Alerts: {subscription.limits.emailNotificationLimit}
-            </p>
-            <p className='text-sm text-white/70'>
-              Monthly Slack Alerts: {subscription.limits.slackNotificationLimit}
-            </p>
+          {/* Resource Limits Table */}
+          <div>
+            <h4 className='text-sm font-medium text-white/80 mb-3'>
+              Resource Limits
+            </h4>
+            <table className='w-full'>
+              <tbody className='divide-y divide-white/10'>
+                <tr>
+                  <td className='py-2 text-sm text-white/60'>
+                    Number of Webhooks
+                  </td>
+                  <td className='py-2 text-right'>
+                    <Badge variant='secondary'>
+                      {subscription.limits.webhookLimit}
+                    </Badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='py-2 text-sm text-white/60'>Daily Requests</td>
+                  <td className='py-2 text-right'>
+                    <Badge variant='secondary'>
+                      {subscription.limits.dailyRequests}
+                    </Badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='py-2 text-sm text-white/60'>Daily Volume</td>
+                  <td className='py-2 text-right'>
+                    <Badge variant='secondary'>
+                      {subscription.limits.dailyDataVolumeMB} MB
+                    </Badge>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </DialogContent>

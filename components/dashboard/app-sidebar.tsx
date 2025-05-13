@@ -104,7 +104,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {state === 'collapsed' && !open ? (
             <div className='flex flex-col items-center justify-center w-full h-full gap-2'>
               <HookfloIcon />
-
               <SidebarTrigger />
             </div>
           ) : (

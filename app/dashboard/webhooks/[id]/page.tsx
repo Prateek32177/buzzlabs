@@ -257,27 +257,29 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
         <div className='lg:col-span-2 space-y-6'>
           <div className='grid gap-6 py-4 bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <h3 className='text-base font-medium'>Basic Information</h3>
-            <div className='flex items-center justify-between '>
-              <span className='text-sm text-muted-foreground'>
-                Status: {webhook.is_active ? 'Active' : 'Disabled'}
-              </span>
-              <Switch
+            <div className='flex items-center justify-between flex-wrap'>
+              <h3 className='text-base font-medium'>Webhook Details</h3>
+              <div className='flex items-center gap-2'>
+              <Badge variant={webhook.is_active ? 'default' : 'destructive'}>
+                {webhook.is_active ? 'Active' : 'Inactive'}
+              </Badge>
+                <Switch
                 checked={webhook.is_active}
                 onCheckedChange={async checked => {
-                  try {
-                    await updateWebhookConfig(webhook.id, {
-                      is_active: checked,
-                    });
-                    toast.success('Webhook status updated successfully');
-                  } catch (error) {
-                    toast.error('Error', {
-                      description: 'Failed to update webhook status',
-                    });
-                  }
+                try {
+                  await updateWebhookConfig(webhook.id, {
+                  is_active: checked,
+                  });
+                  toast.success('Webhook status updated successfully');
+                } catch (error) {
+                  toast.error('Error', {
+                  description: 'Failed to update webhook status',
+                  });
+                }
                 }}
                 disabled={isLoading || isSaving}
               />
+              </div>
             </div>
             <div className='grid gap-2'>
               <Label>Name</Label>
@@ -288,6 +290,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     setWebhook({ ...webhook, name: e.target.value })
                   }
                   placeholder='Webhook name'
+                  className='text-sm'
                 />
                 <Button
                   onClick={handleNameUpdate}
@@ -590,14 +593,14 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     <br />
                     <p className='text-emerald-400 py-2'>
                       Headers:
-                      <p>
+                      <span>
                         x-webhook-id:{' '}
                         {currentValues?.webhook_id || 'your_webhook_id'}
-                      </p>
-                      <p>
+                      </span>
+                      <span>
                         x-webhook-token:{' '}
                         {currentValues?.webhook_token || 'your_webhook_token'}
-                      </p>
+                      </span>
                     </p>
                     <p>4. Select the events you want to trigger the webhook</p>
                   </div>

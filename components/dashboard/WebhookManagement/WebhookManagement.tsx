@@ -264,7 +264,7 @@ export function WebhookManagement() {
   return (
     <WebhookContext.Provider value={contextValue}>
       <div className='space-y-6'>
-        <Card>
+        <Card className='border border-border/40 shadow-sm'>
           <CardHeader>
             <CardTitle>Create New Webhook</CardTitle>
             <CardDescription>
@@ -290,7 +290,7 @@ export function WebhookManagement() {
                 placeholder='Enter webhook name to create'
                 value={newWebhookName}
                 onChange={e => setNewWebhookName(e.target.value)}
-                className='flex-1'
+                className='flex-1 border border-border/70'
                 required
                 minLength={3}
               />
@@ -303,7 +303,7 @@ export function WebhookManagement() {
                   <Loader2 className='h-4 w-4 animate-spin' />
                 ) : (
                   <>
-                    <Plus className='h-4 w-4 mr-1.5' />
+                    <Plus className='h-4 w-4' />
                     <span>Create Webhook</span>
                   </>
                 )}
@@ -312,7 +312,7 @@ export function WebhookManagement() {
           </CardContent>
         </Card>
         <Card className='border border-border/40 shadow-sm'>
-          <CardHeader className='pb-3 shadow-lg'>
+          <CardHeader className='pb-3'>
             <div className='flex justify-between items-center flex-wrap gap-2 '>
               <div>
                 <CardTitle className='text-xl font-semibold'>
@@ -454,7 +454,7 @@ export function WebhookManagement() {
                               disabled={isLoadingId === webhook.id}
                               className='h-9 px-3 border-border/60 hover:bg-muted'
                             >
-                              <PlugZap className='h-4 w-4 mr-1' />
+                              <PlugZap className='h-4 w-4' />
                               <span className='sm:inline hidden'>Connect</span>
                             </Button>
 

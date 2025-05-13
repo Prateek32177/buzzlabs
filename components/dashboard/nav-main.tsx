@@ -34,24 +34,25 @@ export function NavMain({
               tooltip={item.title}
               asChild
               className={cn(
-                item.isActive && 'bg-accent text-accent-foreground',
+                'hover:bg-accent/40 text-muted-foreground/70',
+                item.isActive && 'bg-accent/40 text-[#d3cbf4]'
               )}
             >
               <a href={item.url}>
                 {item.icon && (
                   <item.icon
                     className={cn(
+                      
                       item.isActive
-                        ? 'text-accent-foreground'
-                        : 'text-muted-foreground/80',
+                        && 'text-[#d3cbf4]'
+
                     )}
                   />
                 )}
                 <span
                   className={cn(
-                    item.isActive
-                      ? 'text-accent-foreground'
-                      : 'text-muted-foreground/80',
+                 item.isActive
+                        && 'text-[#d3cbf4]'
                   )}
                 >
                   {item.title}

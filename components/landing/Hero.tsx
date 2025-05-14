@@ -145,12 +145,9 @@ export default function Hero() {
             <div className='relative z-10 mt-10 md:mt-14 w-full'>
               <div className='grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
                 <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{
-                    opacity: isVisible ? 1 : 0,
-                    y: isVisible ? 0 : 50,
-                  }}
-                  transition={{ duration: 0.8, delay: 0.9 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, ease: 'easeOut' }}
                   className='rounded-lg border border-zinc-500/20 bg-zinc-900/50 p-4 
                   backdrop-blur-sm text-left hover:border-zinc-500/30 
                   hover:bg-zinc-900/60 transition-all duration-300'
@@ -171,12 +168,9 @@ export default function Hero() {
                   </div>
                 </motion.div>
                 <motion.div
-                  initial={{ opacity: 0, y: -50 }}
-                  animate={{
-                    opacity: isVisible ? 1 : 0,
-                    y: isVisible ? 0 : -50,
-                  }}
-                  transition={{ duration: 0.8, delay: 1.5 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
                   className='rounded-lg border border-zinc-500/20 bg-zinc-900/50 p-4 
                   backdrop-blur-sm text-left hover:border-zinc-500/30 
                   hover:bg-zinc-900/60 transition-all duration-300'

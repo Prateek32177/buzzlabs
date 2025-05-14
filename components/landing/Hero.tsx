@@ -110,21 +110,35 @@ export default function Hero() {
               <a
                 href='/sign-in'
                 className='group px-5 py-2.5 text-sm rounded-md transition-all duration-300
-        bg-purple-500/20 text-purple-200 border border-purple-500/30
-        hover:bg-purple-500/30 hover:border-purple-400/40 hover:text-purple-100
-        backdrop-blur-sm shadow-lg flex items-center gap-2'
+              bg-purple-500/20 text-purple-200 border border-purple-500/30
+              hover:bg-purple-500/30 hover:border-purple-400/40 hover:text-purple-100
+              backdrop-blur-sm shadow-lg flex items-center gap-2
+              relative overflow-hidden'
               >
-                Try Hookflo Beta
+                <span className='relative z-10 flex items-center gap-2'>
+                  Start Tracking Events
+                  <ArrowUpRight className='w-3.5 h-3.5 text-purple-200/80 group-hover:text-purple-200 transition-colors duration-300' />
+                </span>
+                <div className='absolute inset-0 -z-10'>
+                  <div
+                    className='absolute inset-0 bg-gradient-to-r from-purple-500/10 via-purple-400/20 to-purple-500/10 
+                     translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'
+                  ></div>
+
+                  <div
+                    className='absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-purple-400/50 to-transparent 
+                   translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700'
+                  ></div>
+                </div>{' '}
               </a>
               <a
                 href='https://docs.hookflo.com'
-                className='group px-5 py-2.5 text-sm rounded-md bg-zinc-900/70 text-zinc-300 font-medium
+                className='group px-3 py-2.5 text-sm rounded-md bg-zinc-900/70 text-zinc-300 font-medium
         hover:text-white transition-all duration-300 
         backdrop-blur-sm border border-zinc-800 
-        hover:border-purple-500/30 shadow-lg flex items-center gap-2'
+        '
               >
-                View Documentation
-                <ArrowUpRight className='w-3.5 h-3.5 text-purple-400/80 group-hover:text-purple-300 transition-colors duration-300' />
+                View Docs
               </a>
             </motion.div>
 
@@ -137,18 +151,22 @@ export default function Hero() {
                     y: isVisible ? 0 : 50,
                   }}
                   transition={{ duration: 0.8, delay: 0.9 }}
-                  className='rounded-lg bg-gradient-to-b from-zinc-800/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg border border-zinc-500/20 bg-zinc-900/50 p-4 
+                  backdrop-blur-sm text-left hover:border-zinc-500/30 
+                  hover:bg-zinc-900/60 transition-all duration-300'
                 >
-                  <div className='flex items-center gap-2 text-purple-400'>
-                    <CircleGauge className='h-4 w-4' />
-                    <span className='text-xs font-medium'>efficiency</span>
+                  <div className='flex items-center gap-2 text-purple-300'>
+                    <CircleGauge className='h-4 w-4 fill-purple-400/10' />
+                    <span className='text-xs font-medium tracking-wide'>
+                      efficiency
+                    </span>
                   </div>
-                  <div className='mt-1 flex items-baseline gap-1 flex-wrap'>
-                    <span className='text-2xl md:text-3xl font-bold text-white'>
+                  <div className='mt-2 flex items-baseline gap-1 flex-wrap'>
+                    <span className='text-2xl md:text-3xl font-light text-white'>
                       No-code
                     </span>
                   </div>
-                  <div className='mt-1 text-xs text-purple-200'>
+                  <div className='mt-2 text-xs text-white/60'>
                     direct alert configuration from dashboard
                   </div>
                 </motion.div>
@@ -159,18 +177,22 @@ export default function Hero() {
                     y: isVisible ? 0 : -50,
                   }}
                   transition={{ duration: 0.8, delay: 1.5 }}
-                  className='rounded-lg bg-gradient-to-b from-zinc-700/40 to-transparent p-4 backdrop-blur-sm text-left'
+                  className='rounded-lg border border-zinc-500/20 bg-zinc-900/50 p-4 
+                  backdrop-blur-sm text-left hover:border-zinc-500/30 
+                  hover:bg-zinc-900/60 transition-all duration-300'
                 >
-                  <div className='flex items-center gap-2 text-purple-400'>
-                    <BarChart3 className='h-4 w-4' />
-                    <span className='text-xs font-medium'>integration</span>
+                  <div className='flex items-center gap-2 text-purple-300'>
+                    <BarChart3 className='h-4 w-4 fill-purple-400/10' />
+                    <span className='text-xs font-medium tracking-wide'>
+                      integration
+                    </span>
                   </div>
-                  <div className='mt-1 flex items-baseline gap-1'>
-                    <span className='text-2xl md:text-3xl font-bold text-white'>
+                  <div className='mt-2 flex items-baseline gap-1'>
+                    <span className='text-2xl md:text-3xl font-light text-white'>
                       in 5 mins
                     </span>
                   </div>
-                  <div className='mt-1 text-xs text-purple-200'>
+                  <div className='mt-2 text-xs text-white/60'>
                     Instead of days spent on custom integration
                   </div>
                 </motion.div>

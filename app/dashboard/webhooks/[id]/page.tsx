@@ -260,25 +260,25 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
             <div className='flex items-center justify-between flex-wrap'>
               <h3 className='text-base font-medium'>Webhook Details</h3>
               <div className='flex items-center gap-2'>
-              <Badge variant={webhook.is_active ? 'default' : 'destructive'}>
-                {webhook.is_active ? 'Active' : 'Inactive'}
-              </Badge>
+                <Badge variant={webhook.is_active ? 'default' : 'destructive'}>
+                  {webhook.is_active ? 'Active' : 'Inactive'}
+                </Badge>
                 <Switch
-                checked={webhook.is_active}
-                onCheckedChange={async checked => {
-                try {
-                  await updateWebhookConfig(webhook.id, {
-                  is_active: checked,
-                  });
-                  toast.success('Webhook status updated successfully');
-                } catch (error) {
-                  toast.error('Error', {
-                  description: 'Failed to update webhook status',
-                  });
-                }
-                }}
-                disabled={isLoading || isSaving}
-              />
+                  checked={webhook.is_active}
+                  onCheckedChange={async checked => {
+                    try {
+                      await updateWebhookConfig(webhook.id, {
+                        is_active: checked,
+                      });
+                      toast.success('Webhook status updated successfully');
+                    } catch (error) {
+                      toast.error('Error', {
+                        description: 'Failed to update webhook status',
+                      });
+                    }
+                  }}
+                  disabled={isLoading || isSaving}
+                />
               </div>
             </div>
             <div className='grid gap-2'>

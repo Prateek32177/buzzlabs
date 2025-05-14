@@ -5,7 +5,12 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/Logo';
-import { TooltipProvider, TooltipContent, Tooltip, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  TooltipProvider,
+  TooltipContent,
+  Tooltip,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
 
 export default function Layout({
@@ -30,20 +35,23 @@ export default function Layout({
           </div>
         </div>
         <div className='mx-4 my-8'>{children}</div>
- 
+
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-                <a 
-                href="https://discord.gg/SNmCjU97nr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="fixed bottom-4 right-4 inline-flex items-center justify-center h-11 w-11 rounded-full bg-[#C4B5FD] hover:bg-[#B4A5ED] shadow-lg"
-                >
-                <HelpCircle className="h-5 w-5 text-[#17171F]" />
-                </a>
+              <a
+                href='https://discord.gg/SNmCjU97nr'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='fixed bottom-4 right-4 inline-flex items-center justify-center h-11 w-11 rounded-full bg-[#C4B5FD] hover:bg-[#B4A5ED] shadow-lg'
+              >
+                <HelpCircle className='h-5 w-5 text-[#17171F]' />
+              </a>
             </TooltipTrigger>
-            <TooltipContent side="left" className="bg-[#252530] text-white border-[#353545]">
+            <TooltipContent
+              side='left'
+              className='bg-[#252530] text-white border-[#353545]'
+            >
               <p>Need support?</p>
             </TooltipContent>
           </Tooltip>

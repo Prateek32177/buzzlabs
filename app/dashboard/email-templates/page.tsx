@@ -37,6 +37,7 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
 });
 
+const CHARACTER_LIMIT = 3000;
 // Extended interface for our UI needs
 interface EditorTemplate extends ServiceTemplate {
   variables?: string[];
@@ -80,7 +81,7 @@ export default function EmailTemplateEditor() {
     fetchWebhooksList();
   }, []);
   useEffect(() => {
-    setIsContentValid(editedContent.length <= 1500);
+    setIsContentValid(editedContent.length <= CHARACTER_LIMIT);
   }, [editedContent]);
   const fetchWebhooksList = async () => {
     try {
@@ -254,9 +255,9 @@ export default function EmailTemplateEditor() {
       toast.error('No template selected', { id: 'no-template-selected' });
       return;
     }
-    // Check if content is valid(less than 1500 characters)
-    if (editedContent.length > 1500) {
-      toast.error('Content exceeds 1500 character limit', {
+    // Check if content is valid(less than CHARACTER_LIMIT characters)
+    if (editedContent.length > CHARACTER_LIMIT) {
+      toast.error('Content exceeds CHARACTER_LIMIT character limit', {
         id: 'character-limit-exceeded',
       });
       return;
@@ -645,9 +646,9 @@ function EditorPanel({
           }}
         />
         <div
-          className={`text-xs flex justify-end ${editedContent.length > 1500 ? 'text-red-500 font-medium' : 'text-muted-foreground'}`}
+          className={`text-xs flex justify-end ${editedContent.length > CHARACTER_LIMIT ? 'text-red-500 font-medium' : 'text-muted-foreground'}`}
         >
-          {editedContent.length} / 1500 characters
+          {editedContent.length} / {CHARACTER_LIMIT} characters
         </div>
       </div>
 

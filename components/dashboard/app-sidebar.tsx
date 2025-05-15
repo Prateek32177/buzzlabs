@@ -75,7 +75,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [avatarSeed, setAvatarSeed] = useState('');
-  const { usageData, isLoading, error } = useUsageData();
+  const { usageData, refetch } = useUsageData();
+
+  useEffect(() => {
+    refetch();
+    const interval = setInterval(refetch, 5000);
+
+    return () => clearInterval(interval);
+  }, [refetch]);
   const [subscriptionTier, setSubscriptionTier] = useState('');
   const pathname = usePathname();
 

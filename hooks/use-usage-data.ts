@@ -74,31 +74,29 @@ export function useUsageData() {
     setLimitStatus(newLimitStatus);
   };
 
-  useEffect(() => {
-    const fetchUsageData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch('/api/usage');
+  const fetchUsageData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/usage');
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch usage data');
-        }
-
-        const data = await response.json();
-        setUsageData(data);
-        checkLimits(data);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching usage data:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error('Failed to fetch usage data');
       }
-    };
 
+      const data = await response.json();
+      setUsageData(data);
+      checkLimits(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching usage data:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchUsageData();
-    const interval = setInterval(fetchUsageData, 5 * 60 * 1000);
-    return () => clearInterval(interval);
   }, []);
 
   const getLimitMessages = () => {
@@ -125,5 +123,6 @@ export function useUsageData() {
     limitStatus,
     limitMessages: getLimitMessages(),
     hasReachedAnyLimit,
+    refetch: fetchUsageData
   };
 }

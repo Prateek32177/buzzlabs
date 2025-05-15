@@ -376,9 +376,9 @@ export default function SlackTemplateEditor() {
   return (
     <div className='container mx-auto p-6 space-y-6'>
       <div className='flex flex-col gap-6'>
-        <h1 className='text-3xl text-white font-bold mb-6'>
+        <h2 className='text-3xl font-bold tracking-tight text-foreground'>
           Slack Template Editor
-        </h1>
+        </h2>
 
         <div className='flex items-center justify-between flex-wrap gap-4'>
           <div

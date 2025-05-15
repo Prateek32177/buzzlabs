@@ -413,7 +413,9 @@ export default function EmailTemplateEditor() {
   return (
     <div className='container mx-auto p-6 space-y-6 max-w-full'>
       <div className='flex flex-col gap-6'>
-        <h1 className='text-3xl font-bold'>Email Template Editor</h1>
+      <h2 className='text-3xl font-bold tracking-tight text-foreground'>
+          Email Template Editor
+        </h2>
         <div className='flex items-center justify-between flex-wrap gap-4'>
           <div
             className='

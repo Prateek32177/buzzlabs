@@ -817,7 +817,7 @@ function EmailConfigForm({
 }) {
   const [emailConfig, setEmailConfig] = useState({
     recipient_email: webhook.email_config?.recipient_email || '',
-    template_id: webhook.email_config?.template_id || '',
+    template_id: webhook.email_config?.template_id || 'template1',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -919,13 +919,11 @@ function SlackConfigForm({
   onCancel: () => void;
   isLoading: boolean;
 }) {
-  const [slackConfig, setSlackConfig] = useState(
-    webhook.slack_config || {
-      webhook_url: '',
-      channel_name: '',
-      template_id: '',
-    },
-  );
+  const [slackConfig, setSlackConfig] = useState({
+    webhook_url: webhook.slack_config?.webhook_url || '',
+    channel_name: webhook.slack_config?.channel_name || '',
+    template_id: webhook.slack_config?.template_id || 'basic',
+  });
 
   useEffect(() => {
     if (!slackConfig.channel_name) {

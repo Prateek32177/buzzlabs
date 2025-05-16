@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import {
   BarChart3,
   GaugeCircle as CircleGauge,
@@ -14,51 +13,23 @@ import Link from 'next/link';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
 
 export default function Hero() {
-  const [gradientIndex, setGradientIndex] = useState(0);
-
-  const gradients = [
-    'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.35) 0%, rgba(88, 28, 135, 0.2) 50%, rgba(24,24,27,1) 100%)', // Purple
-    'radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.3) 0%, rgba(202, 138, 4, 0.15) 50%, rgba(24,24,27,1) 100%)', // Amber-Gold
-    'radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.28) 0%, rgba(22, 163, 74, 0.15) 50%, rgba(24,24,27,1) 100%)', // Emerald Green
-    'radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.28) 0%, rgba(2, 132, 199, 0.15) 50%, rgba(24,24,27,1) 100%)', // Sky Blue
-    'radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.28) 0%, rgba(190, 24, 93, 0.15) 50%, rgba(24,24,27,1) 100%)', // Pink Rose
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setGradientIndex(prev => (prev + 1) % gradients.length);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section className='relative min-h-screen overflow-hidden bg-zinc-950 flex items-center justify-center px-4'>
-      <div className='absolute inset-0 z-0'>
-        {gradients.map((gradient, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: index === gradientIndex ? 1 : 0 }}
-            transition={{ duration: 1.2, ease: 'easeInOut' }}
-            className='absolute inset-0'
-          >
-            <NoiseGradientBackground
-              noiseOpacity={10}
-              primaryBlur={80}
-              vignetteIntensity='strong'
-              style={{ background: gradient }}
-              className='w-full h-full'
-            />
-          </motion.div>
-        ))}
-      </div>
-
+      <NoiseGradientBackground
+        theme='purple'
+        noiseOpacity={10}
+        primaryBlur={80}
+        vignetteIntensity='strong'
+        style={{
+          background:
+            'radial-gradient(circle at 50% 50%, rgba(147, 101, 253, 0.4) 0%, rgba(85, 60, 150, 0.2) 50%, rgba(24, 24, 27, 0.9) 100%)',
+        }}
+      />
       <div className='absolute inset-0 z-10 pointer-events-none'>
         <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
       </div>
 
-      <section className='relative z-20 max-w-4xl w-full flex flex-col items-center text-center py-28 px-2'>
+      <section className='relative z-20 max-w-4xl w-full flex flex-col items-center text-center pt-36 pb-16 md:pb-8 px-4'>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -69,10 +40,10 @@ export default function Hero() {
             variant='outline'
             className='border-zinc-800 bg-zinc-900/80 px-3 py-1.5 backdrop-blur-sm'
           >
-            <ChevronsUp className='mr-1 h-4 w-4 text-[#c6c0e4]' />
-            <span className='text-[#c6c0e4]'>Hookflo Public Beta</span>
-            <span className='ml-1 inline text-zinc-400 sm:hidden'>is Live</span>
-            <span className='ml-1 hidden text-zinc-400 sm:inline'>
+            <ChevronsUp className='mr-1 h-4 w-4 text-[#d8b3e8]' />
+            <span className='text-[#d8b3e8]'>Hookflo Public Beta</span>
+            <span className='ml-1 inline text-zinc-200 sm:hidden'>is Live</span>
+            <span className='ml-1 hidden text-zinc-200 sm:inline'>
               is Now Live
             </span>
           </Badge>
@@ -95,7 +66,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className='mt-6 text-sm sm:text-base font-light text-balance bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text px-4 sm:px-0 max-w-md sm:max-w-lg md:max-w-xl mx-auto'
+          className='mt-4 text-sm sm:text-base  text-balance bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text px-4 sm:px-0 max-w-md sm:max-w-lg md:max-w-xl mx-auto'
         >
           Capture events from multiple platforms and instantly relay
           notifications across various channels with our robust webhook

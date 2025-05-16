@@ -49,24 +49,24 @@ type TemplateId = { templateId: string };
 
 export default function EmailTemplateEditor() {
   const searchParams = useSearchParams();
-  const template_id =
-    (searchParams.get('templateId') as TemplateId['templateId']) || null;
-  const webhook_id = searchParams.get('webhookId') || null;
+  const initialTemplateId =
+    (searchParams.get('templateId') as TemplateId['templateId']) || 'template1';
+  const initialWebhookId = searchParams.get('webhookId') || '';
 
   const [selectedTemplate, setSelectedTemplate] =
     useState<EditorTemplate | null>(null);
   const [editedContent, setEditedContent] = useState<string>('');
   const [editedSubject, setEditedSubject] = useState<string>('');
   const [variables, setVariables] = useState<Record<string, string>>({});
+  const [templateId, setTemplateId] = useState<string>(initialTemplateId);
+  const [webhookId, setSelectedWebhookId] = useState<string>(initialWebhookId);
 
-  const [templateId, setTemplateId] = useState<string>('template1');
   const [isSaving, setIsSaving] = useState(false);
   const templateService = new TemplateService();
   const [isLoading, setIsLoading] = useState(true);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [userid, setUserId] = useState('');
   const [webhooksList, setWebhooksList] = useState<any[]>([]);
-  const [webhookId, setSelectedWebhookId] = useState<string>();
   const [isWebhooksLoading, setIsWebhooksLoading] = useState(true);
   const [isContentValid, setIsContentValid] = useState(true);
 
@@ -80,9 +80,11 @@ export default function EmailTemplateEditor() {
     fetchUser();
     fetchWebhooksList();
   }, []);
+
   useEffect(() => {
     setIsContentValid(editedContent.length <= CHARACTER_LIMIT);
   }, [editedContent]);
+
   const fetchWebhooksList = async () => {
     try {
       setIsWebhooksLoading(true);
@@ -91,12 +93,8 @@ export default function EmailTemplateEditor() {
       const data = await response.json();
       setWebhooksList(data);
 
-      // Set default webhook ID to the first webhook if available and no webhook_id from search params
-      if (data.length > 0 && !webhook_id) {
+      if (data.length > 0 && !initialWebhookId) {
         setSelectedWebhookId(data[0].id);
-      } else if (webhook_id) {
-        // If webhook_id is in search params, set it as selected
-        setSelectedWebhookId(webhook_id);
       }
     } catch (error) {
       toast.error('Error', {
@@ -226,16 +224,6 @@ export default function EmailTemplateEditor() {
   };
 
   useEffect(() => {
-    // Only set the templateId from search param once
-    if (template_id) {
-      setTemplateId(template_id);
-    }
-
-    // Set webhookId from search params if available
-    if (webhook_id) {
-      setSelectedWebhookId(webhook_id);
-    }
-
     loadTemplate();
   }, [templateId, userId, webhookId]);
 
@@ -428,16 +416,20 @@ export default function EmailTemplateEditor() {
                 onValueChange={handleWebhookChange}
                 disabled={isWebhooksLoading}
               >
-                <SelectTrigger className='w-[200px]'>
+                <SelectTrigger>
                   {isWebhooksLoading ? (
-                    <Loader text='Loading...' />
+                    <Loader />
                   ) : (
                     <SelectValue placeholder='Select Webhook' />
                   )}
                 </SelectTrigger>
                 <SelectContent>
                   {webhooksList.map(webhook => (
-                    <SelectItem key={webhook.id} value={webhook.id}>
+                    <SelectItem
+                      key={webhook.id}
+                      value={webhook.id}
+                      className='truncate'
+                    >
                       {webhook.name}
                     </SelectItem>
                   ))}

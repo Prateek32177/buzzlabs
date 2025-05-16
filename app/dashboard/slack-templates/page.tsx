@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -31,27 +31,27 @@ import { Loader } from '@/components/ui/loader';
 type TemplateId = { templateId: string };
 
 export default function SlackTemplateEditor() {
+  const searchParams = useSearchParams();
+  const template_id =
+    (searchParams.get('templateId') as TemplateId['templateId']) || 'basic';
+  const webhook_id = searchParams.get('webhookId') || '';
   const [selectedTemplate, setSelectedTemplate] = useState<any | null>(null);
   const [templateCode, setTemplateCode] = useState<string>('');
-  const [templateId, setTemplateId] = useState<string>('basic');
+  const [templateId, setTemplateId] = useState<string>(template_id);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isPageLoading, setIsPageLoading] = useState(true);
+  const initializedRef = useRef(false);
   const [saveStatus, setSaveStatus] = useState<
     'idle' | 'saving' | 'saved' | 'error'
   >('idle');
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [webhooksList, setWebhooksList] = useState<any[]>([]);
-  const [webhookId, setSelectedWebhookId] = useState<string>();
+  const [webhookId, setSelectedWebhookId] = useState<string>(webhook_id);
   const [isWebhooksLoading, setIsWebhooksLoading] = useState(true);
 
   const templateService = new TemplateService();
   const [userid, setUserId] = useState('');
-
-  const searchParams = useSearchParams();
-  const template_id =
-    (searchParams.get('templateId') as TemplateId['templateId']) || null;
-  const webhook_id = searchParams.get('webhookId') || null;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -90,6 +90,31 @@ export default function SlackTemplateEditor() {
       setIsWebhooksLoading(false);
     }
   };
+
+  useEffect(() => {
+    const init = async () => {
+      const { userId: uid } = await getUser();
+      setUserId(uid || '');
+
+      // Get params from URL
+      const queryTemplateId = searchParams.get('templateId');
+      const queryWebhookId = searchParams.get('webhookId');
+
+      // If query params exist, use them
+      if (queryTemplateId) setTemplateId(queryTemplateId);
+      if (queryWebhookId) setSelectedWebhookId(queryWebhookId);
+
+      await fetchWebhooksList();
+
+      setIsPageLoading(false);
+    };
+
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      init();
+    }
+  }, []);
+
   // Load template from service on initial render
   useEffect(() => {
     async function loadTemplate() {
@@ -171,14 +196,6 @@ export default function SlackTemplateEditor() {
         setIsLoading(false);
       }
     }
-    if (template_id) {
-      setTemplateId(template_id);
-    }
-
-    // Set webhookId from search params if available
-    if (webhook_id) {
-      setSelectedWebhookId(webhook_id);
-    }
 
     loadTemplate();
   }, [templateId, userId, webhookId]);
@@ -229,8 +246,7 @@ export default function SlackTemplateEditor() {
         updatedTemplate,
         webhookId || '',
       );
-
-      // Update the selected template with the new content
+      setTemplateId(updatedTemplate.id);
       setSelectedTemplate(updatedTemplate);
 
       setSaveStatus('saved');
@@ -391,16 +407,20 @@ export default function SlackTemplateEditor() {
                 onValueChange={handleWebhookChange}
                 disabled={isWebhooksLoading}
               >
-                <SelectTrigger className='w-[200px]'>
+                <SelectTrigger>
                   {isWebhooksLoading ? (
-                    <Loader text='Loading...' />
+                    <Loader size={16} />
                   ) : (
                     <SelectValue placeholder='Select Webhook' />
                   )}
                 </SelectTrigger>
                 <SelectContent>
                   {webhooksList.map(webhook => (
-                    <SelectItem key={webhook.id} value={webhook.id}>
+                    <SelectItem
+                      key={webhook.id}
+                      value={webhook.id}
+                      className='truncate'
+                    >
                       {webhook.name}
                     </SelectItem>
                   ))}

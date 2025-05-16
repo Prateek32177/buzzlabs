@@ -31,7 +31,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
   return (
     <form className='flex min-w-64 flex-1 flex-col'>
-      <Card className='relative w-[400px] overflow-hidden'>
+      <Card className='relative w-[350px] overflow-hidden'>
         <CardHeader>
           <div className='m-auto mb-6'>
             <Logo size='2xl' />
@@ -45,7 +45,12 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           <div className='grid w-full items-center gap-4'>
             <div className='flex flex-col gap-2 [&>input]:mb-3'>
               <Label htmlFor='email'>Email</Label>
-              <Input name='email' placeholder='you@example.com' required />
+              <Input
+                name='email'
+                placeholder='you@example.com'
+                required
+                className='placeholder:text-sm'
+              />
               <div className='flex items-center justify-between'>
                 <Label htmlFor='password'>Password</Label>
                 <Link
@@ -60,6 +65,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
                 name='password'
                 placeholder='Your password'
                 required
+                className='placeholder:text-sm'
               />
 
               <FormMessage message={searchParams} />

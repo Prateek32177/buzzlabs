@@ -48,9 +48,15 @@ export default async function Signup(props: {
                   name='username'
                   placeholder='Enter your username'
                   required
+                  className='placeholder:text-sm'
                 />
                 <Label htmlFor='email'>Email</Label>
-                <Input name='email' placeholder='you@example.com' required />
+                <Input
+                  name='email'
+                  placeholder='you@example.com'
+                  required
+                  className='placeholder:text-sm'
+                />
                 <Label htmlFor='password'>Password</Label>
                 <Input
                   type='password'
@@ -58,6 +64,7 @@ export default async function Signup(props: {
                   placeholder='Your password'
                   minLength={6}
                   required
+                  className='placeholder:text-sm'
                 />
 
                 <FormMessage message={searchParams} />

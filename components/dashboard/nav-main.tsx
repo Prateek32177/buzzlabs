@@ -41,10 +41,10 @@ export function NavMain({
               <a href={item.url}>
                 {item.icon && (
                   <item.icon
-                  className={cn(
-                    'transition-transform duration-200 group-hover:scale-110',
-                    item.isActive && 'text-[#d3cbf4]'
-                  )}
+                    className={cn(
+                      'transition-transform duration-200 group-hover:scale-110',
+                      item.isActive && 'text-[#d3cbf4]',
+                    )}
                   />
                 )}
                 <span className={cn(item.isActive && 'text-[#d3cbf4]')}>

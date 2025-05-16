@@ -285,30 +285,37 @@ export function WebhookManagement() {
                       'Webhook name must be at least 3 characters long',
                   });
                 }
-                }}
-                className='flex flex-col sm:flex-row gap-4'
-              >
-                <div className="flex-1 flex items-center relative">
-                  <Anchor strokeWidth={1.5} 
+              }}
+              className='flex flex-col sm:flex-row gap-4'
+            >
+              <div className='flex-1 flex items-center relative'>
+                <Anchor
+                  strokeWidth={1.5}
                   className={`h-4 w-4 absolute left-3 text-muted-foreground transition-all duration-300 ${
-                  newWebhookName ? 'text-primary' : ''
+                    newWebhookName ? 'text-primary' : ''
                   }`}
                   style={{
-                  transform: newWebhookName ? 'translateY(-1px) rotate(5deg)' : 'none',
-                  filter: newWebhookName ? 'drop-shadow(0 0 2px rgb(var(--primary)))' : 'none'
+                    transform: newWebhookName
+                      ? 'translateY(-1px) rotate(5deg)'
+                      : 'none',
+                    filter: newWebhookName
+                      ? 'drop-shadow(0 0 2px rgb(var(--primary)))'
+                      : 'none',
                   }}
-                  />
-                  <Input
+                />
+                <Input
                   placeholder='Add webhook name'
                   value={newWebhookName}
                   onChange={e => setNewWebhookName(e.target.value)}
                   className={`flex-1 border border-border/70 pl-9 placeholder:text-sm transition-all duration-300 ${
-                    newWebhookName ? 'shadow-[0_0_0_1px] shadow-primary/20 border-primary/40' : ''
+                    newWebhookName
+                      ? 'shadow-[0_0_0_1px] shadow-primary/20 border-primary/40'
+                      : ''
                   }`}
                   required
                   minLength={3}
-                  />
-                </div>
+                />
+              </div>
               <Button
                 type='submit'
                 variant='default'

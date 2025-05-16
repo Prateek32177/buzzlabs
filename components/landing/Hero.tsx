@@ -1,200 +1,160 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BarChart3,
   GaugeCircle as CircleGauge,
-  Sparkles,
+  ChevronsUp,
   ArrowUpRight,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Ripple } from '../magicui/ripple';
-import { NoiseGradientBackground } from 'noise-gradient-bg';
 import { Badge } from '../ui/badge';
+import Link from 'next/link';
+import { NoiseGradientBackground } from 'noise-gradient-bg';
 
 export default function Hero() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [gradientIndex, setGradientIndex] = useState(0);
+
+  const gradients = [
+    'radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.35) 0%, rgba(88, 28, 135, 0.2) 50%, rgba(24,24,27,1) 100%)', // Purple
+    'radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.3) 0%, rgba(202, 138, 4, 0.15) 50%, rgba(24,24,27,1) 100%)', // Amber-Gold
+    'radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.28) 0%, rgba(22, 163, 74, 0.15) 50%, rgba(24,24,27,1) 100%)', // Emerald Green
+    'radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.28) 0%, rgba(2, 132, 199, 0.15) 50%, rgba(24,24,27,1) 100%)', // Sky Blue
+    'radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.28) 0%, rgba(190, 24, 93, 0.15) 50%, rgba(24,24,27,1) 100%)', // Pink Rose
+  ];
 
   useEffect(() => {
-    setIsVisible(true);
+    const interval = setInterval(() => {
+      setGradientIndex(prev => (prev + 1) % gradients.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <>
-      <NoiseGradientBackground
-        theme='purple'
-        noiseOpacity={10}
-        primaryBlur={80}
-        vignetteIntensity='strong'
-        style={{
-          background:
-            'radial-gradient(circle at 50% 50%, rgba(147, 101, 253, 0.4) 0%, rgba(85, 60, 150, 0.2) 50%, rgba(24, 24, 27, 0.9) 100%)',
-        }}
-      />
-      <section className='pt-44 pb-16 md:pb-8 px-4 overflow-hidden min-h-screen relative z-2'>
-        <div className='absolute inset-0 z-0'>
-          <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
-        </div>
-        <div className='px-2 m-auto max-w-6xl relative'>
-          <div className='text-center max-w-4xl mx-auto'>
-            <Badge
-              variant={'secondary'}
-              className='mb-4 text-white/80 text-xs px-3 py-2 sm:px-3 
-          border border-purple-500/20 bg-zinc-900/50 
-          backdrop-blur-sm shadow-lg
-          hover:border-purple-500/40 hover:bg-zinc-900/60
-          transition-all duration-300 ease-in-out
-          rounded-full'
-            >
-              <Sparkles className='w-4 h-4 text-purple-400 fill-purple-400 mr-2' />
-              <span className='text-purple-300'>Hookflo Public Beta</span>
-              <span className='ml-1 text-white/80 hidden sm:inline'>
-                is Now Live
+    <section className='relative min-h-screen overflow-hidden bg-zinc-950 flex items-center justify-center px-4'>
+      <div className='absolute inset-0 z-0'>
+        {gradients.map((gradient, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: index === gradientIndex ? 1 : 0 }}
+            transition={{ duration: 1.2, ease: 'easeInOut' }}
+            className='absolute inset-0'
+          >
+            <NoiseGradientBackground
+              noiseOpacity={10}
+              primaryBlur={80}
+              vignetteIntensity='strong'
+              style={{ background: gradient }}
+              className='w-full h-full'
+            />
+          </motion.div>
+        ))}
+      </div>
+
+      <div className='absolute inset-0 z-10 pointer-events-none'>
+        <Ripple mainCircleSize={400} mainCircleOpacity={0.1} numCircles={7} />
+      </div>
+
+      <section className='relative z-20 max-w-4xl w-full flex flex-col items-center text-center py-28 px-2'>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className='mb-6'
+        >
+          <Badge
+            variant='outline'
+            className='border-zinc-800 bg-zinc-900/80 px-3 py-1.5 backdrop-blur-sm'
+          >
+            <ChevronsUp className='mr-1 h-4 w-4 text-[#c6c0e4]' />
+            <span className='text-[#c6c0e4]'>Hookflo Public Beta</span>
+            <span className='ml-1 inline text-zinc-400 sm:hidden'>is Live</span>
+            <span className='ml-1 hidden text-zinc-400 sm:inline'>
+              is Now Live
+            </span>
+          </Badge>
+        </motion.div>
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className='text-center text-4xl sm:text-5xl md:text-6xl font-light leading-tight tracking-tight text-white'
+        >
+          Transform{' '}
+          <span className='text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-purple-400'>
+            events
+          </span>{' '}
+          into <br className='hidden sm:inline' />
+          <span>real time notifications</span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className='mt-6 text-sm sm:text-base font-light text-balance bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text px-4 sm:px-0 max-w-md sm:max-w-lg md:max-w-xl mx-auto'
+        >
+          Capture events from multiple platforms and instantly relay
+          notifications across various channels with our robust webhook
+          infrastructure.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className='mt-8 flex flex-col sm:flex-row gap-4 justify-center px-4 sm:px-0'
+        >
+          <Link
+            href='/sign-in'
+            className='group inline-flex h-10 items-center justify-center rounded-md bg-white px-4 text-sm  text-zinc-900 transition-all duration-300 hover:bg-white/80 shadow-sm ring-1 ring-zinc-900/10 backdrop-blur-sm hover:ring-zinc-900/20'
+          >
+            <span className='relative z-10 flex items-center'>
+              Start Tracking Events
+              <ArrowUpRight className='ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
+            </span>
+          </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className='relative z-10 mt-10 md:mt-14 w-full grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'
+        >
+          <div className='rounded-lg border border-zinc-500/20 bg-zinc-900/50 p-4 backdrop-blur-sm text-left hover:border-zinc-500/30 hover:bg-zinc-900/60 transition-all duration-300'>
+            <div className='flex items-center gap-2 text-purple-300'>
+              <CircleGauge className='h-4 w-4 fill-purple-400/10' />
+              <span className='text-xs font-medium tracking-wide'>
+                efficiency
               </span>
-              <span className='sm:hidden ml-1'>is Live</span>
-            </Badge>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className={`text-[2.5rem] lg:text-[4rem] leading-[1] tracking-tighter font-light`}
-            >
-              <span className='text-white'>Transform</span>
-              <span className='relative mx-2 bg-gradient-to-r from-[#FFE599] to-[#FFD866] text-transparent bg-clip-text font-light'>
-                events
-              </span>
-              <div className='flex items-center justify-center gap-3 my-2'>
-                <span className='text-white font-light'>into</span>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='1.5'
-                  stroke='currentColor'
-                  className='w-8 h-8 text-purple-400'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941'
-                  />
-                </svg>
-                <span className='bg-gradient-to-r from-[#FFE599] to-[#FFD866] text-transparent bg-clip-text'>
-                  real-time
-                </span>
-              </div>
-              <span className='text-white block mt-1'>notifications</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className='mt-6 text-sm sm:text-base
-          font-light
-          bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text
-          max-w-sm sm:max-w-xl mx-auto'
-            >
-              Capture events from multiple platforms and instantly relay
-              notifications across various channels with our robust webhook
-              infrastructure.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className='flex items-center justify-center gap-5 mt-8'
-            >
-              <a
-                href='/sign-in'
-                className='group px-5 py-2.5 text-sm rounded-md transition-all duration-300
-              bg-purple-500/20 text-purple-200 border border-purple-500/30
-              hover:bg-purple-500/30 hover:border-purple-400/40 hover:text-purple-100
-              backdrop-blur-sm shadow-lg flex items-center gap-2
-              relative overflow-hidden'
-              >
-                <span className='relative z-10 flex items-center gap-2'>
-                  Start Tracking Events
-                  <ArrowUpRight className='w-3.5 h-3.5 text-purple-200/80 group-hover:text-purple-200 transition-colors duration-300' />
-                </span>
-                <div className='absolute inset-0 -z-10'>
-                  <div
-                    className='absolute inset-0 bg-gradient-to-r from-purple-500/10 via-purple-400/20 to-purple-500/10 
-                     translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000'
-                  ></div>
-
-                  <div
-                    className='absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-purple-400/50 to-transparent 
-                   translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700'
-                  ></div>
-                </div>{' '}
-              </a>
-              <a
-                href='https://docs.hookflo.com'
-                className='group px-3 py-2.5 text-sm rounded-md bg-zinc-900/70 text-zinc-300 font-medium
-        hover:text-white transition-all duration-300 
-        backdrop-blur-sm border border-zinc-800 
-        '
-              >
-                View Docs
-              </a>
-            </motion.div>
-
-            <div className='relative z-10 mt-10 md:mt-14 w-full'>
-              <div className='grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 px-4 md:px-0 max-w-md m-auto'>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1, ease: 'easeOut' }}
-                  className='rounded-lg border border-zinc-500/20 bg-zinc-900/50 p-4 
-                  backdrop-blur-sm text-left hover:border-zinc-500/30 
-                  hover:bg-zinc-900/60 transition-all duration-300'
-                >
-                  <div className='flex items-center gap-2 text-purple-300'>
-                    <CircleGauge className='h-4 w-4 fill-purple-400/10' />
-                    <span className='text-xs font-medium tracking-wide'>
-                      efficiency
-                    </span>
-                  </div>
-                  <div className='mt-2 flex items-baseline gap-1 flex-wrap'>
-                    <span className='text-2xl md:text-3xl font-light text-white'>
-                      No-code
-                    </span>
-                  </div>
-                  <div className='mt-2 text-xs text-white/60'>
-                    direct alert configuration from dashboard
-                  </div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
-                  className='rounded-lg border border-zinc-500/20 bg-zinc-900/50 p-4 
-                  backdrop-blur-sm text-left hover:border-zinc-500/30 
-                  hover:bg-zinc-900/60 transition-all duration-300'
-                >
-                  <div className='flex items-center gap-2 text-purple-300'>
-                    <BarChart3 className='h-4 w-4 fill-purple-400/10' />
-                    <span className='text-xs font-medium tracking-wide'>
-                      integration
-                    </span>
-                  </div>
-                  <div className='mt-2 flex items-baseline gap-1'>
-                    <span className='text-2xl md:text-3xl font-light text-white'>
-                      in 5 mins
-                    </span>
-                  </div>
-                  <div className='mt-2 text-xs text-white/60'>
-                    Instead of days spent on custom integration
-                  </div>
-                </motion.div>
-              </div>
+            </div>
+            <div className='mt-2 text-2xl md:text-3xl font-light text-white'>
+              No-code
+            </div>
+            <div className='mt-2 text-xs text-white/60'>
+              Direct alert configuration from dashboard
             </div>
           </div>
-        </div>
+
+          <div className='rounded-lg border border-zinc-500/20 bg-zinc-900/50 p-4 backdrop-blur-sm text-left hover:border-zinc-500/30 hover:bg-zinc-900/60 transition-all duration-300'>
+            <div className='flex items-center gap-2 text-purple-300'>
+              <BarChart3 className='h-4 w-4 fill-purple-400/10' />
+              <span className='text-xs font-medium tracking-wide'>
+                integration
+              </span>
+            </div>
+            <div className='mt-2 text-2xl md:text-3xl font-light text-white'>
+              in 5 mins
+            </div>
+            <div className='mt-2 text-xs text-white/60'>
+              Instead of days spent on custom integration
+            </div>
+          </div>
+        </motion.div>
       </section>
-    </>
+    </section>
   );
 }

@@ -122,6 +122,6 @@ export function useUsageData() {
     error,
     limitStatus,
     limitMessages: getLimitMessages(),
-    hasReachedAnyLimit
+    hasReachedAnyLimit,
   };
 }

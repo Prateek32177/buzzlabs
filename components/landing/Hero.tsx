@@ -11,8 +11,27 @@ import { Ripple } from '../magicui/ripple';
 import { Badge } from '../ui/badge';
 import Link from 'next/link';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
+import { SupabaseLogo, ClerkLogo } from '../Logos';
+import { StripeWordmarkLogo } from '@/components/Logos/StripeLogo';
+import { GitHubLogoIcon } from '@radix-ui/react-icons';
 
 export default function Hero() {
+  const iconClasses =
+    'w-6 h-6 text-zinc-400 transition-colors group-hover:text-white';
+
+  const icons = [
+    <StripeWordmarkLogo
+      className={`${iconClasses}`}
+      style={{
+        filter: 'brightness(0) invert(0.7)',
+        scale: '0.8',
+      }}
+    />,
+    <SupabaseLogo className={`${iconClasses} -ml-6`} />,
+    <GitHubLogoIcon className={iconClasses} />,
+    <ClerkLogo className={`${iconClasses} fill-zinc-400`} />,
+  ];
+
   return (
     <section className='relative min-h-screen overflow-hidden bg-zinc-950 flex items-center justify-center px-4'>
       <NoiseGradientBackground
@@ -38,14 +57,12 @@ export default function Hero() {
         >
           <Badge
             variant='outline'
-            className='border-zinc-800 bg-zinc-900/80 px-3 py-1.5 backdrop-blur-sm'
+            className='flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1.5 text-xs text-zinc-100 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-zinc-600'
           >
-            <ChevronsUp className='mr-1 h-4 w-4 text-[#d8b3e8]' />
-            <span className='text-[#d8b3e8]'>Hookflo Public Beta</span>
-            <span className='ml-1 inline text-zinc-200 sm:hidden'>is Live</span>
-            <span className='ml-1 hidden text-zinc-200 sm:inline'>
-              is Now Live
-            </span>
+            <ChevronsUp className='h-4 w-4 text-violet-300 animate-pulse' />
+            <span className='text-violet-200'>Hookflo Public Beta</span>
+            <span className='hidden text-zinc-400 sm:inline'>is Now Live</span>
+            <span className='inline text-zinc-400 sm:hidden'>is Live</span>
           </Badge>
         </motion.div>
         <motion.h1
@@ -72,6 +89,7 @@ export default function Hero() {
           notifications across various channels with our robust webhook
           infrastructure.
         </motion.p>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -87,6 +105,27 @@ export default function Hero() {
               <ArrowUpRight className='ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
             </span>
           </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className='mt-8 flex flex-col items-center gap-3'
+        >
+          <span className='text-sm text-zinc-500 tracking-wide'>
+            Flawlessly integrates with
+          </span>
+          <div className='flex items-center gap-6 text-sm font-medium text-zinc-400 transition-all -ml-4'>
+            {icons.map((icon, index) => (
+              <span
+                key={index}
+                className='flex items-center gap-1 hover:text-zinc-100 transition-colors'
+              >
+                {icon}
+              </span>
+            ))}
+          </div>
         </motion.div>
 
         <motion.div

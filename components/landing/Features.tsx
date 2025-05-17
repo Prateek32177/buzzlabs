@@ -103,10 +103,10 @@ export default function Features() {
         {/* Main Heading */}
         <div className='text-center mb-16'>
           <h2
-            className={`text-3xl md:text-5xl font-medium text-white max-w-4xl mx-auto leading-tight transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`text-3xl  text-white max-w-4xl mx-auto leading-tight transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
-            We deliver Real-time notifications
-            <br /> for Any Event trigger from Your Favorite Apps.
+            We deliver real-time notifications
+            <br /> for any event triggered by your favorite apps.
           </h2>
         </div>
 

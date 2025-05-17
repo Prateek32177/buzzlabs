@@ -1,4 +1,5 @@
 'use client';
+
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Logo } from '../Logo';
@@ -10,14 +11,21 @@ export function Navbar() {
   const isAuthPage = pathname === '/signin' || pathname === '/register';
 
   return (
-    <div className='fixed w-full z-50'>
-      {/* Main Navbar */}
-      <div className='px-6 md:px-16 pt-4'>
+    <div className='fixed z-50 w-full'>
+      <div className='px-6 pt-4 md:px-16'>
         <nav className='floating-nav'>
-          <div className='container mx-auto h-16 flex items-center justify-between px-4 md:px-6'>
+          <div className='container mx-auto flex h-16 items-center justify-between px-4 md:px-6'>
             <Logo size='xl' hideText={true} />
             {!isAuthPage && (
-              <div className='flex items-center space-x-2'>
+              <div className='flex items-center gap-2 sm:gap-3'>
+                <Button
+                  variant='ghost'
+                  className='text-white/70 hover:text-white hover:bg-white/10'
+                  size='sm'
+                  asChild
+                >
+                  <Link href='https://docs.hookflo.com'>Docs</Link>
+                </Button>
                 <Button
                   variant='ghost'
                   className='text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex'
@@ -28,12 +36,12 @@ export function Navbar() {
                 </Button>
                 <Button
                   size='sm'
-                  className='bg-white/80 text-gray-800 border-none'
+                  className='bg-[#f5f3ff] text-zinc-900 hover:bg-white border border-zinc-300 font-semibold shadow-sm transition-colors'
                   asChild
                 >
                   <Link href='/sign-in' className='flex items-center group'>
                     Get Started
-                    <ChevronsRight className='-ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 text-zinc-700' />
+                    <ChevronsRight className='h-4 w-4 text-zinc-700 group-hover:translate-x-1 transition-transform duration-300' />
                   </Link>
                 </Button>
               </div>

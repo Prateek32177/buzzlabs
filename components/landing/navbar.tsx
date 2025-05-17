@@ -36,12 +36,11 @@ export function Navbar() {
                 </Button>
                 <Button
                   size='sm'
-                  className='bg-[#f5f3ff] text-zinc-900 hover:bg-white border border-zinc-300 font-semibold shadow-sm transition-colors'
+                  className='bg-[#f5f3ff] text-zinc-900 hover:bg-white border border-zinc-300 shadow-sm transition-colors'
                   asChild
                 >
                   <Link href='/sign-in' className='flex items-center group'>
-                    Get Started
-                    <ChevronsRight className='h-4 w-4 text-zinc-700 group-hover:translate-x-1 transition-transform duration-300' />
+                    Start free trial
                   </Link>
                 </Button>
               </div>

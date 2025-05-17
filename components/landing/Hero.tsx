@@ -83,7 +83,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          className='mt-4 text-sm sm:text-base  text-balance bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text px-4 sm:px-0 max-w-md sm:max-w-lg md:max-w-xl mx-auto'
+          className='mt-4 text-sm sm:text-base  text-balance bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text px-1 sm:px-0 max-w-lg md:max-w-xl mx-auto'
         >
           Capture events from multiple platforms and instantly relay
           notifications across various channels with our robust webhook

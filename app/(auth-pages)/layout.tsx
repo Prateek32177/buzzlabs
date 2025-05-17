@@ -1,5 +1,3 @@
-import { cn } from '@/lib/utils';
-import { DotPattern } from '@/components/magicui/dot-pattern';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 export default async function Layout({
@@ -18,12 +16,6 @@ export default async function Layout({
           Home
         </Link>
       </nav>
-      <DotPattern
-        glow={true}
-        className={cn(
-          '[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]',
-        )}
-      />
       {children}
     </div>
   );

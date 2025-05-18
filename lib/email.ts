@@ -10,14 +10,17 @@ export async function sendEmail({
   to,
   templateId = 'template1',
   data = {},
+  emailCount,
 }: {
   userId: string;
   from: string;
   to: string;
   templateId?: string;
   data: any;
+  emailCount?: number;
 }) {
-  const checkResult = await checkActionAllowed(userId, 'email');
+  let actionCount = emailCount || 1;
+  const checkResult = await checkActionAllowed(userId, 'email',0, actionCount);
   if (!checkResult.allowed) {
     return {
       success: false,

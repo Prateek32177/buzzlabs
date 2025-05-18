@@ -1,12 +1,7 @@
-// @/lib/analytics/usage.ts
-
 import { getUser } from '@/hooks/user-auth';
 import { createClient } from '@/utils/supabase/server';
-
-// Import the getUserLimits function from our new service
 import { getUserLimits } from '@/lib/subscription/limits';
 
-// Define the structure of usage metrics
 interface UsageMetrics {
   userId: string;
   webhookId: string;
@@ -36,11 +31,8 @@ export async function trackUsage(
     return false;
   }
 
-  // First check if the action should be allowed
   if (!skipLimitCheck) {
     let actionType: 'request' | 'email' | 'slack' | 'webhook' = 'request';
-
-    // Determine action type based on metrics
     if (metrics.emailCount > 0) {
       actionType = 'email';
     } else if (metrics.slackCount > 0) {
@@ -53,7 +45,6 @@ export async function trackUsage(
       metrics.payloadSize,
     );
 
-    // If the action is not allowed based on limits, don't track the usage
     if (!allowed) {
       console.log(
         `Usage tracking skipped: ${actionType} limit reached for user ${metrics.userId}`,
@@ -63,10 +54,9 @@ export async function trackUsage(
   }
 
   const supabase = await createClient();
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+  const today = new Date().toISOString().split('T')[0];
 
   try {
-    // Get existing usage record for today if it exists
     const { data: existingUsage } = await supabase
       .from('usage_daily')
       .select('*')
@@ -75,7 +65,6 @@ export async function trackUsage(
       .single();
 
     if (existingUsage) {
-      // Update existing usage record
       const { error: updateError } = await supabase
         .from('usage_daily')
         .update({
@@ -93,7 +82,6 @@ export async function trackUsage(
         throw updateError;
       }
     } else {
-      // Create new usage record for today
       const { error: insertError } = await supabase.from('usage_daily').insert({
         user_id: metrics.userId,
         date: today,
@@ -126,6 +114,7 @@ export async function checkActionAllowed(
   userId: string,
   actionType: 'request' | 'email' | 'slack' | 'webhook',
   payloadSize: number = 0,
+  actionCount?: number,
 ): Promise<{
   allowed: boolean;
   reason?: string;
@@ -136,10 +125,11 @@ export async function checkActionAllowed(
   };
 }> {
   try {
-    const { hasReachedLimit, limitInfo } = await checkUsageLimits(userId);
-
+    const { hasReachedLimit, limitInfo } = await checkUsageLimits(
+      userId,
+      actionCount,
+    );
     if (hasReachedLimit) {
-      // Determine which specific limit was reached to provide a helpful message
       if (actionType === 'request' && limitInfo.requests.exceeded) {
         return {
           allowed: false,
@@ -216,7 +206,6 @@ export async function checkActionAllowed(
         }
       }
 
-      // Check data volume limit
       if (payloadSize > 0 && limitInfo.dataVolume.exceeded) {
         return {
           allowed: false,
@@ -232,7 +221,6 @@ export async function checkActionAllowed(
         };
       }
 
-      // For webhooks count limit
       if (actionType === 'webhook') {
         if (limitInfo.webhooks.exceeded) {
           return {
@@ -249,7 +237,6 @@ export async function checkActionAllowed(
       }
     }
 
-    // Determine which usage details to return based on action type
     let usageDetails;
 
     switch (actionType) {
@@ -302,8 +289,6 @@ export async function checkActionAllowed(
     };
   } catch (error) {
     console.error('Failed to check if action is allowed:', error);
-    // Default to allowing the action on error (prevent user lockout due to system issues)
-    // But log the error for investigation
     return {
       allowed: true,
       reason: 'Error checking limits. Action allowed as a failsafe.',
@@ -316,7 +301,10 @@ export async function checkActionAllowed(
   }
 }
 
-export async function checkUsageLimits(userId: string): Promise<{
+export async function checkUsageLimits(
+  userId: string,
+  actionCount?: number,
+): Promise<{
   hasReachedLimit: boolean;
   limitInfo: {
     requests: { current: number; limit: number; exceeded: boolean };
@@ -340,17 +328,14 @@ export async function checkUsageLimits(userId: string): Promise<{
     const supabase = await createClient();
     const today = new Date().toISOString().split('T')[0];
     const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-indexed
+    const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
 
-    // Get user's subscription tier
     const user = await getUser();
     const tier = user?.subscription_tier || 'free';
 
-    // Get user's limits (from database)
     const limits = await getUserLimits(userId, tier);
 
-    // Get today's usage with a null check - avoid potential errors
     const { data: todayUsageData, error: todayUsageError } = await supabase
       .from('usage_daily')
       .select('*')
@@ -359,7 +344,6 @@ export async function checkUsageLimits(userId: string): Promise<{
       .single();
 
     if (todayUsageError && todayUsageError.code !== 'PGRST116') {
-      // PGRST116 is "Results contain 0 rows" - not an error for our purposes
       console.error('Error fetching today usage:', todayUsageError);
     }
 
@@ -370,7 +354,6 @@ export async function checkUsageLimits(userId: string): Promise<{
       total_payload_bytes: 0,
     };
 
-    // Count active webhooks
     const { count: activeWebhooks, error: webhookError } = await supabase
       .from('webhooks')
       .select('*', { count: 'exact', head: true })
@@ -380,7 +363,6 @@ export async function checkUsageLimits(userId: string): Promise<{
       console.error('Error counting webhooks:', webhookError);
     }
 
-    // Get month-to-date email and slack usage
     const startOfMonth = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-01`;
     const { data: monthUsage, error: monthUsageError } = await supabase
       .from('usage_daily')
@@ -393,7 +375,6 @@ export async function checkUsageLimits(userId: string): Promise<{
       console.error('Error fetching month usage:', monthUsageError);
     }
 
-    // Calculate month-to-date totals
     let monthlyEmailCount = 0;
     let monthlySlackCount = 0;
 
@@ -404,7 +385,6 @@ export async function checkUsageLimits(userId: string): Promise<{
       });
     }
 
-    // Current usage metrics
     const currentUsage = {
       requests: todayUsage.request_count || 0,
       dailyEmails: todayUsage.email_count || 0,
@@ -415,7 +395,6 @@ export async function checkUsageLimits(userId: string): Promise<{
       monthlySlackCount,
     };
 
-    // Check if any limit is exceeded - enforce strict comparison
     const limitInfo = {
       requests: {
         current: currentUsage.requests,
@@ -425,7 +404,7 @@ export async function checkUsageLimits(userId: string): Promise<{
       dailyEmails: {
         current: currentUsage.dailyEmails,
         limit: limits.dailyEmails,
-        exceeded: currentUsage.dailyEmails >= limits.dailyEmails,
+        exceeded: currentUsage.dailyEmails + actionCount > limits.dailyEmails,
       },
       dailySlackNotifications: {
         current: currentUsage.dailySlackNotifications,
@@ -450,7 +429,8 @@ export async function checkUsageLimits(userId: string): Promise<{
         current: currentUsage.monthlyEmailCount,
         limit: limits.emailNotificationLimit,
         exceeded:
-          currentUsage.monthlyEmailCount >= limits.emailNotificationLimit,
+        currentUsage.monthlyEmailCount + (actionCount || 1) > limits.emailNotificationLimit,
+
       },
       monthlySlackNotifications: {
         current: currentUsage.monthlySlackCount,
@@ -470,17 +450,16 @@ export async function checkUsageLimits(userId: string): Promise<{
     };
   } catch (error) {
     console.error('Failed to check usage limits:', error);
-    // Default to not rate limiting on error, but log for monitoring
     return {
       hasReachedLimit: false,
       limitInfo: {
         requests: { current: 0, limit: 100, exceeded: false },
-        dailyEmails: { current: 0, limit: 20, exceeded: false },
-        dailySlackNotifications: { current: 0, limit: 100, exceeded: false },
+        dailyEmails: { current: 0, limit: 10, exceeded: false },
+        dailySlackNotifications: { current: 0, limit: 50, exceeded: false },
         dataVolume: { current: 0, limitMB: 10, exceeded: false },
         webhooks: { current: 0, limit: 5, exceeded: false },
         monthlyEmails: { current: 0, limit: 100, exceeded: false },
-        monthlySlackNotifications: { current: 0, limit: 100, exceeded: false },
+        monthlySlackNotifications: { current: 0, limit: 300, exceeded: false },
       },
     };
   }

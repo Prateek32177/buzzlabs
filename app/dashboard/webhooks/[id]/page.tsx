@@ -802,7 +802,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   );
 }
 
-export function EmailConfigForm({
+function EmailConfigForm({
   webhook,
   onUpdate,
   onCancel,

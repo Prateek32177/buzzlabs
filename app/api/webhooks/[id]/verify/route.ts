@@ -200,6 +200,7 @@ export async function POST(
             to: webhook[0].email_config.recipient_email,
             templateId: webhook[0].email_config.template_id,
             data,
+            emailCount,
           });
 
           if (success) {

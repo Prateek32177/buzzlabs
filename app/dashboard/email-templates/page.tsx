@@ -400,7 +400,7 @@ export default function EmailTemplateEditor() {
   }
 
   return (
-    <div className='container mx-auto p-6 space-y-6 max-w-full'>
+    <div className=' mx-auto p-6 space-y-6 w-full'>
       <div className='flex flex-col gap-6'>
         <h2 className='text-3xl font-bold tracking-tight text-foreground'>
           Email Template Editor

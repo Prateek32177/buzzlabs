@@ -37,7 +37,7 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
 });
 
-const CHARACTER_LIMIT = 3000;
+const CHARACTER_LIMIT = 1500;
 // Extended interface for our UI needs
 interface EditorTemplate extends ServiceTemplate {
   variables?: string[];

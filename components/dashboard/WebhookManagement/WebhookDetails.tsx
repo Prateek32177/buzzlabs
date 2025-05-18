@@ -370,14 +370,6 @@ export function WebhookDetailsComp({
                   />
                 </div>
                 <div className='flex items-center gap-2'>
-                  {webhook?.email_config?.recipient_email && (
-                    <Badge
-                      variant='outline'
-                      className='text-xs hidden sm:block'
-                    >
-                      {webhook.email_config.recipient_email}
-                    </Badge>
-                  )}
                   <Button
                     variant='outline'
                     size='sm'
@@ -415,7 +407,7 @@ export function WebhookDetailsComp({
                       variant='outline'
                       className='text-xs hidden sm:block'
                     >
-                      {webhook.slack_config.channel_name}
+                      #{webhook.slack_config.channel_name}
                     </Badge>
                   )}
                   <Button

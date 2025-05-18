@@ -17,9 +17,7 @@ export async function sendEmail({
   templateId?: string;
   data: any;
 }) {
-  // Check if action is allowed before attempting to send
   const checkResult = await checkActionAllowed(userId, 'email');
-
   if (!checkResult.allowed) {
     return {
       success: false,
@@ -30,7 +28,6 @@ export async function sendEmail({
   }
 
   try {
-    // Get the template using TemplateService
     const templateService = new TemplateService();
     const template = await templateService.getUserTemplate(
       userId,
@@ -45,23 +42,22 @@ export async function sendEmail({
       };
     }
 
-    // If we have customized content, use it directly
     let subject, html;
     if (template.content && template.subject) {
-      // Replace variables in the customized content
       html = replaceVariables(template.content, data);
       subject = replaceVariables(template.subject, data);
     } else {
-      // Fall back to render function if no customized content
       const rendered = template.render(data);
       html = rendered.html;
       subject = rendered.subject;
     }
 
-    // Send the email using Resend
     const { data: result, error } = await resend.emails.send({
       from,
-      to,
+      to: to
+        .split(',')
+        .map(e => e.trim())
+        .filter(e => e.length > 0),
       subject,
       html,
     });
@@ -69,7 +65,7 @@ export async function sendEmail({
     if (error) {
       return {
         success: false,
-        message: 'Failed to send email!',
+        message: `Failed to send email! ${error.message}`,
       };
     }
     return {
@@ -85,26 +81,20 @@ export async function sendEmail({
   }
 }
 
-// Helper function to replace variables in template strings
 function replaceVariables(template: string, data: Record<string, any>): string {
   return template.replace(/{{([\w.]+)}}/g, (match, key) => {
-    // Split the key by dots to handle nested properties
     const keys = key.split('.');
     let value = data;
 
-    // Traverse the nested structure
     for (const k of keys) {
       if (value === undefined || value === null) {
-        return match; // Keep original placeholder if any part of the path is undefined
+        return match;
       }
 
-      // Handle array properties
       if (Array.isArray(value)) {
-        // If we're at the last key and it's an array, return the first item
         if (k === keys[keys.length - 1]) {
           value = value[0];
         } else {
-          // Otherwise, try to find the item in the array that matches the next key
           const nextKey = keys[keys.indexOf(k) + 1];
           value = value.find(item => item[nextKey] !== undefined);
         }
@@ -113,12 +103,10 @@ function replaceVariables(template: string, data: Record<string, any>): string {
       }
     }
 
-    // If we found a value, return it, otherwise keep the original placeholder
     if (value === undefined || value === null) {
       return match;
     }
 
-    // Convert the value to string, handling objects and arrays
     if (typeof value === 'object') {
       return JSON.stringify(value);
     }

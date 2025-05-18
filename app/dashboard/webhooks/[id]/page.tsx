@@ -18,6 +18,7 @@ import {
   Eye,
   EyeOff,
   Loader2,
+  X,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
@@ -801,7 +802,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   );
 }
 
-function EmailConfigForm({
+export function EmailConfigForm({
   webhook,
   onUpdate,
   onCancel,
@@ -815,45 +816,125 @@ function EmailConfigForm({
   onCancel: () => void;
   isLoading: boolean;
 }) {
-  const [emailConfig, setEmailConfig] = useState({
-    recipient_email: webhook.email_config?.recipient_email || '',
-    template_id: webhook.email_config?.template_id || 'template1',
-  });
+  const initialEmails = webhook.email_config?.recipient_email
+    ? webhook.email_config.recipient_email.split(',').map(e => e.trim())
+    : [];
+
+  const [emails, setEmails] = useState<string[]>(initialEmails);
+  const [input, setInput] = useState('');
+  const [templateId, setTemplateId] = useState(
+    webhook.email_config?.template_id || emailTemplates[0].id,
+  );
+
+  const addEmail = () => {
+    const trimmed = input.trim();
+    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+    if (!trimmed || !isValid) {
+      toast.error('Invalid email');
+      return;
+    }
+    if (emails.includes(trimmed)) {
+      toast.error('Duplicate email');
+      return;
+    }
+    if (emails.length >= 3) {
+      toast.error('Maximum 3 emails allowed');
+      return;
+    }
+    setEmails([...emails, trimmed]);
+    setInput('');
+  };
+
+  const removeEmail = (emailToRemove: string) => {
+    setEmails(emails.filter(email => email !== emailToRemove));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!emailConfig.recipient_email) {
-      toast.error('Error', { description: 'Recipient email is required' });
+
+    const trimmed = input.trim();
+    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+    let finalEmails = [...emails];
+
+    if (trimmed) {
+      if (!isValid) {
+        toast.error('Invalid email in input field');
+        return;
+      }
+      if (finalEmails.includes(trimmed)) {
+        toast.error('Duplicate email');
+        return;
+      }
+      if (finalEmails.length >= 3) {
+        toast.error('Maximum 3 emails allowed');
+        return;
+      }
+      finalEmails.push(trimmed);
+    }
+
+    if (finalEmails.length === 0) {
+      toast.error('At least one recipient email is required');
       return;
     }
-    await onUpdate(emailConfig);
+
+    await onUpdate({
+      recipient_email: finalEmails.join(','),
+      template_id: templateId,
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div className='space-y-2'>
-        <Label htmlFor='recipientEmail'>Recipient Email *</Label>
-        <Input
-          id='recipientEmail'
-          type='email'
-          required
-          placeholder='Enter recipient email'
-          value={emailConfig.recipient_email}
-          onChange={e =>
-            setEmailConfig({
-              ...emailConfig,
-              recipient_email: e.target.value,
-            })
-          }
-          disabled={isLoading}
-        />
+        <div className='flex items-center justify-between'>
+          <Label htmlFor='recipientEmail'>Recipient Emails*</Label>
+          <Badge variant={'outline'} className='text-xs'>
+            Max 3 allowed
+          </Badge>
+        </div>
+        <div className='flex flex-wrap items-center gap-2 p-2 border rounded-md'>
+          {emails.map(email => (
+            <Badge key={email} variant='secondary'>
+              {email}
+              <button
+                type='button'
+                onClick={() => removeEmail(email)}
+                className='ml-1 text-muted-foreground hover:text-foreground'
+              >
+                <X className='w-3 h-3' />
+              </button>
+            </Badge>
+          ))}
+          {emails.length < 3 ? (
+            <Input
+              id='recipientEmail'
+              type='email'
+              placeholder='Add email and press Enter'
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ',') {
+                  e.preventDefault();
+                  addEmail();
+                }
+              }}
+              className='flex-1 min-w-[200px] text-sm placeholder:text-sm border-none focus-visible:ring-0 focus-visible:ring-offset-0'
+              disabled={isLoading}
+            />
+          ) : (
+            <span className='text-xs text-muted-foreground pl-1'>
+              Max 3 emails added
+            </span>
+          )}
+        </div>
       </div>
+
       <div className='space-y-2'>
         <div className='flex items-center justify-between'>
           <Label htmlFor='emailTemplate'>Template</Label>
           <Button variant='link' size='sm' asChild>
             <a
-              href={`/dashboard/email-templates?templateId=${emailConfig.template_id}&webhookId=${webhook.id}`}
+              href={`/dashboard/email-templates?templateId=${templateId}&webhookId=${webhook.id}`}
               target='_blank'
               rel='noopener noreferrer'
             >
@@ -864,13 +945,8 @@ function EmailConfigForm({
         </div>
         <Select
           disabled={isLoading}
-          value={emailConfig.template_id || emailTemplates[0].id}
-          onValueChange={value =>
-            setEmailConfig({
-              ...emailConfig,
-              template_id: value,
-            })
-          }
+          value={templateId}
+          onValueChange={value => setTemplateId(value)}
         >
           <SelectTrigger>
             <SelectValue placeholder='Select a template' />
@@ -884,6 +960,7 @@ function EmailConfigForm({
           </SelectContent>
         </Select>
       </div>
+
       <DialogFooter className='flex justify-between'>
         <Button
           type='button'
@@ -893,11 +970,12 @@ function EmailConfigForm({
         >
           Cancel
         </Button>
-        <Button
-          type='submit'
-          disabled={isLoading || !emailConfig.recipient_email}
-        >
-          {isLoading ? <Loader text='Saving...' /> : 'Save Configuration'}
+        <Button type='submit' disabled={isLoading || emails.length === 0}>
+          {isLoading ? (
+            <Loader2 className='animate-spin h-4 w-4' />
+          ) : (
+            'Save Configuration'
+          )}
         </Button>
       </DialogFooter>
     </form>

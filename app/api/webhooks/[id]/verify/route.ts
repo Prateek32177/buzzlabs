@@ -183,19 +183,31 @@ export async function POST(
     if (webhook[0].is_active) {
       if (webhook[0].notify_email) {
         try {
+          const recipientEmails = webhook[0].email_config.recipient_email
+            .split(',')
+            .map((email: string) => email.trim())
+            .filter((email: string) => email);
+
+          const emailCount = recipientEmails.length;
+
           const { success, message } = await sendEmail({
             userId: webhook[0].user_id,
-            from: `${detectedPlatform === 'unknown' ? 'Hookflo' : capitalizeFirstLetter(detectedPlatform)} Alerts <alerts@hookflo.com>`,
+            from: `${
+              detectedPlatform === 'unknown'
+                ? 'Hookflo'
+                : capitalizeFirstLetter(detectedPlatform)
+            } Alerts <alerts@hookflo.com>`,
             to: webhook[0].email_config.recipient_email,
             templateId: webhook[0].email_config.template_id,
             data,
           });
+
           if (success) {
             channels.push('email');
-            usageMetrics.emailCount = 1;
+            usageMetrics.emailCount = emailCount;
             status = 'success';
           } else {
-            errorMessage += `Slack error: ${message}; `;
+            errorMessage += `Email error: ${message}; `;
             status = 'failed';
           }
         } catch (err) {

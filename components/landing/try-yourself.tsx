@@ -136,8 +136,8 @@ function TryYourself() {
                 </motion.div>
                 {step < 4 && (
                   <div
-                    className={`h-0.5 flex-1 ${
-                      step < currentStep ? 'bg-zinc-400' : 'bg-slate-700'
+                    className={`h-[0.5px] flex-1 ${
+                      step < currentStep ? 'bg-zinc-200' : 'bg-slate-700'
                     }`}
                   />
                 )}
@@ -147,7 +147,7 @@ function TryYourself() {
         </div>
 
         {/* Step content container */}
-        <div className='backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-5xl mx-auto border border-purple-500/20 shadow-xl '>
+        <div className='backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-5xl bg-zinc-900/40 mx-auto border border-gray-500/20 shadow-xl '>
           <AnimatePresence mode='wait'>
             {currentStep === 1 && (
               <Step1WebhookCreation
@@ -297,10 +297,10 @@ function Step1WebhookCreation({
       className='space-y-6'
     >
       <div className='text-center' id='step-top'>
-        <h3 className='text-2xl font-bold text-white mb-2'>
+        <h3 className='text-xl font-normal text-white mb-2'>
           Step 1: Create Your Webhook
         </h3>
-        <p className='text-purple-200/70 mb-6'>Start by creating a webhook.</p>
+        <p className='text-purple-200/70 mb-4'>Start by creating a webhook.</p>
       </div>
 
       <div className='p-6 max-w-lg mx-auto'>
@@ -311,7 +311,7 @@ function Step1WebhookCreation({
             placeholder='Enter webhook name'
             value={webhookName}
             onChange={e => setWebhookName(e.target.value)}
-            className=' text-white h-10 bg-zinc-900/60 border border-zinc-200/30 placeholder:text-slate-400'
+            className=' text-white h-10 bg-zinc-900/60  border-[0.5px] placeholder:text-slate-400'
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleCreateWebhook();

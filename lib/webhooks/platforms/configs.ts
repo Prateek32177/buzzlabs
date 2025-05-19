@@ -162,10 +162,9 @@ export const platformConfigs: Partial<
       {
         key: 'signing_secret',
         label: 'Webhook Signing Secret',
-        description:
-          'Dodo Payments webhook secret key used for signature verification (passed into the standard-webhooks verifier)',
+        description: 'Dodo Payments signing secret (starts with whsec_)',
         type: 'secret',
-        placeholder: 'your_dodo_webhook_secret',
+        placeholder: 'whsec_...',
         required: true,
         readOnly: false,
       },

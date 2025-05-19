@@ -153,8 +153,8 @@ export function WebhookDetailsComp({
               } flex items-center justify-between transition-all duration-200`}
             >
               <div className='flex items-center'>
-                <div className='w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 shadow-sm'>
-                  <config.icon className='h-full w-full' />
+                <div className='w-10 h-10 rounded-full flex items-center justify-center mr-3 shadow-sm'>
+                  <config.icon className='h-full w-full scale-[0.8]' />
                 </div>
                 <span className='text-white capitalize'>{config.name}</span>
               </div>

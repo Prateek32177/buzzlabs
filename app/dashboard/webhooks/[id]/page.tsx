@@ -319,8 +319,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   } flex items-center justify-between transition-all duration-200`}
                 >
                   <div className='flex items-center'>
-                    <div className='w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center mr-3 shadow-sm'>
-                      <config.icon className='h-full w-full' />
+                    <div className='w-10 h-10 rounded-full flex items-center justify-center mr-3 shadow-sm'>
+                      <config.icon className='h-full w-full scale-[0.8]' />
                     </div>
                     <span className='text-white capitalize'>{config.name}</span>
                   </div>
@@ -622,15 +622,37 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                       Endpoint URL:{' '}
                       {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=clerk`}
                     </p>
-                    <br />
-                    <p className='text-emerald-400 py-2'>
-                      Signing Secret:{' '}
-                      {currentValues?.signing_secret || 'your_signing_secret'}
-                    </p>
                     <p>4. Select the events you want to receive</p>
                     <p>5. Copy the generated signing secret</p>
                     <p>
                       6. Paste the signing secret in the "Signing Secret" field
+                      and save configuration
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {platform === 'dodoPayments' && (
+                <div className='space-y-3'>
+                  <h4 className='text-sm font-medium'>
+                    Dodo Payments Integration
+                  </h4>
+                  <p className='text-sm text-muted-foreground'>
+                    Configure Dodo Payments to send webhooks to this endpoint.
+                  </p>
+                  <div className='bg-zinc-900 p-3 rounded-md text-xs font-mono overflow-x-auto'>
+                    <p>1. Go to your Dodo Payments dashboard</p>
+                    <p>2. Navigate to Developer → Webhooks in Sidebar</p>
+                    <p>3. Click "Add Webhook" button</p>
+                    <p>4. Set the following:</p>
+                    <p className='text-emerald-400 py-2'>
+                      Endpoint URL:{' '}
+                      {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=dodoPayments`}
+                    </p>
+                    <p>5. Select the events you want to receive</p>
+                    <p>6. Copy the generated signing secret</p>
+                    <p>
+                      7. Paste the signing secret in the "Signing Secret" field
                       and save configuration
                     </p>
                   </div>
@@ -650,11 +672,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     <p className='text-emerald-400 py-2'>
                       Endpoint URL:{' '}
                       {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=stripe`}
-                    </p>
-                    <br />
-                    <p className='text-emerald-400 py-2'>
-                      Signing Secret:{' '}
-                      {currentValues?.signing_secret || 'your_webhook_secret'}
                     </p>
                     <p>4. Choose the events you want to listen to</p>
                     <p>5. Click "Add endpoint" to save</p>

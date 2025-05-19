@@ -61,7 +61,7 @@ export default function Hero() {
             variant='outline'
             className='flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1.5 text-xs text-zinc-100 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-zinc-600'
           >
-            <ChevronsUp className='h-4 w-4 text-violet-300 animate-pulse' />
+            <ChevronsUp className='h-4 w-4 text-violet-200' />
             <span className='text-violet-200'>Hookflo Public Beta</span>
             <span className='hidden text-zinc-400 sm:inline'>is Now Live</span>
             <span className='inline text-zinc-400 sm:hidden'>is Live</span>

@@ -13,7 +13,7 @@ class PlatformDetector {
     if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk';
     if (headers.get('x-webhook-token')) return 'supabase';
     if (headers.get('x-webhook-id')) return 'supabase';
-    if (headers.get('webhook-id')) return 'dodoPayments';
+    if (headers.get('webhook-id')) return 'Dodo Payments';
 
     return null;
   }
@@ -59,8 +59,10 @@ export async function POST(
   }
 
   detectedPlatform = detectedPlatform || 'unknown';
+  if (detectedPlatform === 'dodoPayments') {
+    detectedPlatform = 'Dodo Payments';
+  }
 
-  // Initialize usage metrics
   const usageMetrics = {
     userId: '',
     webhookId: id,

@@ -59,6 +59,7 @@ import Link from 'next/link';
 import StatusBadge from '@/components/ui/status-badges';
 import { Loader } from '@/components/ui/loader';
 import { useClipboard } from '../WebhookManagement/useClipboard';
+import { capitalize } from '@/utils/utils';
 
 type WebhookLogData = {
   id: string;
@@ -386,8 +387,12 @@ export function NotificationLogs() {
                         </Link>
                       </TableCell>
                       <TableCell>
-                        <Badge variant='default' className='px-2 py-1'>
-                          {log.platform}
+                        <Badge>
+                          {log.platform
+                            ? log.platform === 'dodopayments'
+                              ? 'Dodo Payments'
+                              : capitalize(log.platform)
+                            : ''}
                         </Badge>
                       </TableCell>
                       <TableCell>

@@ -141,38 +141,25 @@ export const emailTemplates: Template[] = [
   },
   {
     id: 'template6',
-    name: 'Custom Template',
+    name: 'Dodo Payments',
     type: TemplateType.EMAIL,
     render: data => ({
-      subject: 'Custom build',
-      html: `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="x-apple-disable-message-reformatting" />
-  </head>
-  <body style="background:#fff;font-family:ui-sans-serif,system-ui,sans-serif,'Apple Color Emoji','Segoe UI Emoji'">
-    <table align="center" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:auto;padding:0">
-      <tr>
-        <td style="padding:2rem;text-align:center">
-          <p style="font-size:1.5rem;font-weight:700;letter-spacing:-0.05em;margin:1rem 0">Hookflo</p>
-          <p style="font-size:0.875rem;text-transform:uppercase;letter-spacing:0.05em;margin:1rem 0">2024 in Review</p>
-          <h1 style="font-size:2rem;font-weight:500;margin:1rem 0">Your Year with Hookflo</h1>
-          <p style="font-size:1rem;line-height:1.5;margin:1rem 0">
-            A big thank you for being with us! Here’s a quick look at how you used Papermark this year.
-          </p>
-          <a href="https://hookflo.com" style="display:inline-block;margin-top:1.5rem;font-size:0.875rem;font-weight:700;color:#111827;text-decoration:none">
-            View your dashboard
-          </a>
-        </td>
-      </tr>
-    </table>
-    <hr style="border:0;border-top:1px solid #e5e7eb;margin:0 0; padding:8px" />
-    <p style="color:#6b7280;font-size:12px;text-align:center">
-      Delivered by <a href="https://hookflo.com" style="color:#4f46e5;text-decoration:none">Hookflo</a>
-    </p>
-  </body>
-</html>
+      subject: 'Dodo Payments Event',
+      html: `
+<div style="background:#000;color:#fff;font-family:Arial,sans-serif;padding:24px;border-radius:8px;max-width:600px;margin:auto;">
+  <h2 style="color:#C6FE1E;margin:0 0 12px;">Dodo Payments Alert</h2>
+  <p style="color:#aaa;margin:0 0 16px;font-size:14px;">You've received a new webhook event via HookFlo.</p>
+  <div style="background:#111;padding:16px;border-radius:6px;margin-bottom:16px;font-size:14px;">
+    <p style="margin:4px 0;"><strong style="color:#C6FE1E;">Event:</strong> {{event_type}}</p>
+    <p style="margin:4px 0;"><strong style="color:#C6FE1E;">Txn ID:</strong> {{transaction_id}}</p>
+    <p style="margin:4px 0;"><strong style="color:#C6FE1E;">Customer:</strong> {{customer_email}}</p>
+    <p style="margin:4px 0;"><strong style="color:#C6FE1E;">Amount:</strong> {{amount}} {{currency}}</p>
+  </div>
+  <p style="color:#777;font-size:12px;margin:0 0 16px;">Received at {{timestamp}} · Powered by <a href="https://hookflo.com" style="text-decoration:underline">Hookflo</a></p>
+  <div style="text-align:center;">
+    <a href="{{log_url}}" style="background:#C6FE1E;color:#000;text-decoration:none;padding:10px 16px;border-radius:4px;font-weight:bold;font-size:14px;">View Log</a>
+  </div>
+</div>
 `,
     }),
   },

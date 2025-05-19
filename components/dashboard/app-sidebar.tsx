@@ -122,13 +122,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter className='my-2'>
         <>
           <UsageBar
-            label='Emails left'
+            label='Daily Email alerts left'
             used={usageData?.currentUsage.dailyEmails.current || 0}
             total={usageData?.subscription.limits.dailyEmails || 0}
             isCollapsed={!open}
           />
           <UsageBar
-            label='Slack alerts left'
+            label='Daily Slack alerts left'
             used={usageData?.currentUsage.dailySlackNotifications.current || 0}
             total={usageData?.subscription.limits.dailySlackNotifications || 0}
             isCollapsed={!open}
@@ -152,8 +152,8 @@ export function UsageBar({
   label,
   used,
   total,
-  colorFrom = '#d546ef',
-  colorTo = '#8b5cd6',
+  colorFrom = '#bfaaff', 
+  colorTo = '#9d89ea', 
   isCollapsed = false,
 }: UsageBarProps) {
   const router = useRouter();
@@ -166,25 +166,22 @@ export function UsageBar({
   return (
     <div
       onPointerUp={handleClick}
-      className={`w-full px-2 mb-2 cursor-pointer group transition-opacity duration-300 ${
+      className={`w-full px-2 mb-2 cursor-pointer group transition-all duration-300 ${
         isCollapsed
           ? 'opacity-0 pointer-events-none h-0 overflow-hidden'
           : 'opacity-100'
       }`}
     >
-      {/* Label */}
-      <div className='flex justify-between text-[11px] font-medium text-zinc-400 mb-1 tracking-tight'>
+      <div className="flex justify-between text-[11px] font-medium text-zinc-500 mb-1 tracking-tight">
         <span>{label}</span>
-        <span className='tabular-nums'>
+        <span className="tabular-nums text-zinc-400">
           {used}/{total}
         </span>
       </div>
 
-      {/* Track */}
-      <div className='relative h-2.5 rounded-full bg-zinc-800/70 backdrop-blur-sm shadow-inner overflow-hidden group-hover:ring-1 group-hover:ring-zinc-600/30'>
-        {/* Progress Fill */}
+      <div className="relative h-2 rounded-full bg-zinc-800/60 shadow-inner overflow-hidden transition-all duration-300 group-hover:shadow-md group-hover:shadow-zinc-900/20">
         <div
-          className='absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-in-out'
+          className="absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-in-out"
           style={{
             width: `${percentage}%`,
             background: `linear-gradient(to right, ${colorFrom}, ${colorTo})`,

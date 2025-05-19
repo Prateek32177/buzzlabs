@@ -1,15 +1,10 @@
 import { WebhookPlatformConfig } from './types';
-import {
-  Webhook,
-  UserCircle,
-  AlertCircle,
-  CreditCard,
-  Github,
-} from 'lucide-react';
 import { WebhookPlatform } from '../types';
 import { SupabaseLogo } from '@/components/Logos';
 import { ClerkLogo } from '@/components/Logos';
 import { StripeLogo } from '@/components/Logos/StripeLogo';
+import { DodoLogo } from '@/components/Logos/DodoPayments';
+import { GitHubLogoIcon } from '@radix-ui/react-icons';
 
 export const platformConfigs: Partial<
   Record<WebhookPlatform, WebhookPlatformConfig>
@@ -134,7 +129,7 @@ export const platformConfigs: Partial<
     id: 'github',
     name: 'GitHub',
     description: 'Authenticate webhooks from GitHub repositories',
-    icon: Github,
+    icon: GitHubLogoIcon,
     fields: [
       {
         key: 'signing_secret',
@@ -155,6 +150,39 @@ export const platformConfigs: Partial<
   -H "x-github-delivery: 72d3162e-cc78-11e3-81ab-4c9367dc0958" \
   -H "Content-Type: application/json" \
   -d '{"ref":"refs/heads/main","repository":{"name":"example"}}'`,
+    },
+    showSaveButton: true,
+  },
+  dodoPayments: {
+    id: 'dodoPayments',
+    name: 'Dodo Payments',
+    description: 'Authenticate webhooks from Dodo Payments platform',
+    icon: DodoLogo,
+    fields: [
+      {
+        key: 'signing_secret',
+        label: 'Webhook Signing Secret',
+        description:
+          'Dodo Payments webhook secret key used for signature verification (passed into the standard-webhooks verifier)',
+        type: 'secret',
+        placeholder: 'your_dodo_webhook_secret',
+        required: true,
+        readOnly: false,
+      },
+    ],
+    verificationHeaders: [
+      'webhook-id',
+      'webhook-signature',
+      'webhook-timestamp',
+    ],
+    docs: 'https://docs.hookflo.com/webhook-platforms/dodo',
+    exampleCode: {
+      curl: `curl -X POST https://api.SuperHook.dev/webhook \
+  -H "webhook-id: your_webhook_id" \
+  -H "webhook-signature: your_signature_here" \
+  -H "webhook-timestamp: 1716112345" \
+  -H "Content-Type: application/json" \
+  -d '{"payment_id":"pay_12345","status":"succeeded"}'`,
     },
     showSaveButton: true,
   },

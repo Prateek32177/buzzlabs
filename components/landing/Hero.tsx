@@ -14,7 +14,7 @@ import { NoiseGradientBackground } from 'noise-gradient-bg';
 import { SupabaseLogo, ClerkLogo } from '../Logos';
 import { StripeWordmarkLogo } from '@/components/Logos/StripeLogo';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
-
+import { DodoLogo } from '../Logos/DodoPayments';
 export default function Hero() {
   const iconClasses =
     'w-6 h-6 text-zinc-400 transition-colors group-hover:text-white';
@@ -27,7 +27,9 @@ export default function Hero() {
         scale: '0.8',
       }}
     />,
+
     <SupabaseLogo className={`${iconClasses} -ml-6`} />,
+    <DodoLogo className={`${iconClasses}`} />,
     <GitHubLogoIcon className={iconClasses} />,
     <ClerkLogo className={`${iconClasses} fill-zinc-400`} />,
   ];
@@ -85,7 +87,7 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.3 }}
           className='mt-4 text-sm sm:text-base  text-balance bg-gradient-to-br from-white/50 to-white/60 text-transparent bg-clip-text px-1 sm:px-0 max-w-lg md:max-w-xl mx-auto'
         >
-          Capture events from multiple platforms and instantly relay
+          Capture Webhook events from multiple platforms and instantly relay
           notifications across various channels with our robust webhook
           infrastructure.
         </motion.p>

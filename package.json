@@ -49,6 +49,7 @@
     "resend": "^4.5.1",
     "rfc6902": "^5.1.2",
     "sonner": "^1.7.4",
+    "standardwebhooks": "^1.0.0",
     "supabase": "^2.15.8",
     "uuid": "^11.1.0"
   },

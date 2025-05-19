@@ -122,6 +122,10 @@ export async function POST(req: Request) {
           webhook_id: webhookId,
           signing_secret: webhookSecret || '',
         },
+        dodoPayments: {
+          webhook_id: webhookId,
+          signing_secret: webhookSecret || '',
+        },
       };
 
       return configs[platform as keyof typeof configs] || {};

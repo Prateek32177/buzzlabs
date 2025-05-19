@@ -7,12 +7,13 @@ export type WebhookPlatform =
   | 'shopify'
   | 'vercel'
   | 'polar'
+  | 'dodoPayments'
   | 'unknown';
 
 export interface WebhookVerificationResult {
   isValid: boolean;
   error?: string;
-  platform?: WebhookPlatform;
+  platform: WebhookPlatform;
   payload?: any;
   metadata?: {
     timestamp?: string;

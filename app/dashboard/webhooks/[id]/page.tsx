@@ -319,8 +319,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                   } flex items-center justify-between transition-all duration-200`}
                 >
                   <div className='flex items-center'>
-                    <div className='w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 shadow-sm'>
-                      <config.icon className='w-5 h-5 text-emerald-500' />
+                    <div className='w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center mr-3 shadow-sm'>
+                      <config.icon className='h-full w-full' />
                     </div>
                     <span className='text-white capitalize'>{config.name}</span>
                   </div>

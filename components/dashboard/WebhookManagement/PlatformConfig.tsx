@@ -59,7 +59,7 @@ export function PlatformConfig({
               className='flex flex-col items-center justify-center h-24 gap-2'
               onClick={() => handlePlatformChange(config.id)}
             >
-              <config.icon className='h-6 w-6' />
+              <config.icon className='h-full w-full' />
               <span>{config.name}</span>
             </Button>
           ))}

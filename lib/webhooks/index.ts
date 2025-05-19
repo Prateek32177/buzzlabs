@@ -7,6 +7,7 @@ import { ClerkWebhookVerifier } from './verifiers/clerk';
 import { CustomWebhookVerifier } from './verifiers/custom';
 import { GithubWebhookVerifier } from './verifiers/github';
 import { StripeWebhookVerifier } from './verifiers/stripe';
+import { DodoPaymentsWebhookVerifier } from './verifiers/dodo';
 
 export class WebhookVerificationService {
   static async verify(
@@ -36,11 +37,17 @@ export class WebhookVerificationService {
           config.secret,
           config.toleranceInSeconds,
         );
+      case 'dodoPayments':
+        return new DodoPaymentsWebhookVerifier(
+          config.secret,
+          config.toleranceInSeconds,
+        );
       case 'custom':
         return new CustomWebhookVerifier(
           config.secret,
           config.toleranceInSeconds,
         );
+
       default:
         return {
           verify: async () => ({

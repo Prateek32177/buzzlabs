@@ -13,6 +13,7 @@ class PlatformDetector {
     if (headers.get('svix-id') && headers.get('svix-timestamp')) return 'clerk';
     if (headers.get('x-webhook-token')) return 'supabase';
     if (headers.get('x-webhook-id')) return 'supabase';
+    if (headers.get('webhook-id')) return 'Dodo Payments';
 
     return null;
   }
@@ -29,6 +30,7 @@ class PlatformDetector {
     if (lastPathPart === 'supabase') return 'supabase';
     if (lastPathPart === 'vercel') return 'vercel';
     if (lastPathPart === 'polar') return 'polar';
+    if (lastPathPart === 'dodoPayments') return 'dodoPayments';
 
     return null;
   }
@@ -57,8 +59,10 @@ export async function POST(
   }
 
   detectedPlatform = detectedPlatform || 'unknown';
+  if (detectedPlatform === 'dodoPayments') {
+    detectedPlatform = 'Dodo Payments';
+  }
 
-  // Initialize usage metrics
   const usageMetrics = {
     userId: '',
     webhookId: id,
@@ -327,6 +331,8 @@ function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
     case 'stripe':
       return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'github':
+      return webhook.platformConfig[detectedPlatform].signing_secret;
+    case 'dodoPayments':
       return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'supabase':
       return webhook.platformConfig[detectedPlatform];

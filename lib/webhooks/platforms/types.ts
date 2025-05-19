@@ -1,3 +1,4 @@
+import React from 'react';
 import { WebhookPlatform } from '../types';
 export interface PlatformField {
   key: string;

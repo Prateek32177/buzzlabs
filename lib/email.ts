@@ -20,7 +20,7 @@ export async function sendEmail({
   emailCount?: number;
 }) {
   let actionCount = emailCount || 1;
-  const checkResult = await checkActionAllowed(userId, 'email',0, actionCount);
+  const checkResult = await checkActionAllowed(userId, 'email', 0, actionCount);
   if (!checkResult.allowed) {
     return {
       success: false,

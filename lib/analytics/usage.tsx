@@ -429,8 +429,8 @@ export async function checkUsageLimits(
         current: currentUsage.monthlyEmailCount,
         limit: limits.emailNotificationLimit,
         exceeded:
-        currentUsage.monthlyEmailCount + (actionCount || 1) > limits.emailNotificationLimit,
-
+          currentUsage.monthlyEmailCount + (actionCount || 1) >
+          limits.emailNotificationLimit,
       },
       monthlySlackNotifications: {
         current: currentUsage.monthlySlackCount,

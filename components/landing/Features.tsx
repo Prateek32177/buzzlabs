@@ -5,15 +5,8 @@ import { Mail, CheckCircle2 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Blocks, WandSparkles } from 'lucide-react';
 import { Lock, Unlock } from 'lucide-react';
-import {
-  SlackLogo,
-  SupabaseLogo,
-  ClerkLogo,
-  PolarLogo,
-  LoopsLogo,
-  ResendLogo,
-  TeamsLogo,
-} from '../Logos';
+import { SlackLogo, SupabaseLogo, ClerkLogo, PolarLogo } from '../Logos';
+import { DodoLogo } from '../Logos/DodoPayments';
 import { StripeLogo } from '@/components/Logos/StripeLogo';
 import {
   CreditCardIcon,
@@ -22,9 +15,6 @@ import {
   BoltIcon,
 } from '@heroicons/react/24/solid';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
-import { Bell, Clock, CheckCircle } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Features() {
   const [isVisible, setIsVisible] = useState(false);
@@ -33,14 +23,12 @@ export default function Features() {
     4, 7, 3, 8, 5, 9, 6, 10, 7, 5, 8, 11, 9, 6, 8,
   ]);
 
-  // Animation for chart data
   useEffect(() => {
     const interval = setInterval(() => {
       setChartData(prev => {
         const newData = [...prev];
-        // Remove first element and add a new random one at the end
         newData.shift();
-        newData.push(Math.floor(Math.random() * 8) + 4); // Random number between 4-12
+        newData.push(Math.floor(Math.random() * 8) + 4);
         return newData;
       });
     }, 2000);
@@ -55,11 +43,9 @@ export default function Features() {
     <PolarLogo className='w-6 h-6 ' />,
     <StripeLogo className='w-6 h-6 ' />,
     <SlackLogo className='w-12 h-12' />,
-    // <ResendLogo className='w-12 h-12 ' />,
-    // <TeamsLogo className='w-6 h-6 text-indigo-400 ' />,
+    <DodoLogo className='w-6 h-6' />,
   ];
 
-  // Intersection observer to trigger animations when section is visible
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -88,7 +74,6 @@ export default function Features() {
       className='bg-black text-white pb-16 pt-8 px-4 overflow-hidden'
     >
       <div className='max-w-6xl mx-auto'>
-        {/* Header */}
         <div className='flex justify-center mb-6'>
           <div
             className={`inline-flex items-center gap-2 bg-black/30 px-3 py-1.5 rounded-full border border-purple-400/20 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
@@ -100,7 +85,6 @@ export default function Features() {
           </div>
         </div>
 
-        {/* Main Heading */}
         <div className='text-center mb-16'>
           <h2
             className={`text-3xl  text-white max-w-4xl mx-auto leading-tight transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
@@ -110,10 +94,7 @@ export default function Features() {
           </h2>
         </div>
 
-        {/* Top Row Features */}
         <div className='grid md:grid-cols-3 px-6 gap-6 mb-6'>
-          {/* Instant Tracking */}
-
           <div
             className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
             style={{ transitionDelay: '200ms' }}
@@ -144,7 +125,6 @@ export default function Features() {
             </p>
           </div>
 
-          {/* Smart Notifications */}
           <div
             className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
             style={{ transitionDelay: '400ms' }}
@@ -195,9 +175,7 @@ export default function Features() {
           <NotificationDigestCard />
         </div>
 
-        {/* Bottom Row Features */}
         <div className='grid md:grid-cols-2 gap-6 mb-8 px-6'>
-          {/* Effortless Integration */}
           <div
             className={`bg-zinc-900/60 rounded-xl p-6 border border-zinc-800 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)] ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}`}
             style={{ transitionDelay: '800ms' }}
@@ -236,7 +214,6 @@ export default function Features() {
           <SecurityReliabilityCard />
         </div>
 
-        {/* Feature Pills */}
         <div className='flex flex-wrap justify-center gap-4 mb-6'>
           {[
             'Slack Message Templates',
@@ -320,21 +297,17 @@ function SecurityReliabilityCard() {
         </div>
 
         <div className='flex-1 flex items-center justify-center relative p-8'>
-          {/* Central security dial */}
           <div
             className={`absolute w-20 h-20 md:w-32 md:h-32 rounded-full transition-all duration-1000 ${
               isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
             }`}
             style={{ transitionDelay: '500ms' }}
           >
-            {/* Outer ring */}
             <div className='absolute inset-0 rounded-full border-4 border-emerald-600/30 animate-spin-slow'></div>
 
-            {/* Inner circle with glow */}
             <div className='absolute inset-2 rounded-full bg-zinc-900 flex items-center justify-center overflow-hidden'>
               <div className='absolute inset-0 bg-emerald-500/5'></div>
 
-              {/* Lock icon with animation */}
               <div className='relative z-10'>
                 <div
                   className={`transition-all duration-500 ${isLocked ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
@@ -357,7 +330,6 @@ function SecurityReliabilityCard() {
             </div>
           </div>
 
-          {/* Scanning line */}
           <div className='absolute inset-0 overflow-hidden opacity-30'>
             <div className='absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-emerald-400 to-transparent animate-scan'></div>
           </div>

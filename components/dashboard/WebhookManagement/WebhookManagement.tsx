@@ -319,7 +319,7 @@ export function WebhookManagement() {
               <Button
                 type='submit'
                 variant='default'
-                className='whitespace-nowrap'
+                className='whitespace-nowrap tracking-tight font-normal'
               >
                 {isLoading ? (
                   <Loader2 className='h-4 w-4 animate-spin' />

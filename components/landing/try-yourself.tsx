@@ -87,7 +87,7 @@ function TryYourself() {
   };
 
   return (
-    <section className='w-full py-24 relative overflow-hidden bg-zinc-900/60 rounded-xl p-6 transition-all duration-500 hover:border-purple-400/30 hover:shadow-[0_0_15px_rgba(167,139,250,0.15)]'>
+    <section className='w-full py-24 relative overflow-hidden bg-black/60  p-6 transition-all duration-500 '>
       {/* Background elements */}
 
       <div className='container max-w-6xl mx-auto px-4 relative z-10'>
@@ -104,11 +104,11 @@ function TryYourself() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className='text-4xl md:text-5xl font-bold text-center tracking-tight mb-4 text-white'
+            className='sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70 leading-tight text-4xl md:text-5xl font-light tracking-tight text-gray-900 mb-4'
           >
             Try It yourself
           </motion.h2>
-          <p className='text-purple-200/80 text-center max-w-2xl mx-auto text-lg'>
+          <p className='text-purple-200/80 text-center max-w-2xl mx-auto text-base'>
             Follow the steps below to create, manage, and test webhooks.
           </p>
         </div>
@@ -124,10 +124,10 @@ function TryYourself() {
                 <motion.div
                   className={`flex items-center justify-center w-10 h-10 rounded-full ${
                     step === currentStep
-                      ? 'bg-purple-500/30 border border-white/30 text-white shadow-lg shadow-purple-600/30'
+                      ? 'bg-zinc-700/30 border border-white/30 text-white shadow-lg shadow-zinc-600/30'
                       : step < currentStep
-                        ? 'bg-purple-500/60 border-white/30 text-white'
-                        : 'bg-slate-800/10 border border-white/20 text-purple-300'
+                        ? 'bg-zinc-700/60 border-white/30 text-white'
+                        : 'bg-slate-800/10 border border-white/20 text-zinc-300'
                   }`}
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 17 }}
@@ -136,8 +136,8 @@ function TryYourself() {
                 </motion.div>
                 {step < 4 && (
                   <div
-                    className={`h-0.5 flex-1 ${
-                      step < currentStep ? 'bg-purple-400' : 'bg-slate-700'
+                    className={`h-[0.5px] flex-1 ${
+                      step < currentStep ? 'bg-zinc-200' : 'bg-slate-700'
                     }`}
                   />
                 )}
@@ -147,7 +147,7 @@ function TryYourself() {
         </div>
 
         {/* Step content container */}
-        <div className='backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-5xl mx-auto border border-purple-500/20 shadow-xl '>
+        <div className='backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-5xl bg-zinc-900/40 mx-auto border border-gray-500/20 shadow-xl '>
           <AnimatePresence mode='wait'>
             {currentStep === 1 && (
               <Step1WebhookCreation
@@ -297,10 +297,10 @@ function Step1WebhookCreation({
       className='space-y-6'
     >
       <div className='text-center' id='step-top'>
-        <h3 className='text-2xl font-bold text-white mb-2'>
+        <h3 className='text-xl font-normal text-white mb-2'>
           Step 1: Create Your Webhook
         </h3>
-        <p className='text-purple-200/70 mb-6'>Start by creating a webhook.</p>
+        <p className='text-purple-200/70 mb-4'>Start by creating a webhook.</p>
       </div>
 
       <div className='p-6 max-w-lg mx-auto'>
@@ -311,7 +311,7 @@ function Step1WebhookCreation({
             placeholder='Enter webhook name'
             value={webhookName}
             onChange={e => setWebhookName(e.target.value)}
-            className=' text-white h-10 bg-zinc-900/60 border border-zinc-200/30 placeholder:text-slate-400'
+            className=' text-white h-10 bg-zinc-900/60  border-[0.5px] placeholder:text-slate-400'
             onKeyDown={e => {
               if (e.key === 'Enter') {
                 handleCreateWebhook();

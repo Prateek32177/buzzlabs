@@ -15,7 +15,7 @@ export class DodoPaymentsWebhookVerifier extends WebhookVerifier {
         return {
           isValid: false,
           error: 'Missing required Dodo Payments webhook headers',
-          platform: 'dodoPayments',
+          platform: 'dodopayments',
         };
       }
 
@@ -24,7 +24,7 @@ export class DodoPaymentsWebhookVerifier extends WebhookVerifier {
         return {
           isValid: false,
           error: 'Webhook timestamp is too old',
-          platform: 'dodoPayments',
+          platform: 'dodopayments',
         };
       }
 
@@ -40,7 +40,7 @@ export class DodoPaymentsWebhookVerifier extends WebhookVerifier {
 
       return {
         isValid: true,
-        platform: 'dodoPayments',
+        platform: 'dodopayments',
         payload: verifiedPayload,
         metadata: {
           id: webhookId,
@@ -51,7 +51,7 @@ export class DodoPaymentsWebhookVerifier extends WebhookVerifier {
       return {
         isValid: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        platform: 'dodoPayments',
+        platform: 'dodopayments',
       };
     }
   }

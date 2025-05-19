@@ -122,7 +122,7 @@ export async function POST(req: Request) {
           webhook_id: webhookId,
           signing_secret: webhookSecret || '',
         },
-        dodoPayments: {
+        dodopayments: {
           webhook_id: webhookId,
           signing_secret: webhookSecret || '',
         },

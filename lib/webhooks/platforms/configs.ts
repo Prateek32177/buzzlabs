@@ -153,8 +153,8 @@ export const platformConfigs: Partial<
     },
     showSaveButton: true,
   },
-  dodoPayments: {
-    id: 'dodoPayments',
+  dodopayments: {
+    id: 'dodopayments',
     name: 'Dodo Payments',
     description: 'Authenticate webhooks from Dodo Payments platform',
     icon: DodoLogo,

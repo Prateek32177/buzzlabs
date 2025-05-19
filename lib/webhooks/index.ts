@@ -37,7 +37,7 @@ export class WebhookVerificationService {
           config.secret,
           config.toleranceInSeconds,
         );
-      case 'dodoPayments':
+      case 'dodopayments':
         return new DodoPaymentsWebhookVerifier(
           config.secret,
           config.toleranceInSeconds,

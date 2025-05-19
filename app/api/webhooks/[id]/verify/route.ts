@@ -30,7 +30,7 @@ class PlatformDetector {
     if (lastPathPart === 'supabase') return 'supabase';
     if (lastPathPart === 'vercel') return 'vercel';
     if (lastPathPart === 'polar') return 'polar';
-    if (lastPathPart === 'dodoPayments') return 'dodoPayments';
+    if (lastPathPart === 'dodopayments') return 'dodopayments';
 
     return null;
   }
@@ -59,10 +59,6 @@ export async function POST(
   }
 
   detectedPlatform = detectedPlatform || 'unknown';
-  if (detectedPlatform === 'dodoPayments') {
-    detectedPlatform = 'Dodo Payments';
-  }
-
   const usageMetrics = {
     userId: '',
     webhookId: id,
@@ -332,7 +328,7 @@ function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
       return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'github':
       return webhook.platformConfig[detectedPlatform].signing_secret;
-    case 'dodoPayments':
+    case 'dodopayments':
       return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'supabase':
       return webhook.platformConfig[detectedPlatform];

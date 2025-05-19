@@ -632,7 +632,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 </div>
               )}
 
-              {platform === 'dodoPayments' && (
+              {platform === 'dodopayments' && (
                 <div className='space-y-3'>
                   <h4 className='text-sm font-medium'>
                     Dodo Payments Integration
@@ -647,7 +647,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                     <p>4. Set the following:</p>
                     <p className='text-emerald-400 py-2'>
                       Endpoint URL:{' '}
-                      {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=dodoPayments`}
+                      {`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}/utm_source=dodopayments`}
                     </p>
                     <p>5. Select the events you want to receive</p>
                     <p>6. Copy the generated signing secret</p>

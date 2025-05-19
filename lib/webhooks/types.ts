@@ -7,7 +7,7 @@ export type WebhookPlatform =
   | 'shopify'
   | 'vercel'
   | 'polar'
-  | 'dodoPayments'
+  | 'dodopayments'
   | 'unknown';
 
 export interface WebhookVerificationResult {

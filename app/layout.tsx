@@ -36,22 +36,6 @@ export const metadata = {
     siteName: 'Hookflo',
     title: 'Hookflo - Quick to setup event tracking system for web apps',
     description: 'No Code Notification Webhook Infrastructure',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Hookflo - No Code Webhook Platform',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Hookflo - Quick to setup event tracking system for web apps',
-    description: 'No Code Notification Webhook Infrastructure',
-    images: ['/og-image.png'],
-    creator: '@Prateek53788134',
-    site: '@Prateek53788134',
   },
   robots: {
     index: true,

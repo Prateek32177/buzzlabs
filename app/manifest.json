@@ -29,13 +29,5 @@
   "dir": "ltr",
   "scope": "/",
   "prefer_related_applications": false,
-  "display_override": ["standalone", "browser"],
-  "screenshots": [
-    {
-      "src": "/og-image.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "platform": "wide"
-    }
-  ]
+  "display_override": ["standalone", "browser"]
 }

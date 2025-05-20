@@ -474,6 +474,31 @@ function BlockEditor({
   }
 }
 
+// Generic text input hook for cursor position management
+function useTextInputWithCursor(initialText: string) {
+  const [text, setText] = useState(initialText);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const [cursorPosition, setCursorPosition] = useState<number | null>(null);
+
+  // Restore cursor position after render
+  useEffect(() => {
+    if (cursorPosition !== null && inputRef.current) {
+      inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+      setCursorPosition(null);
+    }
+  }, [cursorPosition, text]);
+
+  const handleTextChange = (newText: string) => {
+    // Save cursor position before update
+    if (inputRef.current) {
+      setCursorPosition(inputRef.current.selectionStart);
+    }
+    setText(newText);
+  };
+
+  return { text, setText, inputRef, handleTextChange };
+}
+
 // Section block editor
 function SectionBlockEditor({
   block,
@@ -482,30 +507,17 @@ function SectionBlockEditor({
   block: any;
   onChange: (block: any) => void;
 }) {
-  const [text, setText] = useState(block.text?.text || '');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [cursorPosition, setCursorPosition] = useState<number | null>(null);
+  const { text, setText, inputRef, handleTextChange } = useTextInputWithCursor(
+    block.text?.text || '',
+  );
 
   // Update local state when block changes
   useEffect(() => {
     setText(block.text?.text || '');
   }, [block.text?.text]);
 
-  // Restore cursor position after render
-  useEffect(() => {
-    if (cursorPosition !== null && textareaRef.current) {
-      textareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
-      setCursorPosition(null);
-    }
-  }, [cursorPosition, text]);
-
   const updateText = (newText: string) => {
-    // Save cursor position before update
-    if (textareaRef.current) {
-      setCursorPosition(textareaRef.current.selectionStart);
-    }
-
-    setText(newText);
+    handleTextChange(newText);
     onChange({
       ...block,
       text: {
@@ -526,7 +538,7 @@ function SectionBlockEditor({
         <Label htmlFor='section-text'>Text</Label>
         <Textarea
           id='section-text'
-          ref={textareaRef}
+          ref={inputRef as React.RefObject<HTMLTextAreaElement>}
           value={text}
           onChange={e => updateText(e.target.value)}
           placeholder='Enter text with Slack markdown'
@@ -558,6 +570,8 @@ function ActionsBlockEditor({
         text: 'Button',
       },
       value: `button_${elements.length}`,
+      url: '',
+      action_id: `action_${Date.now()}_${elements.length}`,
     });
 
     onChange({
@@ -623,6 +637,36 @@ function ActionsBlockEditor({
                     value={button.value || ''}
                     onChange={e => updateButton(index, 'value', e.target.value)}
                   />
+                  <p className='text-xs text-muted-foreground'>
+                    A value sent to your app when the button is clicked
+                  </p>
+                </div>
+
+                <div className='space-y-2'>
+                  <Label htmlFor={`button-url-${index}`}>URL (Optional)</Label>
+                  <Input
+                    id={`button-url-${index}`}
+                    value={button.url || ''}
+                    onChange={e => updateButton(index, 'url', e.target.value)}
+                    placeholder='https://example.com'
+                  />
+                  <p className='text-xs text-muted-foreground'>
+                    If provided, the button will act as a link to this URL
+                  </p>
+                </div>
+
+                <div className='space-y-2'>
+                  <Label htmlFor={`button-action-id-${index}`}>Action ID</Label>
+                  <Input
+                    id={`button-action-id-${index}`}
+                    value={button.action_id || `action_${Date.now()}_${index}`}
+                    onChange={e =>
+                      updateButton(index, 'action_id', e.target.value)
+                    }
+                  />
+                  <p className='text-xs text-muted-foreground'>
+                    Unique identifier for this button in your app
+                  </p>
                 </div>
 
                 <div className='space-y-2'>
@@ -718,49 +762,76 @@ function ContextBlockEditor({
   return (
     <div className='space-y-3 '>
       <div className='space-y-2'>
-        {(block.elements || []).map((element: any, index: number) => (
-          <div key={index} className='border rounded-md p-2 space-y-2'>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm font-medium capitalize'>
-                {element.type}
-              </span>
-              <Button
-                variant='ghost'
-                size='icon'
-                onClick={() => removeElement(index)}
-                className='h-6 w-6'
-              >
-                <Trash2 className='h-4 w-4' />
-              </Button>
-            </div>
+        {(block.elements || []).map((element: any, index: number) => {
+          // Create refs for each text element
+          const textRef = useRef<HTMLTextAreaElement>(null);
+          const [cursorPosition, setCursorPosition] = useState<number | null>(
+            null,
+          );
 
-            {element.type === 'mrkdwn' ? (
-              <Textarea
-                value={element.text || ''}
-                onChange={e => updateElement(index, 'text', e.target.value)}
-                placeholder='Context text with Slack markdown'
-                rows={2}
-              />
-            ) : (
-              <div className='space-y-2'>
-                <Input
-                  value={element.image_url || ''}
-                  onChange={e =>
-                    updateElement(index, 'image_url', e.target.value)
-                  }
-                  placeholder='Image URL'
-                />
-                <Input
-                  value={element.alt_text || ''}
-                  onChange={e =>
-                    updateElement(index, 'alt_text', e.target.value)
-                  }
-                  placeholder='Alt text'
-                />
+          // Effect to restore cursor position for this specific element
+          useEffect(() => {
+            if (
+              cursorPosition !== null &&
+              textRef.current &&
+              element.type === 'mrkdwn'
+            ) {
+              textRef.current.setSelectionRange(cursorPosition, cursorPosition);
+              setCursorPosition(null);
+            }
+          }, [cursorPosition, element.text]);
+
+          return (
+            <div key={index} className='border rounded-md p-2 space-y-2'>
+              <div className='flex justify-between items-center'>
+                <span className='text-sm font-medium capitalize'>
+                  {element.type}
+                </span>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => removeElement(index)}
+                  className='h-6 w-6'
+                >
+                  <Trash2 className='h-4 w-4' />
+                </Button>
               </div>
-            )}
-          </div>
-        ))}
+
+              {element.type === 'mrkdwn' ? (
+                <Textarea
+                  ref={textRef}
+                  value={element.text || ''}
+                  onChange={e => {
+                    // Save cursor position before update
+                    if (textRef.current) {
+                      setCursorPosition(textRef.current.selectionStart);
+                    }
+                    updateElement(index, 'text', e.target.value);
+                  }}
+                  placeholder='Context text with Slack markdown'
+                  rows={2}
+                />
+              ) : (
+                <div className='space-y-2'>
+                  <Input
+                    value={element.image_url || ''}
+                    onChange={e =>
+                      updateElement(index, 'image_url', e.target.value)
+                    }
+                    placeholder='Image URL'
+                  />
+                  <Input
+                    value={element.alt_text || ''}
+                    onChange={e =>
+                      updateElement(index, 'alt_text', e.target.value)
+                    }
+                    placeholder='Alt text'
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <div className='flex gap-2'>
@@ -795,12 +866,22 @@ function HeaderBlockEditor({
   block: any;
   onChange: (block: any) => void;
 }) {
-  const updateText = (text: string) => {
+  const { text, setText, inputRef, handleTextChange } = useTextInputWithCursor(
+    block.text?.text || '',
+  );
+
+  // Update local state when block changes
+  useEffect(() => {
+    setText(block.text?.text || '');
+  }, [block.text?.text]);
+
+  const updateText = (newText: string) => {
+    handleTextChange(newText);
     onChange({
       ...block,
       text: {
         type: 'plain_text',
-        text,
+        text: newText,
       },
     });
   };
@@ -810,7 +891,8 @@ function HeaderBlockEditor({
       <Label htmlFor='header-text'>Header Text</Label>
       <Input
         id='header-text'
-        value={block.text?.text || ''}
+        ref={inputRef as React.RefObject<HTMLInputElement>}
+        value={text}
         onChange={e => updateText(e.target.value)}
         placeholder='Enter header text'
       />
@@ -844,8 +926,10 @@ function createEmptyBlock(type: string) {
             text: {
               type: 'plain_text',
               text: 'Click Me',
+              emoji: true,
             },
             value: 'button_1',
+            action_id: `action_${Date.now()}_1`,
           },
         ],
       };
@@ -865,6 +949,7 @@ function createEmptyBlock(type: string) {
         text: {
           type: 'plain_text',
           text: 'Header text',
+          emoji: true,
         },
       };
     case 'fields':
@@ -888,27 +973,45 @@ function createEmptyBlock(type: string) {
   }
 }
 
-// Create an empty attachment template
-function createEmptyAttachment() {
-  return {
-    color: '#36a64f',
-    pretext: 'Optional pretext',
-    title: 'Attachment Title',
-    title_link: '',
-    text: 'Main attachment text',
-    fields: [
-      {
-        title: 'Field Title',
-        value: 'Field Value',
-        short: true,
-      },
-    ],
-    footer: '',
-    footer_icon: '',
-  };
+function FieldItemEditor({
+  index,
+  text,
+  onChange,
+  onRemove,
+}: {
+  index: number;
+  text: string;
+  onChange: (index: number, value: string) => void;
+  onRemove: (index: number) => void;
+}) {
+  const {
+    text: inputText,
+    inputRef,
+    handleTextChange,
+  } = useTextInputWithCursor(text);
+
+  useEffect(() => {
+    handleTextChange(text); // sync external updates
+  }, [text]);
+
+  return (
+    <div className='flex gap-2'>
+      <Input
+        ref={inputRef as React.Ref<HTMLInputElement>}
+        value={inputText}
+        onChange={e => {
+          handleTextChange(e.target.value);
+          onChange(index, e.target.value);
+        }}
+        placeholder='*Label:* Value'
+      />
+      <Button variant='ghost' size='icon' onClick={() => onRemove(index)}>
+        <Trash2 className='h-4 w-4' />
+      </Button>
+    </div>
+  );
 }
 
-// Add this new block editor for fields
 function FieldsBlockEditor({
   block,
   onChange,
@@ -916,60 +1019,98 @@ function FieldsBlockEditor({
   block: any;
   onChange: (block: any) => void;
 }) {
+  const updateField = (index: number, value: string) => {
+    const updatedFields = [...(block.fields || [])];
+    updatedFields[index] = { type: 'mrkdwn', text: value };
+    onChange({ ...block, fields: updatedFields });
+  };
+
   const addField = () => {
-    const fields = [...(block.fields || [])];
-    fields.push({
-      type: 'mrkdwn',
-      text: '*Label:* Value',
-    });
-    onChange({
-      ...block,
-      fields,
-    });
+    const fields = [
+      ...(block.fields || []),
+      { type: 'mrkdwn', text: '*Label:* Value' },
+    ];
+    onChange({ ...block, fields });
   };
 
   const removeField = (index: number) => {
     const fields = [...(block.fields || [])];
     fields.splice(index, 1);
-    onChange({
-      ...block,
-      fields,
-    });
-  };
-
-  const updateField = (index: number, value: string) => {
-    const fields = [...(block.fields || [])];
-    fields[index] = {
-      type: 'mrkdwn',
-      text: value,
-    };
-    onChange({
-      ...block,
-      fields,
-    });
+    onChange({ ...block, fields });
   };
 
   return (
     <div className='space-y-3'>
       {(block.fields || []).map((field: any, index: number) => (
-        <div key={index} className='flex gap-2'>
-          <Input
-            value={field.text}
-            onChange={e => updateField(index, e.target.value)}
-            placeholder='*Label:* Value'
-          />
-          <Button
-            variant='ghost'
-            size='icon'
-            onClick={() => removeField(index)}
-          >
-            <Trash2 className='h-4 w-4' />
-          </Button>
-        </div>
+        <FieldItemEditor
+          key={index}
+          index={index}
+          text={field.text}
+          onChange={updateField}
+          onRemove={removeField}
+        />
       ))}
       <Button variant='outline' size='sm' onClick={addField} className='w-full'>
         <Plus className='h-4 w-4 mr-2' />
         Add Field
+      </Button>
+      <p className='text-xs text-muted-foreground'>
+        Use Slack markdown: *bold* for labels, and separate labels and values
+        with a colon.
+      </p>
+    </div>
+  );
+}
+
+function parseLinkText(mrkdwn: string) {
+  const match = mrkdwn.match(/<([^|]+)\|(.+)>/);
+  return match ? { url: match[1], text: match[2] } : { url: '', text: '' };
+}
+
+function LinkItemEditor({
+  index,
+  value,
+  onChange,
+  onRemove,
+}: {
+  index: number;
+  value: string;
+  onChange: (index: number, newText: string, newUrl: string) => void;
+  onRemove: (index: number) => void;
+}) {
+  const parsed = parseLinkText(value);
+  const textState = useTextInputWithCursor(parsed.text);
+  const urlState = useTextInputWithCursor(parsed.url);
+
+  useEffect(() => {
+    textState.handleTextChange(parsed.text);
+    urlState.handleTextChange(parsed.url);
+  }, [value]);
+
+  return (
+    <div className='flex gap-2'>
+      <Input
+        ref={textState.inputRef as React.Ref<HTMLInputElement>}
+        value={textState.text}
+        onChange={e => {
+          textState.handleTextChange(e.target.value);
+          onChange(index, e.target.value, urlState.text);
+        }}
+        placeholder='Link Text'
+        className='flex-1'
+      />
+      <Input
+        ref={urlState.inputRef as React.Ref<HTMLInputElement>}
+        value={urlState.text}
+        onChange={e => {
+          urlState.handleTextChange(e.target.value);
+          onChange(index, textState.text, e.target.value);
+        }}
+        placeholder='https://example.com'
+        className='flex-1'
+      />
+      <Button variant='ghost' size='icon' onClick={() => onRemove(index)}>
+        <Trash2 className='h-4 w-4' />
       </Button>
     </div>
   );
@@ -982,83 +1123,45 @@ function LinksBlockEditor({
   block: any;
   onChange: (block: any) => void;
 }) {
-  const addLink = () => {
+  const updateLink = (index: number, newText: string, newUrl: string) => {
     const links = [...(block.elements || [])];
-    links.push({
-      type: 'mrkdwn',
-      text: '<https://example.com|Link Text>',
-    });
-    onChange({
-      ...block,
-      elements: links,
-    });
+    const formatted = newText && newUrl ? `<${newUrl}|${newText}>` : '';
+    links[index] = { type: 'mrkdwn', text: formatted };
+    onChange({ ...block, elements: links });
+  };
+
+  const addLink = () => {
+    const links = [
+      ...(block.elements || []),
+      { type: 'mrkdwn', text: '<https://example.com|Link Text>' },
+    ];
+    onChange({ ...block, elements: links });
   };
 
   const removeLink = (index: number) => {
     const links = [...(block.elements || [])];
     links.splice(index, 1);
-    onChange({
-      ...block,
-      elements: links,
-    });
-  };
-
-  const updateLink = (index: number, text: string, url: string) => {
-    const links = [...(block.elements || [])];
-    links[index] = {
-      type: 'mrkdwn',
-      text: `<${url}|${text}>`,
-    };
-    onChange({
-      ...block,
-      elements: links,
-    });
-  };
-
-  // Helper function to parse link format
-  const parseLinkText = (mrkdwn: string) => {
-    const match = mrkdwn.match(/<([^|]+)\|(.+)>/);
-    return match
-      ? { url: match[1], text: match[2] }
-      : { url: '', text: mrkdwn };
+    onChange({ ...block, elements: links });
   };
 
   return (
     <div className='space-y-3'>
-      {(block.elements || []).map((link: any, index: number) => {
-        const { url, text } = parseLinkText(link.text);
-        return (
-          <div key={index} className='flex gap-2'>
-            <Input
-              value={text}
-              onChange={e => updateLink(index, e.target.value, url)}
-              placeholder='Link Text'
-              className='flex-1'
-            />
-            <Input
-              value={url}
-              onChange={e => updateLink(index, text, e.target.value)}
-              placeholder='https://example.com'
-              className='flex-1'
-            />
-            <Button
-              variant='ghost'
-              size='icon'
-              onClick={() => removeLink(index)}
-            >
-              <Trash2 className='h-4 w-4' />
-            </Button>
-          </div>
-        );
-      })}
+      {(block.elements || []).map((element: any, index: number) => (
+        <LinkItemEditor
+          key={index}
+          index={index}
+          value={element.text}
+          onChange={updateLink}
+          onRemove={removeLink}
+        />
+      ))}
       <Button variant='outline' size='sm' onClick={addLink} className='w-full'>
         <Plus className='h-4 w-4 mr-2' />
         Add Link
       </Button>
+      <p className='text-xs text-muted-foreground'>
+        Links will be formatted as &lt;URL|Text&gt; in Slack's markdown format.
+      </p>
     </div>
   );
-}
-
-function setJsonError(arg0: string | null) {
-  throw new Error('Function not implemented.');
 }

@@ -37,8 +37,8 @@ export function NavMain({
                 'relative transition-all duration-200 ease-out px-3 py-1 rounded-md',
                 'hover:bg-accent/15',
                 item.isActive && [
-                  'bg-gradient-to-r from-primary/5 to-transparent',
-                  'after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:w-1 after:h-full after:rounded-full after:bg-primary',
+                  'bg-gradient-to-r from-[#A692E5]/20 to-transparent',
+                  'after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:w-[3px] after:h-full after:bg-[#A692E5]',
                 ],
               )}
             >
@@ -53,9 +53,10 @@ export function NavMain({
                         'transition-all duration-200',
                         item.isActive
                           ? 'text-primary'
-                          : 'text-muted-foreground/60 group-hover:text-muted-foreground/90',
+                          : 'text-muted-foreground/60 group-hover:text-muted-foreground/60',
                       )}
                       size={18}
+                      strokeWidth={1.5}
                     />
                   </div>
                 )}
@@ -64,7 +65,7 @@ export function NavMain({
                     'transition-all duration-200 transform group-hover:translate-x-0.5',
                     item.isActive
                       ? 'text-foreground font-medium'
-                      : 'text-muted-foreground/80 group-hover:text-foreground/90',
+                      : 'text-muted-foreground/60 group-hover:text-foreground/60',
                   )}
                 >
                   {item.title}

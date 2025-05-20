@@ -265,8 +265,8 @@ export function WebhookManagement() {
 
   return (
     <WebhookContext.Provider value={contextValue}>
-      <div className='space-y-6'>
-        <Card className='border border-border/40 shadow-sm'>
+      <div className='space-y-6 w-full'>
+        <Card className='border border-border/30 shadow-lg bg-zinc-800/20 '>
           <CardHeader>
             <CardTitle>Create New Webhook</CardTitle>
             <CardDescription>
@@ -333,7 +333,7 @@ export function WebhookManagement() {
             </form>
           </CardContent>
         </Card>
-        <Card className='border border-border/40 shadow-sm'>
+        <Card className='border border-border/30 shadow-lg bg-zinc-800/20'>
           <CardHeader className='pb-3'>
             <div className='flex justify-between items-center flex-wrap gap-2 '>
               <div>
@@ -407,7 +407,7 @@ export function WebhookManagement() {
                               {webhook.name}
 
                               <span>
-                                <ArrowUpRight className='h-3.5 w-3.5' />
+                                <ArrowUpRight className='h-3.5 w-3.5 text-[#baa5fe]' />
                               </span>
                             </a>
                           </div>

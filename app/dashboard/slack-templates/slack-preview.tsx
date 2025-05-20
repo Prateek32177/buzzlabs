@@ -106,9 +106,7 @@ export function SlackPreview({ template, jsonError }: SlackPreviewProps) {
                 return (
                   <img
                     key={elemIndex}
-                    src={
-                      element.image_url || '/placeholder.svg?height=20&width=20'
-                    }
+                    src={element.image_url || ''}
                     alt={element.alt_text || 'Context image'}
                     className='h-5 w-5 rounded'
                   />

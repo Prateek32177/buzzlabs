@@ -201,6 +201,7 @@ export async function POST(
             templateId: webhook[0].email_config.template_id,
             data,
             emailCount,
+            webhookId: webhook[0]?.id,
           });
 
           if (success) {
@@ -226,6 +227,7 @@ export async function POST(
             channelName: webhook[0].slack_config.channel_name,
             templateId: webhook[0].slack_config.template_id,
             data,
+            webhookId: webhook[0]?.id,
           });
           if (success) {
             channels.push('slack');

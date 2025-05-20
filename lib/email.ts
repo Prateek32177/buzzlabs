@@ -11,6 +11,7 @@ export async function sendEmail({
   templateId = 'template1',
   data = {},
   emailCount,
+  webhookId,
 }: {
   userId: string;
   from: string;
@@ -18,6 +19,7 @@ export async function sendEmail({
   templateId?: string;
   data: any;
   emailCount?: number;
+  webhookId?: string;
 }) {
   let actionCount = emailCount || 1;
   const checkResult = await checkActionAllowed(userId, 'email', 0, actionCount);
@@ -36,6 +38,7 @@ export async function sendEmail({
       userId,
       templateId,
       TemplateType.EMAIL,
+      webhookId,
     );
 
     if (!template) {

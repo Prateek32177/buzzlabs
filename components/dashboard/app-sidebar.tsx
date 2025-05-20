@@ -152,8 +152,8 @@ export function UsageBar({
   label,
   used,
   total,
-  colorFrom = '#bfaaff', 
-  colorTo = '#9d89ea', 
+  colorFrom = '#bfaaff',
+  colorTo = '#9d89ea',
   isCollapsed = false,
 }: UsageBarProps) {
   const router = useRouter();
@@ -172,16 +172,16 @@ export function UsageBar({
           : 'opacity-100'
       }`}
     >
-      <div className="flex justify-between text-[11px] font-medium text-zinc-500 mb-1 tracking-tight">
+      <div className='flex justify-between text-[11px] font-medium text-zinc-500 mb-1 tracking-tight'>
         <span>{label}</span>
-        <span className="tabular-nums text-zinc-400">
+        <span className='tabular-nums text-zinc-400'>
           {used}/{total}
         </span>
       </div>
 
-      <div className="relative h-2 rounded-full bg-zinc-800/60 shadow-inner overflow-hidden transition-all duration-300 group-hover:shadow-md group-hover:shadow-zinc-900/20">
+      <div className='relative h-2 rounded-full bg-zinc-800/60 shadow-inner overflow-hidden transition-all duration-300 group-hover:shadow-md group-hover:shadow-zinc-900/20'>
         <div
-          className="absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-in-out"
+          className='absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-in-out'
           style={{
             width: `${percentage}%`,
             background: `linear-gradient(to right, ${colorFrom}, ${colorTo})`,

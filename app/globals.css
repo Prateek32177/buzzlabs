@@ -70,9 +70,9 @@
     --chart-5: 240 10% 18%;
 
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 250 70% 55%;
+    --sidebar-primary: #0f0f11;
     --sidebar-primary-foreground: 0 0% 5%;
-    --sidebar-accent: 240 6% 24%;
+    --sidebar-accent: #0f0f11;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 240 6% 14%;
     --sidebar-ring: 255 100% 80%;

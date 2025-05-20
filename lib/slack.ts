@@ -7,12 +7,14 @@ export async function sendSlackNotification({
   channelName,
   templateId = 'template2',
   data,
+  webhookId,
 }: {
   userId: string;
   webhookUrl: string;
   channelName: string;
   templateId?: string;
   data: any;
+  webhookId?: string;
 }) {
   const checkResult = await checkActionAllowed(userId, 'slack');
 
@@ -32,6 +34,7 @@ export async function sendSlackNotification({
       userId,
       templateId,
       TemplateType.SLACK,
+      webhookId,
     );
 
     if (!template) {
@@ -79,60 +82,37 @@ export async function sendSlackNotification({
   }
 }
 
-// Helper function to replace variables in template
 function replaceVariables(template: any, data: Record<string, any>): any {
-  if (typeof template === 'string') {
-    return template.replace(/{{([\w.]+)}}/g, (match, key) => {
-      // Split the key by dots to handle nested properties
-      const keys = key.split('.');
-      let value = data;
-
-      // Traverse the nested structure
-      for (const k of keys) {
-        if (value === undefined || value === null) {
-          return match; // Keep original placeholder if any part of the path is undefined
-        }
-
-        // Handle array properties
-        if (Array.isArray(value)) {
-          // If we're at the last key and it's an array, return the first item
-          if (k === keys[keys.length - 1]) {
-            value = value[0];
-          } else {
-            // Otherwise, try to find the item in the array that matches the next key
-            const nextKey = keys[keys.indexOf(k) + 1];
-            value = value.find(item => item[nextKey] !== undefined);
-          }
-        } else {
-          value = value[k];
-        }
+  const resolvePath = (path: string): any => {
+    return path.split('.').reduce((obj, key) => {
+      if (obj && typeof obj === 'object') {
+        return obj[key];
       }
+      return undefined;
+    }, data);
+  };
 
-      // If we found a value, return it, otherwise keep the original placeholder
-      if (value === undefined || value === null) {
-        return match;
+  const replacer = (value: any): any => {
+    if (typeof value === 'string') {
+      return value.replace(/{{([\w.]+)}}/g, (_, key) => {
+        const resolved = resolvePath(key);
+        if (resolved === undefined || resolved === null) return `{{${key}}}`;
+        return typeof resolved === 'object'
+          ? JSON.stringify(resolved)
+          : String(resolved);
+      });
+    } else if (Array.isArray(value)) {
+      return value.map(replacer);
+    } else if (typeof value === 'object' && value !== null) {
+      const replacedObject: Record<string, any> = {};
+      for (const [k, v] of Object.entries(value)) {
+        replacedObject[k] = replacer(v);
       }
-
-      // Convert the value to string, handling objects and arrays
-      if (typeof value === 'object') {
-        return JSON.stringify(value);
-      }
-
-      return String(value);
-    });
-  }
-
-  if (Array.isArray(template)) {
-    return template.map(item => replaceVariables(item, data));
-  }
-
-  if (typeof template === 'object' && template !== null) {
-    const result: Record<string, any> = {};
-    for (const [key, value] of Object.entries(template)) {
-      result[key] = replaceVariables(value, data);
+      return replacedObject;
+    } else {
+      return value;
     }
-    return result;
-  }
+  };
 
-  return template;
+  return replacer(template);
 }

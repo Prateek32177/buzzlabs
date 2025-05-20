@@ -966,6 +966,23 @@ function createEmptyBlock(type: string) {
           },
         ],
       };
+    case 'links':
+      return {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: 'Check out these links:',
+        },
+        accessory: {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Visit Link',
+            emoji: true,
+          },
+          url: 'https://example.com',
+        },
+      };
     default:
       return {
         type,

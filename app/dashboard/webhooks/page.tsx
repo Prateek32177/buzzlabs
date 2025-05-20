@@ -6,28 +6,6 @@ import { PlanLimitsDialog } from '../settings/usage/usage-settings';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function WebhooksPage() {
-  return (
-    <div className='space-y-6 px-4 md:px-10 max-w-full'>
-      <div className='flex flex-wrap items-center justify-between gap-4'>
-        <div className='flex flex-col gap-2'>
-          <h1 className='text-3xl font-bold tracking-tight'>Welcome back</h1>
-          <p className='text-zinc-400'>
-            Here's an overview of your webhook activity
-          </p>
-        </div>
-        <PlanLimitsDialog text='Usage Limit' />
-      </div>
-      <div className='flex flex-col gap-4 md:flex-row'>
-        <WebhookManagement />
-        <div className='hidden md:flex flex-col gap-4'>
-          <UseCaseCard />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 const useCases = [
   {
     title: 'Track New Signups',
@@ -55,7 +33,29 @@ const useCases = [
   },
 ];
 
-export function UseCaseCard() {
+export default function WebhooksPage() {
+  return (
+    <div className='space-y-6 px-4 md:px-10 max-w-full'>
+      <div className='flex flex-wrap items-center justify-between gap-4'>
+        <div className='flex flex-col gap-2'>
+          <h1 className='text-3xl font-bold tracking-tight'>Welcome back</h1>
+          <p className='text-zinc-400'>
+            Here's an overview of your webhook activity
+          </p>
+        </div>
+        <PlanLimitsDialog text='Usage Limit' />
+      </div>
+      <div className='flex flex-col gap-4 md:flex-row'>
+        <WebhookManagement />
+        <div className='hidden md:flex flex-col gap-4'>
+          <UseCaseCard />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UseCaseCard() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {

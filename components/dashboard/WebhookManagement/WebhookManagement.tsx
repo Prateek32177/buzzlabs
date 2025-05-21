@@ -274,63 +274,12 @@ export function WebhookManagement() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form
-              onSubmit={e => {
-                e.preventDefault();
-                if (newWebhookName.length >= 3) {
-                  addWebhook();
-                } else {
-                  toast.error('Validation Error', {
-                    description:
-                      'Webhook name must be at least 3 characters long',
-                  });
-                }
-              }}
-              className='flex flex-col sm:flex-row gap-4'
-            >
-              <div className='flex-1 flex items-center relative'>
-                <Anchor
-                  strokeWidth={1.5}
-                  className={`h-4 w-4 absolute left-3 text-muted-foreground transition-all duration-300 ${
-                    newWebhookName ? 'text-primary' : ''
-                  }`}
-                  style={{
-                    transform: newWebhookName
-                      ? 'translateY(-1px) rotate(5deg)'
-                      : 'none',
-                    filter: newWebhookName
-                      ? 'drop-shadow(0 0 2px rgb(var(--primary)))'
-                      : 'none',
-                  }}
-                />
-                <Input
-                  placeholder='Add webhook name'
-                  value={newWebhookName}
-                  onChange={e => setNewWebhookName(e.target.value)}
-                  className={`flex-1 border border-border/70 pl-9 placeholder:text-sm transition-all duration-300 ${
-                    newWebhookName
-                      ? 'shadow-[0_0_0_1px] shadow-primary/20 border-primary/40'
-                      : ''
-                  }`}
-                  required
-                  minLength={3}
-                />
-              </div>
-              <Button
-                type='submit'
-                variant='default'
-                className='whitespace-nowrap tracking-tight font-normal'
-              >
-                {isLoading ? (
-                  <Loader2 className='h-4 w-4 animate-spin' />
-                ) : (
-                  <>
-                    <Plus className='h-4 w-4' />
-                    <span>Create Webhook</span>
-                  </>
-                )}
-              </Button>
-            </form>
+            <AnimatedWebhookInput
+              newWebhookName={newWebhookName}
+              setNewWebhookName={setNewWebhookName}
+              addWebhook={addWebhook}
+              isLoading={isLoading}
+            />
           </CardContent>
         </Card>
         <Card className='border border-border/30 shadow-lg bg-zinc-800/20'>
@@ -561,5 +510,92 @@ export function WebhookManagement() {
         <SlackConfigDialog />
       </div>
     </WebhookContext.Provider>
+  );
+}
+
+const useCases = [
+  'Create Stripe Payment Alerts',
+  'Notify on Supabase Auth Events',
+  'Trigger Slack for New Users',
+  'Receive Dodo Payment Failures',
+  'Track GitHub PRs via Webhooks',
+];
+
+export function AnimatedWebhookInput({
+  newWebhookName,
+  setNewWebhookName,
+  addWebhook,
+  isLoading,
+}: {
+  newWebhookName: string;
+  setNewWebhookName: (val: string) => void;
+  addWebhook: () => void;
+  isLoading: boolean;
+}) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!newWebhookName) {
+        setIndex(i => (i + 1) % useCases.length);
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [newWebhookName]);
+
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        if (newWebhookName.length >= 3) {
+          addWebhook();
+        } else {
+          toast.error('Validation Error', {
+            description: 'Webhook name must be at least 3 characters long',
+          });
+        }
+      }}
+      className='relative align-middle z-10 w-full flex items-center sm:gap-4 gap-2 sm:justify-between rounded-2xl p-1 backdrop-blur-md border border-white/10 bg-white/[0.02] shadow-md'
+    >
+      <div className='relative flex-1 w-full'>
+        <Anchor
+          strokeWidth={1.5}
+          className={`h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-all duration-300 ${
+            newWebhookName ? 'text-primary' : ''
+          }`}
+        />
+        <input
+          type='text'
+          value={newWebhookName}
+          onChange={e => setNewWebhookName(e.target.value)}
+          className='w-full pl-9 pr-4 py-3 bg-transparent rounded-xl text-sm text-white outline-none focus:shadow-[0_0_0_1px] focus:shadow-primary/30 transition-all duration-300'
+          required
+          minLength={3}
+        />
+        {/* Animated Use Case Placeholder */}
+        {newWebhookName === '' && (
+          <div className='pointer-events-none absolute left-9 top-1/2 -translate-y-1/2 text-sm text-muted-foreground h-[20px] overflow-hidden'>
+            <div key={index} className='animate-slide-up'>
+              {useCases[index]}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Button
+        type='submit'
+        variant='default'
+        className='px-5 py-3 rounded-xl font-medium text-sm flex items-center gap-2 whitespace-nowrap sm:min-w-[140px] mr-1'
+      >
+        {isLoading ? (
+          <Loader2 className='h-4 w-4 animate-spin' />
+        ) : (
+          <>
+            <Plus className='h-4 w-4' />
+            <span className='hidden sm:inline'>Create Webhook</span>
+          </>
+        )}
+      </Button>
+    </form>
   );
 }

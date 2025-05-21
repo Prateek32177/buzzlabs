@@ -43,50 +43,11 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         </CardHeader>
         <CardContent>
           <div className='grid w-full items-center gap-4'>
-            <div className='flex flex-col gap-2 [&>input]:mb-3'>
-              <Label htmlFor='email'>Email</Label>
-              <Input
-                name='email'
-                placeholder='you@example.com'
-                required
-                className='placeholder:text-sm'
-              />
-              <div className='flex items-center justify-between'>
-                <Label htmlFor='password'>Password</Label>
-                <Link
-                  className='text-xs text-foreground underline'
-                  href='/forgot-password'
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-              <Input
-                type='password'
-                name='password'
-                placeholder='Your password'
-                required
-                className='placeholder:text-sm'
-              />
-
-              <FormMessage message={searchParams} />
-            </div>
-
-            <div className='relative mb-2'>
-              <div className='absolute inset-0 flex items-center'>
-                <Separator className='w-full' />
-              </div>
-              <div className='relative flex justify-center text-xs uppercase'>
-                <span className='bg-card px-2 text-muted-foreground'>
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
             <div className='flex flex-col gap-2'>
               <Button
                 variant='outline'
                 type='button'
-                className='w-full flex items-center gap-2 transition-all  '
+                className='w-full flex items-center gap-2 transition-all '
                 onClick={signInWithGithubAction}
               >
                 <Github className='h-4 w-4' />
@@ -120,6 +81,45 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
                 </svg>
                 <span>Google</span>
               </Button> */}
+            </div>
+
+            <div className='relative my-2'>
+              <div className='absolute inset-0 flex items-center'>
+                <Separator className='w-full' />
+              </div>
+              <div className='relative flex justify-center text-xs uppercase'>
+                <span className='bg-card px-2 text-muted-foreground'>
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            <div className='flex flex-col gap-2 [&>input]:mb-3'>
+              <Label htmlFor='email'>Email</Label>
+              <Input
+                name='email'
+                placeholder='you@example.com'
+                required
+                className='placeholder:text-sm'
+              />
+              <div className='flex items-center justify-between'>
+                <Label htmlFor='password'>Password</Label>
+                <Link
+                  className='text-xs text-foreground underline'
+                  href='/forgot-password'
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+              <Input
+                type='password'
+                name='password'
+                placeholder='Your password'
+                required
+                className='placeholder:text-sm'
+              />
+
+              <FormMessage message={searchParams} />
             </div>
           </div>
         </CardContent>

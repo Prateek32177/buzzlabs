@@ -972,7 +972,7 @@ function createEmptyBlock(type: string) {
         text: {
           type: 'mrkdwn',
           text: 'Check out these links:',
-        }
+        },
       };
     default:
       return {

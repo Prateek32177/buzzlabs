@@ -43,13 +43,13 @@ export default async function Signup(props: {
           <CardContent>
             <div className='grid w-full items-center gap-4'>
               <div className='flex flex-col gap-2 [&>input]:mb-3'>
-                <Label htmlFor='username'>Username</Label>
+                {/* <Label htmlFor='username'>Username</Label>
                 <Input
                   name='username'
                   placeholder='Enter your username'
                   required
                   className='placeholder:text-sm'
-                />
+                /> */}
                 <Label htmlFor='email'>Email</Label>
                 <Input
                   name='email'

@@ -14,7 +14,7 @@ import { SupabaseLogo, ClerkLogo } from '../Logos';
 import { StripeWordmarkLogo } from '@/components/Logos/StripeLogo';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { DodoLogo } from '../Logos/DodoPayments';
-import { SignInDialog } from '../auth/SignInDialog';
+import { SignInDialog } from '@/components/auth/signInDialog';
 import { Button } from '../ui/button';
 
 export default function Hero() {

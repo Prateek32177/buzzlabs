@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Logo } from '../Logo';
 import Link from 'next/link';
-import { SignInDialog } from '../auth/SignInDialog';
+import { SignInDialog } from '@/components/auth/signInDialog';
 
 export function Navbar() {
   const pathname = usePathname();

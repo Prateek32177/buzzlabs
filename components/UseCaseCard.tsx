@@ -98,7 +98,7 @@ export function UseCaseCard({
         <p className='text-zinc-400 text-sm leading-relaxed mb-4 flex-1'>
           {useCase.description}
         </p>
-        <div className='hidden sm:block'>{useCase.background}</div>
+        <div className='hidden md:block'>{useCase.background}</div>
         <div className='space-y-1.5 mb-4'>
           {useCase?.features.map((feature, idx) => (
             <motion.div

@@ -6,7 +6,7 @@ import { useCases } from '../UseCaseCard';
 
 export function UseCaseSection() {
   return (
-    <section className=' relative bg-zinc-950/80 text-white py-24 px-4 md:px-8'>
+    <section className=' relative bg-black/60 text-white py-24 px-4 md:px-8'>
       <div className='max-w-6xl mx-auto'>
         {/* Header */}
         <div className='text-center mb-12 md:mb-16'>

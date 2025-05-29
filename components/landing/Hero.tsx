@@ -9,13 +9,12 @@ import {
 import { motion } from 'framer-motion';
 import { Ripple } from '../magicui/ripple';
 import { Badge } from '../ui/badge';
-import Link from 'next/link';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
 import { SupabaseLogo, ClerkLogo } from '../Logos';
 import { StripeWordmarkLogo } from '@/components/Logos/StripeLogo';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { DodoLogo } from '../Logos/DodoPayments';
-import { SignInDialog } from '@/components/auth/SignInDialog';
+import { SignInDialog } from '../auth/SignInDialog';
 import { Button } from '../ui/button';
 
 export default function Hero() {

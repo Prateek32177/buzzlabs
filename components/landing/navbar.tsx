@@ -3,8 +3,8 @@
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Logo } from '../Logo';
-import { ChevronsRight } from 'lucide-react';
 import Link from 'next/link';
+import { SignInDialog } from '@/components/auth/SignInDialog';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -34,15 +34,15 @@ export function Navbar() {
                 >
                   <Link href='/sign-up'>Sign up</Link>
                 </Button>
-                <Button
-                  size='sm'
-                  className='bg-[#f5f3ff] text-zinc-900 hover:bg-white border border-zinc-300 shadow-sm transition-colors'
-                  asChild
-                >
-                  <Link href='/sign-in' className='flex items-center group'>
+
+                <SignInDialog>
+                  <Button
+                    size='sm'
+                    className='bg-[#f5f3ff] text-zinc-900 hover:bg-white border border-zinc-300 shadow-sm transition-colors'
+                  >
                     Start free trial
-                  </Link>
-                </Button>
+                  </Button>
+                </SignInDialog>
               </div>
             )}
           </div>

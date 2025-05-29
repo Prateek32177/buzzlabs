@@ -5,6 +5,7 @@ import Features from './Features';
 import { Footer } from './footer';
 import Hero from './Hero';
 import TryYourself from './try-yourself';
+import { UseCaseSection } from './Use-case';
 
 const Index = () => {
   return (
@@ -13,6 +14,7 @@ const Index = () => {
       <Hero />
       <Introduction />
       <Features />
+      <UseCaseSection />
       <IntegrationSection />
       <TryYourself />
       <Footer />

@@ -15,6 +15,9 @@ import { SupabaseLogo, ClerkLogo } from '../Logos';
 import { StripeWordmarkLogo } from '@/components/Logos/StripeLogo';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { DodoLogo } from '../Logos/DodoPayments';
+import { SignInDialog } from '../auth/SignInDialog';
+import { Button } from '../ui/button';
+
 export default function Hero() {
   const iconClasses =
     'w-6 h-6 text-zinc-400 transition-colors group-hover:text-white';
@@ -98,15 +101,17 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className='mt-8 flex flex-col sm:flex-row gap-4 justify-center px-4 sm:px-0'
         >
-          <Link
-            href='/sign-in'
-            className='group inline-flex h-10 items-center justify-center rounded-md bg-white px-4 text-sm  text-zinc-900 transition-all duration-300 hover:bg-white/80 shadow-sm ring-1 ring-zinc-900/10 backdrop-blur-sm hover:ring-zinc-900/20'
-          >
-            <span className='relative z-10 flex items-center'>
-              Start Tracking Events
-              <ArrowUpRight className='ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
-            </span>
-          </Link>
+          <SignInDialog>
+            <Button
+              size='sm'
+              className='group inline-flex h-10 items-center justify-center rounded-md bg-white px-4 text-sm  text-zinc-900 transition-all duration-300 hover:bg-white/80 shadow-sm ring-1 ring-zinc-900/10 backdrop-blur-sm hover:ring-zinc-900/20'
+            >
+              <span className='relative z-10 flex items-center'>
+                Start Tracking Events
+                <ArrowUpRight className='ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
+              </span>
+            </Button>
+          </SignInDialog>
         </motion.div>
 
         <motion.div

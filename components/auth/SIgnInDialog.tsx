@@ -23,6 +23,7 @@ export function SignInDialog({
   onSuccess,
 }: SignInDialogProps) {
   const [open, setOpen] = useState(false);
+  const [key, setKey] = useState(0);
 
   const handleSuccess = () => {
     setOpen(false);
@@ -30,7 +31,7 @@ export function SignInDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog key={key} open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='max-w-[350px] sm:max-w-sm rounded-lg p-3'>
         <DialogTitle className='hidden'>Sign In</DialogTitle>

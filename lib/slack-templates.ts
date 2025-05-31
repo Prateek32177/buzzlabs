@@ -12,7 +12,6 @@ type Template = {
 };
 
 export const slackTemplates: Template[] = [
-  // GitHub Templates
   {
     id: 'github-general',
     name: 'GitHub - Repository Activity',
@@ -157,7 +156,6 @@ export const slackTemplates: Template[] = [
     }),
   },
 
-  // Clerk Templates
   {
     id: 'clerk-user-created',
     name: 'Clerk - New User Created',
@@ -209,7 +207,6 @@ export const slackTemplates: Template[] = [
     }),
   },
 
-  // Stripe Templates
   {
     id: 'stripe-payment-succeeded',
     name: 'Stripe - Payment Succeeded',
@@ -270,7 +267,6 @@ export const slackTemplates: Template[] = [
     }),
   },
 
-  // Custom Template
   {
     id: 'custom-general-alert',
     name: 'Custom - General Alert',

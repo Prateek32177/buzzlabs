@@ -20,18 +20,11 @@ import {
   Template as ServiceTemplate,
 } from '@/utils/template-manager';
 import { toast } from 'sonner';
-import { Save, RefreshCw, HelpCircle, ArrowUpRight } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Save, RefreshCw, ArrowUpRight } from 'lucide-react';
 import { getUser } from '@/hooks/user-auth';
 import { useSearchParams } from 'next/navigation';
 import { Loader } from '@/components/ui/loader';
+import { VariablesGuideDialog } from '@/components/dashboard/templates/VariableGuideDialog';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -460,61 +453,7 @@ export default function EmailTemplateEditor() {
             </Select>
           </div>
           <div className='flex gap-2 flex-wrap'>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant='outline'
-                  className='flex items-center gap-2  text-xs sm:text-sm'
-                >
-                  <HelpCircle className='h-4 w-4' />
-                  Variables Guide
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>How to Use Dynamic Variables</DialogTitle>
-                  <DialogDescription>
-                    Use variables to personalize your email templates
-                  </DialogDescription>
-                </DialogHeader>
-                <div className='py-4 text-sm'>
-                  <h3 className='font-medium mb-2'>Variable Format</h3>
-                  <p className='mb-4'>
-                    Insert variables using double curly braces:{' '}
-                    <code>{'{{variableName}}'}</code>
-                  </p>
-
-                  <h3 className='font-medium mb-2'>Common Variables</h3>
-                  <ul className='space-y-2 list-disc pl-5'>
-                    <li>
-                      <code>{'{{firstName}}'}</code> - Recipient's first name
-                    </li>
-                    <li>
-                      <code>{'{{lastName}}'}</code> - Recipient's last name
-                    </li>
-                    <li>
-                      <code>{'{{company}}'}</code> - Company name
-                    </li>
-                    <li>
-                      <code>{'{{date}}'}</code> - Current date
-                    </li>
-                    <li>
-                      <code>{'{{productName}}'}</code> - Product name
-                    </li>
-                    <li>
-                      <code>{'{{orderNumber}}'}</code> - Order reference
-                    </li>
-                  </ul>
-
-                  <h3 className='font-medium mt-4 mb-2'>Example</h3>
-                  <pre className='bg-muted p-2 rounded text-xs text-wrap'>
-                    {`<p>Hello {{firstName}},</p>
-<p>Thank you for your order #{{orderNumber}} from {{company}}.</p>`}
-                  </pre>
-                </div>
-              </DialogContent>
-            </Dialog>
-
+            <VariablesGuideDialog platform='email' />
             <Button
               size={'sm'}
               onClick={saveTemplate}

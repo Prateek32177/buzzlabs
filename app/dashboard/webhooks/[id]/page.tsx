@@ -1020,7 +1020,7 @@ function SlackConfigForm({
   const [slackConfig, setSlackConfig] = useState({
     webhook_url: webhook.slack_config?.webhook_url || '',
     channel_name: webhook.slack_config?.channel_name || '',
-    template_id: webhook.slack_config?.template_id || 'basic',
+    template_id: webhook.slack_config?.template_id || 'supabase-user-signup',
   });
 
   useEffect(() => {

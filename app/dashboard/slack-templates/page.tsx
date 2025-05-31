@@ -27,13 +27,15 @@ import { Save, RefreshCw, ArrowUpRight } from 'lucide-react';
 import { getUser } from '@/hooks/user-auth';
 import { useSearchParams } from 'next/navigation';
 import { Loader } from '@/components/ui/loader';
+import { VariablesGuideDialog } from '@/components/dashboard/templates/VariableGuideDialog';
 
 type TemplateId = { templateId: string };
 
 export default function SlackTemplateEditor() {
   const searchParams = useSearchParams();
   const template_id =
-    (searchParams.get('templateId') as TemplateId['templateId']) || 'basic';
+    (searchParams.get('templateId') as TemplateId['templateId']) ||
+    'supabase-user-signup';
   const webhook_id = searchParams.get('webhookId') || '';
   const [selectedTemplate, setSelectedTemplate] = useState<any | null>(null);
   const [templateCode, setTemplateCode] = useState<string>('');
@@ -454,7 +456,8 @@ export default function SlackTemplateEditor() {
               </SelectContent>
             </Select>
           </div>
-          <div className='flex gap-2'>
+          <div className='flex gap-2 flex-wrap sm:flex-nowrap'>
+            <VariablesGuideDialog platform='slack' />
             <Button
               size={'sm'}
               onClick={saveTemplate}

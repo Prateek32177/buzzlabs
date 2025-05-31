@@ -12,53 +12,21 @@ type Template = {
 };
 
 export const slackTemplates: Template[] = [
+  // GitHub Templates
   {
-    id: 'basic',
-    name: 'Basic Notification',
+    id: 'github-general',
+    name: 'GitHub - Repository Activity',
     type: TemplateType.SLACK,
     render: data => ({
-      username: 'Notification Bot',
-      icon_emoji: ':bell:',
-      text: 'You have a new notification!',
+      username: 'GitHub Alerts',
+      icon_emoji: ':octocat:',
+      text: `🔔 New GitHub Event: ${data?.event_type || 'push'}`,
       blocks: [
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: '*New Notification*\nYou have received a new notification from the system.',
-          },
-        },
-        {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'View Details',
-              },
-              style: 'primary',
-              value: 'view_details',
-            },
-          ],
-        },
-      ],
-    }),
-  },
-  {
-    id: 'welcome',
-    name: 'Welcome Message',
-    type: TemplateType.SLACK,
-    render: data => ({
-      username: 'Welcome Bot',
-      icon_emoji: ':wave:',
-      text: 'Welcome to the team!',
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: "*Welcome to the team!* :tada:\nWe're excited to have you join us. Here are some resources to help you get started:",
+            text: `*${data?.repository?.full_name || 'example/repo'}*\nEvent: *${data?.event_type || 'push'}*`,
           },
         },
         {
@@ -66,69 +34,52 @@ export const slackTemplates: Template[] = [
           fields: [
             {
               type: 'mrkdwn',
-              text: '*Onboarding Guide:*\n<https://example.com/onboarding|View Guide>',
+              text: `*By:*\n${data?.sender?.login || 'octocat'}`,
             },
             {
               type: 'mrkdwn',
-              text: '*Team Calendar:*\n<https://example.com/calendar|View Calendar>',
+              text: `*Branch:*\n${data?.ref?.split('/')?.pop() || 'main'}`,
             },
           ],
         },
         {
-          type: 'divider',
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: { type: 'plain_text', text: 'View Repo' },
+              url:
+                data?.repository?.html_url || 'https://github.com/example/repo',
+              style: 'primary',
+              value: 'view_repo',
+            },
+          ],
+        },
+      ],
+    }),
+  },
+  {
+    id: 'github-pr',
+    name: 'GitHub - Pull Request',
+    type: TemplateType.SLACK,
+    render: data => ({
+      username: 'GitHub PR Bot',
+      icon_emoji: ':twisted_rightwards_arrows:',
+      text: `🛠 Pull Request ${data?.action || 'opened'}: ${data?.pull_request?.title || 'Fix login issue'}`,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*${data?.pull_request?.title || 'Fix login issue'}*\nStatus: *${data?.action || 'opened'}*`,
+          },
         },
         {
           type: 'context',
           elements: [
             {
-              type: 'image',
-              image_url:
-                'https://api.slack.com/img/blocks/bkb_template_images/placeholder.png',
-              alt_text: 'placeholder',
-            },
-            {
               type: 'mrkdwn',
-              text: 'Your onboarding buddy is @sarah. Feel free to reach out with any questions!',
-            },
-          ],
-        },
-      ],
-    }),
-  },
-  {
-    id: 'weekly-summary',
-    name: 'Weekly Summary',
-    type: TemplateType.SLACK,
-    render: data => ({
-      username: 'Analytics Bot',
-      icon_emoji: ':chart_with_upwards_trend:',
-      text: 'Your weekly summary is ready',
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: '*Weekly Summary: March 22-28, 2023*',
-          },
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: '*New Users:*\n+125 (↑15%)',
-            },
-            {
-              type: 'mrkdwn',
-              text: '*Active Users:*\n1,204 (↑8%)',
-            },
-            {
-              type: 'mrkdwn',
-              text: '*Revenue:*\n$12,540 (↑23%)',
-            },
-            {
-              type: 'mrkdwn',
-              text: '*Churn Rate:*\n2.4% (↓0.5%)',
+              text: `By *${data?.sender?.login || 'octocat'}* on ${data?.repository?.full_name || 'example/repo'}`,
             },
           ],
         },
@@ -137,20 +88,42 @@ export const slackTemplates: Template[] = [
           elements: [
             {
               type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'View Full Report',
-              },
+              text: { type: 'plain_text', text: 'View PR' },
+              url:
+                data?.pull_request?.html_url ||
+                'https://github.com/example/repo/pull/1',
               style: 'primary',
-              value: 'view_report',
+              value: 'view_pr',
             },
+          ],
+        },
+      ],
+    }),
+  },
+
+  // Supabase Templates
+  {
+    id: 'supabase-user-signup',
+    name: 'Supabase - New User Signup',
+    type: TemplateType.SLACK,
+    render: data => ({
+      username: 'Supabase Auth',
+      icon_emoji: ':busts_in_silhouette:',
+      text: `🎉 New user signup detected`,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*New Signup:*\nEmail: ${data?.record?.email || 'user@example.com'}\nProvider: ${data?.record?.auth_provider || 'email'}`,
+          },
+        },
+        {
+          type: 'context',
+          elements: [
             {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Download CSV',
-              },
-              value: 'download_csv',
+              type: 'mrkdwn',
+              text: `User ID: ${data?.record?.id || 'user_abc123'}`,
             },
           ],
         },
@@ -158,133 +131,168 @@ export const slackTemplates: Template[] = [
     }),
   },
   {
-    id: 'subscription-renewal',
-    name: 'Subscription Renewal',
+    id: 'supabase-user-update',
+    name: 'Supabase - User Updated or Deleted',
     type: TemplateType.SLACK,
     render: data => ({
-      username: 'Subscription Bot',
+      username: 'Supabase Alerts',
+      icon_emoji: ':warning:',
+      text: `⚠️ User record ${data?.type || 'updated'}`,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*User Email:* ${data?.old_record?.email || 'user@example.com'}\n*Action:* ${data?.type || 'UPDATE'}`,
+          },
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Old Data:*\n\`\`\`${JSON.stringify(data?.old_record || {}, null, 2)}\`\`\``,
+          },
+        },
+      ],
+    }),
+  },
+
+  // Clerk Templates
+  {
+    id: 'clerk-user-created',
+    name: 'Clerk - New User Created',
+    type: TemplateType.SLACK,
+    render: data => ({
+      username: 'Clerk Alerts',
+      icon_emoji: ':new:',
+      text: `🧑‍💼 New Clerk user created`,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*User:* ${data?.data?.email_addresses?.[0]?.email_address || 'jane.doe@example.com'}\n*ID:* ${data?.data?.id || 'user_abc123'}`,
+          },
+        },
+        {
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: { type: 'plain_text', text: 'View in Clerk' },
+              url: `https://dashboard.clerk.com/users/${data?.data?.id || 'user_abc123'}`,
+              style: 'primary',
+              value: 'view_user',
+            },
+          ],
+        },
+      ],
+    }),
+  },
+  {
+    id: 'clerk-user-deleted',
+    name: 'Clerk - User Deleted',
+    type: TemplateType.SLACK,
+    render: data => ({
+      username: 'Clerk Alerts',
+      icon_emoji: ':x:',
+      text: `🚫 Clerk user deleted`,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Email:* ${data?.data?.email_addresses?.[0]?.email_address || 'john@example.com'}\n*Deleted At:* ${new Date(data?.timestamp || Date.now()).toLocaleString()}`,
+          },
+        },
+      ],
+    }),
+  },
+
+  // Stripe Templates
+  {
+    id: 'stripe-payment-succeeded',
+    name: 'Stripe - Payment Succeeded',
+    type: TemplateType.SLACK,
+    render: data => ({
+      username: 'Stripe Payments',
+      icon_emoji: ':money_with_wings:',
+      text: `✅ Payment successful`,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `*Amount:* $${(data?.data?.object?.amount_total || 2999) / 100}\n*Customer:* ${data?.data?.object?.customer_email || 'customer@example.com'}`,
+          },
+        },
+        {
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: { type: 'plain_text', text: 'View Payment' },
+              url: `https://dashboard.stripe.com/payments/${data?.data?.object?.id || 'pi_12345'}`,
+              style: 'primary',
+              value: 'view_payment',
+            },
+          ],
+        },
+      ],
+    }),
+  },
+  {
+    id: 'stripe-subscription-renewal',
+    name: 'Stripe - Subscription Renewal',
+    type: TemplateType.SLACK,
+    render: data => ({
+      username: 'Stripe Subscriptions',
       icon_emoji: ':calendar:',
-      text: 'Subscription renewal notice',
+      text: `🔁 Subscription renewed`,
       blocks: [
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: '*Subscription Renewal Notice*',
+            text: `*Plan:* ${data?.data?.object?.plan?.nickname || 'Pro Monthly'}\n*Amount:* $${(data?.data?.object?.amount || 2999) / 100}`,
           },
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: 'Your subscription for *Premium Plan* will renew automatically on *April 15, 2023*. The renewal amount is *$29.99*.',
-          },
-        },
-        {
-          type: 'section',
-          fields: [
-            {
-              type: 'mrkdwn',
-              text: '*Current Plan:*\nPremium ($29.99/month)',
-            },
-            {
-              type: 'mrkdwn',
-              text: '*Renewal Date:*\nApril 15, 2023',
-            },
-            {
-              type: 'mrkdwn',
-              text: '*Payment Method:*\nVisa ending in 4242',
-            },
-            {
-              type: 'mrkdwn',
-              text: '*Billing Cycle:*\nMonthly',
-            },
-          ],
-        },
-        {
-          type: 'divider',
-        },
-        {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Manage Subscription',
-              },
-              style: 'primary',
-              value: 'manage_subscription',
-            },
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Update Payment Method',
-              },
-              value: 'update_payment',
-            },
-          ],
         },
         {
           type: 'context',
           elements: [
             {
               type: 'mrkdwn',
-              text: 'If you have any questions, please contact support@example.com',
+              text: `Customer: ${data?.data?.object?.customer_email || 'subscriber@example.com'}`,
             },
           ],
         },
       ],
     }),
   },
+
+  // Custom Template
   {
-    id: 'custom',
-    name: 'Custom Template',
+    id: 'custom-general-alert',
+    name: 'Custom - General Alert',
     type: TemplateType.SLACK,
     render: data => ({
-      username: 'Custom Bot',
-      icon_emoji: ':robot_face:',
-      text: 'This is a custom template',
+      username: 'AlertBot',
+      icon_emoji: ':rotating_light:',
+      text: data?.summary || '⚠️ A custom alert was triggered',
       blocks: [
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: 'This is a custom template. Edit it to create your own notification format.',
+            text: `*Summary:* ${data?.summary || 'Alert triggered due to high CPU usage'}`,
           },
-        },
-        {
-          type: 'divider',
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: 'You can add sections, buttons, images, and more to customize this template.',
+            text: `*Details:*\n\`\`\`${JSON.stringify(data?.details || { cpu: '95%' }, null, 2)}\`\`\``,
           },
-        },
-        {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Primary Button',
-              },
-              style: 'primary',
-              value: 'primary_action',
-            },
-            {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Secondary Button',
-              },
-              value: 'secondary_action',
-            },
-          ],
         },
       ],
     }),

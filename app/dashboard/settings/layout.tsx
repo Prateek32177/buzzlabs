@@ -45,7 +45,9 @@ const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className='container mx-auto space-y-6 px-2'>
-      <h1 className='text-2xl md:text-3xl text-white font-bold mb-6'>Settings</h1>
+      <h1 className='text-2xl md:text-3xl text-white font-bold mb-6'>
+        Settings
+      </h1>
 
       <Tabs
         value={currentTab}

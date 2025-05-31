@@ -402,7 +402,7 @@ export default function EmailTemplateEditor() {
   return (
     <div className=' mx-auto p-2 sm:p-4 space-y-6 w-full'>
       <div className='flex flex-col gap-6'>
-        <h2 className='text-xl sm:text-3xl font-bold tracking-tight text-foreground'>
+        <h2 className='text-2xl sm:text-3xl font-bold tracking-tight text-foreground'>
           Email Template Editor
         </h2>
         <div className='flex items-center justify-between flex-wrap gap-4 '>

@@ -247,9 +247,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const currentConfig = platformConfigs[platform];
 
   return (
-    <div className='container mx-auto p-6 space-y-6'>
+    <div className='container mx-auto p-4 space-y-6'>
       <div className='flex flex-col gap-2'>
-        <h1 className='text-3xl font-bold tracking-tight'>Webhook Details</h1>
+        <h1 className='text-2xl md:text-3xl font-bold tracking-tight'>Webhook Details</h1>
         <p className='text-zinc-400'>
           Configure your webhook settings and notifications
         </p>
@@ -296,6 +296,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 <Button
                   onClick={handleNameUpdate}
                   disabled={isLoading || isSaving}
+                  size={"sm"}
                 >
                   {isLoading || isSaving ? 'Saving...' : 'Save'}
                 </Button>

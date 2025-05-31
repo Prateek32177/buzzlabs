@@ -400,15 +400,15 @@ export default function EmailTemplateEditor() {
   }
 
   return (
-    <div className=' mx-auto p-6 space-y-6 w-full'>
+    <div className=' mx-auto p-2 sm:p-4 space-y-6 w-full'>
       <div className='flex flex-col gap-6'>
-        <h2 className='text-3xl font-bold tracking-tight text-foreground'>
+        <h2 className='text-xl sm:text-3xl font-bold tracking-tight text-foreground'>
           Email Template Editor
         </h2>
-        <div className='flex items-center justify-between flex-wrap gap-4'>
+        <div className='flex items-center justify-between flex-wrap gap-4 '>
           <div
             className='
-         flex items-center gap-2 justify-start'
+         flex items-center gap-2 justify-start flex-wrap'
           >
             {webhooksList.length !== 0 ? (
               <Select
@@ -416,14 +416,14 @@ export default function EmailTemplateEditor() {
                 onValueChange={handleWebhookChange}
                 disabled={isWebhooksLoading}
               >
-                <SelectTrigger>
+                <SelectTrigger className='text-xs sm:text-sm'>
                   {isWebhooksLoading ? (
                     <Loader />
                   ) : (
                     <SelectValue placeholder='Select Webhook' />
                   )}
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className='text-xs sm:text-sm'>
                   {webhooksList.map(webhook => (
                     <SelectItem
                       key={webhook.id}
@@ -447,10 +447,10 @@ export default function EmailTemplateEditor() {
               </span>
             )}
             <Select value={templateId} onValueChange={handleTemplateChange}>
-              <SelectTrigger className='w-[200px]'>
+              <SelectTrigger className='w-[200px] text-xs sm:text-sm'>
                 <SelectValue placeholder='Select a template' />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className='text-xs sm:text-sm'>
                 {emailTemplates.map(template => (
                   <SelectItem key={template.id} value={template.id}>
                     {template.name}
@@ -459,10 +459,13 @@ export default function EmailTemplateEditor() {
               </SelectContent>
             </Select>
           </div>
-          <div className='flex gap-2'>
+          <div className='flex gap-2 flex-wrap'>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant='outline' className='flex items-center gap-2'>
+                <Button
+                  variant='outline'
+                  className='flex items-center gap-2  text-xs sm:text-sm'
+                >
                   <HelpCircle className='h-4 w-4' />
                   Variables Guide
                 </Button>
@@ -474,7 +477,7 @@ export default function EmailTemplateEditor() {
                     Use variables to personalize your email templates
                   </DialogDescription>
                 </DialogHeader>
-                <div className='py-4'>
+                <div className='py-4 text-sm'>
                   <h3 className='font-medium mb-2'>Variable Format</h3>
                   <p className='mb-4'>
                     Insert variables using double curly braces:{' '}
@@ -504,7 +507,7 @@ export default function EmailTemplateEditor() {
                   </ul>
 
                   <h3 className='font-medium mt-4 mb-2'>Example</h3>
-                  <pre className='bg-muted p-2 rounded text-xs'>
+                  <pre className='bg-muted p-2 rounded text-xs text-wrap'>
                     {`<p>Hello {{firstName}},</p>
 <p>Thank you for your order #{{orderNumber}} from {{company}}.</p>`}
                   </pre>
@@ -611,7 +614,7 @@ function EditorPanel({
   selectedTemplate,
 }: EditorPanelProps) {
   return (
-    <Card className='p-4 space-y-4'>
+    <Card className='p-4 space-y-4 text-xs sm:text-sm'>
       <div className='space-y-2'>
         <Label htmlFor='subject'>Email Subject</Label>
         <Input
@@ -619,6 +622,7 @@ function EditorPanel({
           value={editedSubject}
           onChange={e => setEditedSubject(e.target.value)}
           placeholder='Enter email subject'
+          className='text-sm'
         />
       </div>
 
@@ -645,7 +649,7 @@ function EditorPanel({
       </div>
 
       <div className='space-y-2'>
-        <div className='flex items-center justify-between'>
+        <div className='flex items-center justify-between flex-wrap gap-2'>
           <Label>Variables</Label>
           <span className='text-xs text-muted-foreground'>
             Populate with test values to preview
@@ -694,9 +698,9 @@ function PreviewPanel({
     <Card className='p-4 space-y-4'>
       <div className='space-y-2'>
         <Label>Subject Preview</Label>
-        <div className='p-2 border rounded-md bg-muted'>{editedSubject}</div>
+        <div className='p-2 border rounded-md text-sm'>{editedSubject}</div>
       </div>
-      <div className='space-y-2'>
+      <div className='space-y-2 text-xs sm:text-sm'>
         <Label>Email Preview</Label>
 
         {isContentValid ? (

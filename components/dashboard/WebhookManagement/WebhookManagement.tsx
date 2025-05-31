@@ -334,7 +334,7 @@ export function WebhookManagement() {
   if (isFetching) {
     return (
       <WebhookContext.Provider value={contextValue}>
-        <div className='space-y-10 w-full max-w-6xl mx-auto px-4 sm:px-6'>
+        <div className='space-y-10 w-full max-w-6xl mx-auto'>
           {webhooks.length > 0 ? (
             <>
               <CreateWebhookLoadingSkeleton />
@@ -350,7 +350,7 @@ export function WebhookManagement() {
 
   return (
     <WebhookContext.Provider value={contextValue}>
-      <div className='space-y-10 w-full mx-auto'>
+      <div className='space-y-10'>
         {/* Empty State - Only show when no webhooks exist */}
         {!hasWebhooks && (
           <Card className='w-full  rounded-2xl p-6 md:p-8 mb-6'>
@@ -443,17 +443,17 @@ export function WebhookManagement() {
               </div>
             </CardHeader>
             <Separator className='mb-0' />
-            <CardContent className='p-0'>
-              <Table className='pverflow-x-hidden'>
+            <CardContent className='p-0 '>
+              <Table>
                 <TableHeader>
-                  <TableRow className='hover:bg-transparent border-none'>
-                    <TableHead className='w-[25%] min-w-[200px] px-6 py-4'>
+                  <TableRow className='hover:bg-transparent border-none '>
+                    <TableHead className='w-[25%] min-w-[180px] px-6 py-4'>
                       Name
                     </TableHead>
                     <TableHead className='w-[20%] min-w-[120px] px-4 py-4'>
                       Status
                     </TableHead>
-                    <TableHead className='w-[35%] min-w-[280px] px-4 py-4 hidden sm:table-cell'>
+                    <TableHead className='w-[35%] min-w-[180px] px-4 py-4'>
                       Notifications
                     </TableHead>
                     <TableHead className='w-[20%] min-w-[120px] text-right px-6 py-4'>
@@ -475,12 +475,12 @@ export function WebhookManagement() {
                         <div className='flex items-center gap-2'>
                           <a
                             href={`/dashboard/webhooks/${webhook.id}`}
-                            className='text-foreground hover:text-primary hover:underline flex items-center gap-1.5 transition-all font-medium'
+                            className='text-foreground hover:text-primary hover:underline flex items-center gap-1 transition-all font-medium'
                           >
-                            <span className='truncate max-w-[180px]'>
+                            <span className=' max-w-[180px] text-wrap sm:truncate'>
                               {webhook.name}
                             </span>
-                            <ArrowUpRight className='h-3.5 w-3.5 text-primary flex-shrink-0' />
+                            <ArrowUpRight className='h-4 w-4 text-primary flex-shrink-0' />
                           </a>
                         </div>
                       </TableCell>
@@ -573,10 +573,10 @@ export function WebhookManagement() {
                             </AlertDialogTrigger>
                             <AlertDialogContent className='border border-border/80'>
                               <AlertDialogHeader>
-                                <AlertDialogTitle className='text-destructive font-medium'>
+                                <AlertDialogTitle className='text-destructive font-medium text-left'>
                                   Delete Webhook
                                 </AlertDialogTitle>
-                                <AlertDialogDescription className='text-muted-foreground'>
+                                <AlertDialogDescription className='text-muted-foreground text-left'>
                                   This action cannot be undone. All webhook
                                   details and associated logs will be
                                   permanently deleted.

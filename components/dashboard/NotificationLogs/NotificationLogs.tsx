@@ -208,7 +208,7 @@ export function NotificationLogs() {
     return (
       <Card className='w-full'>
         <CardHeader>
-          <CardTitle className='text-2xl font-bold'>
+          <CardTitle className='text-lg sm:text-2xl font-bold'>
             Notification Logs
           </CardTitle>
           <CardDescription>
@@ -238,12 +238,12 @@ export function NotificationLogs() {
   return (
     <Card className='w-full'>
       <CardHeader>
-        <div className='flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4'>
+        <div className='flex justify-between items-start'>
           <div>
-            <CardTitle className='text-2xl font-bold text-white'>
+            <CardTitle className='text-lg sm:text-2xl font-bold text-white'>
               Notification Logs
             </CardTitle>
-            <CardDescription className=''>
+            <CardDescription className='text-sm'>
               View and manage your notification delivery history
             </CardDescription>
           </div>
@@ -251,59 +251,75 @@ export function NotificationLogs() {
             onClick={fetchLogs}
             variant='outline'
             size='sm'
-            className='flex items-center gap-2 text-gray-400 w-full sm:w-auto'
+            className='flex items-center gap-2 text-gray-400'
           >
             <RefreshCw className='h-3 w-3' />
-            Refresh
+            <span className='hidden sm:inline'>Refresh</span>
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         <div className='space-y-6'>
-          <div className='flex flex-col space-y-4 md:flex-row md:gap-4 md:space-y-0'>
-            <div className='flex-1 relative'>
+          <div className='grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4'>
+            <div className='relative col-span-2'>
               <Input
                 placeholder='Search webhook name or ID...'
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className='w-full'
+                className='w-full text-xs '
               />
             </div>
             <Select value={timeFilter} onValueChange={setTimeFilter}>
-              <SelectTrigger className='w-full md:w-[180px]'>
+              <SelectTrigger className='w-full text-xs '>
                 <div className='flex items-center gap-2'>
-                  <CalendarDays className='h-4 w-4' />
+                  <CalendarDays className='h-3 w-3 sm:h-4 sm:w-4' />
                   <SelectValue placeholder='Time period' />
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='all'>All time</SelectItem>
-                <SelectItem value='1'>Last 24 hours</SelectItem>
-                <SelectItem value='7'>Last 7 days</SelectItem>
-                <SelectItem value='30'>Last 30 days</SelectItem>
+                <SelectItem value='all' className='text-xs '>
+                  All time
+                </SelectItem>
+                <SelectItem value='1' className='text-xs '>
+                  Last 24 hours
+                </SelectItem>
+                <SelectItem value='7' className='text-xs '>
+                  Last 7 days
+                </SelectItem>
+                <SelectItem value='30' className='text-xs '>
+                  Last 30 days
+                </SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className='w-full md:w-[180px]'>
+              <SelectTrigger className='w-full text-xs'>
                 <div className='flex items-center gap-2'>
-                  <AlertCircle className='h-4 w-4' />
+                  <AlertCircle className='h-3 w-3 sm:h-4 sm:w-4' />
                   <SelectValue placeholder='Status' />
                 </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='all'>All statuses</SelectItem>
-                <SelectItem value='pending'>Pending</SelectItem>
-                <SelectItem value='success'>Success</SelectItem>
-                <SelectItem value='failed'>Failed</SelectItem>
+                <SelectItem value='all' className='text-xs '>
+                  All statuses
+                </SelectItem>
+                <SelectItem value='pending' className='text-xs '>
+                  Pending
+                </SelectItem>
+                <SelectItem value='success' className='text-xs '>
+                  Success
+                </SelectItem>
+                <SelectItem value='failed' className='text-xs '>
+                  Failed
+                </SelectItem>
               </SelectContent>
             </Select>
             {(search || timeFilter !== 'all' || statusFilter !== 'all') && (
               <Button
                 variant='outline'
                 onClick={resetFilters}
-                className='flex items-center gap-2 w-full md:w-auto'
+                className='flex items-center justify-center gap-2 w-full text-xs '
               >
-                <FilterX className='h-4 w-4' />
+                <FilterX className='h-3 w-3 sm:h-4 sm:w-4' />
                 Clear filters
               </Button>
             )}
@@ -350,7 +366,7 @@ export function NotificationLogs() {
                 </div>
               </>
             ) : (
-              <Table className='min-w-[800px]'>
+              <Table className='min-w-[800px] text-xs'>
                 <TableHeader>
                   <TableRow>
                     <TableHead className='whitespace-nowrap'>Time</TableHead>
@@ -366,7 +382,7 @@ export function NotificationLogs() {
                     <TableHead className='whitespace-nowrap'>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className='text-sm'>
+                <TableBody>
                   {paginatedLogs.map(log => (
                     <TableRow key={log.id}>
                       <TableCell className='whitespace-nowrap'>

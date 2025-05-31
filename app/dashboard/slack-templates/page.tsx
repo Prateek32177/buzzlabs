@@ -390,16 +390,16 @@ export default function SlackTemplateEditor() {
   }
 
   return (
-    <div className='container mx-auto p-6 space-y-6'>
+    <div className='container mx-auto p-2 sm:p-4 space-y-6'>
       <div className='flex flex-col gap-6'>
-        <h2 className='text-3xl font-bold tracking-tight text-foreground'>
+        <h2 className='text-2xl sm:text-3xl font-bold tracking-tight text-foreground'>
           Slack Template Editor
         </h2>
 
-        <div className='flex items-center justify-between flex-wrap gap-4'>
+        <div className='flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap'>
           <div
             className='
-         flex items-center gap-2 justify-start'
+         flex items-center gap-2 justify-start flex-wrap sm:flex-nowrap '
           >
             {webhooksList.length !== 0 ? (
               <Select
@@ -481,68 +481,67 @@ export default function SlackTemplateEditor() {
               Reset
             </Button>
           </div>
-        </div>
 
-        {/* Mobile View */}
-        <div className='md:hidden'>
-          <Tabs defaultValue='editor' className='w-full'>
-            <TabsList className='grid w-full grid-cols-2'>
-              <TabsTrigger value='editor'>Editor</TabsTrigger>
-              <TabsTrigger value='preview'>Preview</TabsTrigger>
-            </TabsList>
-            <TabsContent value='editor'>
-              <Card className='h-[600px] flex flex-col'>
-                <CardHeader className='pb-2'>
-                  <CardTitle className='text-foreground'>
-                    Template Editor
-                  </CardTitle>
-                  <CardDescription className='text-muted-foreground'>
-                    Edit the JSON directly or use the visual block builder
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className='flex-1 overflow-hidden p-0 px-6'>
-                  <BlockBuilder
-                    template={getParsedTemplate()}
-                    onUpdate={updateTemplateFromBlockBuilder}
-                    jsonError={jsonError}
-                    setJsonError={setJsonError}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value='preview'>
-              {/* Preview */}
-              <Card className='h-[600px] flex flex-col'>
-                <CardHeader className='pb-2'>
-                  <CardTitle className='text-foreground'>Preview</CardTitle>
-                  <CardDescription className='text-muted-foreground'>
-                    See how your message will appear in Slack
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className='flex-1 overflow-auto bg-[#222529] rounded-md p-4'>
-                  {jsonError ? (
-                    <div className='flex items-center justify-center h-full text-red-500 text-sm'>
-                      <p>`Failed to load preview due to {jsonError}`</p>
-                    </div>
-                  ) : (
-                    <SlackPreview
-                      jsonError={jsonError}
+          {/* Mobile View */}
+          <div className='md:hidden'>
+            <Tabs defaultValue='editor' className='w-full'>
+              <TabsList className='grid w-full grid-cols-2'>
+                <TabsTrigger value='editor'>Editor</TabsTrigger>
+                <TabsTrigger value='preview'>Preview</TabsTrigger>
+              </TabsList>
+              <TabsContent value='editor'>
+                <Card className='h-[600px] flex flex-col'>
+                  <CardHeader className='pb-2'>
+                    <CardTitle className='text-foreground'>
+                      Template Editor
+                    </CardTitle>
+                    <CardDescription className='text-muted-foreground'>
+                      Edit the JSON directly or use the visual block builder
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className='flex-1 overflow-hidden p-0 px-6'>
+                    <BlockBuilder
                       template={getParsedTemplate()}
+                      onUpdate={updateTemplateFromBlockBuilder}
+                      jsonError={jsonError}
+                      setJsonError={setJsonError}
                     />
-                  )}
-                </CardContent>
-                <CardFooter className='border-t p-4'>
-                  <p className='text-sm text-muted-foreground'>
-                    This preview shows how your message will appear in Slack.
-                    Some interactive elements may behave differently in the
-                    actual Slack app.
-                  </p>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value='preview'>
+                {/* Preview */}
+                <Card className='h-[600px] flex flex-col'>
+                  <CardHeader className='pb-2'>
+                    <CardTitle className='text-foreground'>Preview</CardTitle>
+                    <CardDescription className='text-muted-foreground'>
+                      See how your message will appear in Slack
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className='flex-1 overflow-auto bg-[#222529] rounded-md p-4'>
+                    {jsonError ? (
+                      <div className='flex items-center justify-center h-full text-red-500 text-sm'>
+                        <p>`Failed to load preview due to {jsonError}`</p>
+                      </div>
+                    ) : (
+                      <SlackPreview
+                        jsonError={jsonError}
+                        template={getParsedTemplate()}
+                      />
+                    )}
+                  </CardContent>
+                  <CardFooter className='border-t p-4'>
+                    <p className='text-sm text-muted-foreground'>
+                      This preview shows how your message will appear in Slack.
+                      Some interactive elements may behave differently in the
+                      actual Slack app.
+                    </p>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
-
         {/* Desktop View */}
         <div className='hidden md:grid grid-cols-2 gap-6'>
           {/* Template Editor */}

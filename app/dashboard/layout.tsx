@@ -34,7 +34,7 @@ export default function Layout({
             </div>
           </div>
         </div>
-        <div className='mx-4 my-8'>{children}</div>
+        <div className='max-w-[100vw] w-full px-4 my-8 mx-auto'>{children}</div>
 
         <TooltipProvider>
           <Tooltip>

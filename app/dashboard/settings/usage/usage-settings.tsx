@@ -596,7 +596,7 @@ export function PlanLimitsDialog({
           {showIcon && <HelpCircle className={`w-4 h-4`} />}
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-sm'>
+      <DialogContent className='max-w-xs  sm:max-w-sm'>
         <DialogHeader>
           <DialogTitle>Plan Limits</DialogTitle>
           <DialogDescription>
@@ -610,37 +610,45 @@ export function PlanLimitsDialog({
               Notification Limits
             </h4>
             <table className='w-full'>
-              <tbody className='divide-y divide-white/10'>
+              <tbody>
                 <tr>
-                  <td className='py-2 text-sm text-white/60'>Daily Emails</td>
-                  <td className='py-2 text-right'>
+                  <td className='py-1 text-sm text-white/60'>Daily Emails</td>
+                  <td className='py-1 text-right'>
                     <Badge variant='secondary'>
                       {subscription.limits.dailyEmails}
                     </Badge>
                   </td>
                 </tr>
                 <tr>
-                  <td className='py-2 text-sm text-white/60'>Daily Slack</td>
-                  <td className='py-2 text-right'>
+                  <td className='py-1 text-sm text-white/60'>Daily Slack</td>
+                  <td className='py-1 text-right'>
                     <Badge variant='secondary'>
                       {subscription.limits.dailySlackNotifications}
                     </Badge>
                   </td>
                 </tr>
                 <tr>
-                  <td className='py-2 text-sm text-white/60'>Monthly Emails</td>
-                  <td className='py-2 text-right'>
+                  <td className='py-1 text-sm text-white/60'>Monthly Emails</td>
+                  <td className='py-1 text-right'>
                     <Badge variant='secondary'>
                       {subscription.limits.emailNotificationLimit}
                     </Badge>
                   </td>
                 </tr>
                 <tr>
-                  <td className='py-2 text-sm text-white/60'>Monthly Slack</td>
-                  <td className='py-2 text-right'>
+                  <td className='py-1 text-sm text-white/60'>Monthly Slack</td>
+                  <td className='py-1 text-right'>
                     <Badge variant='secondary'>
                       {subscription.limits.slackNotificationLimit}
                     </Badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='py-1 text-sm text-white/60'>
+                    Max Request per second
+                  </td>
+                  <td className='py-1 text-right'>
+                    <Badge variant='secondary'>2</Badge>
                   </td>
                 </tr>
               </tbody>
@@ -652,28 +660,28 @@ export function PlanLimitsDialog({
               Resource Limits
             </h4>
             <table className='w-full'>
-              <tbody className='divide-y divide-white/10'>
+              <tbody>
                 <tr>
-                  <td className='py-2 text-sm text-white/60'>
+                  <td className='py-1 text-sm text-white/60'>
                     Number of Webhooks
                   </td>
-                  <td className='py-2 text-right'>
+                  <td className='py-1 text-right'>
                     <Badge variant='secondary'>
                       {subscription.limits.webhookLimit}
                     </Badge>
                   </td>
                 </tr>
                 <tr>
-                  <td className='py-2 text-sm text-white/60'>Daily Requests</td>
-                  <td className='py-2 text-right'>
+                  <td className='py-1 text-sm text-white/60'>Daily Requests</td>
+                  <td className='py-1 text-right'>
                     <Badge variant='secondary'>
                       {subscription.limits.dailyRequests}
                     </Badge>
                   </td>
                 </tr>
                 <tr>
-                  <td className='py-2 text-sm text-white/60'>Daily Volume</td>
-                  <td className='py-2 text-right'>
+                  <td className='py-1 text-sm text-white/60'>Daily Volume</td>
+                  <td className='py-1 text-right'>
                     <Badge variant='secondary'>
                       {subscription.limits.dailyDataVolumeMB} MB
                     </Badge>

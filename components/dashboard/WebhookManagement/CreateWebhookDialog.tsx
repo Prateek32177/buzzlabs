@@ -91,10 +91,10 @@ export function CreateWebhookDialog({
             <Input
               id='webhook-name'
               type='text'
-              placeholder='e.g., Stripe Payment Alerts, User Signup Notifications'
+              placeholder='e.g. User Signup Notifications'
               value={webhookName}
               onChange={e => setWebhookName(e.target.value)}
-              className='focus:ring-2 focus:ring-primary/20 border-border/60 placeholder:text-sm text-sm'
+              className='focus:ring-2 focus:ring-primary/20 border-border/60 placeholder:text-xs text-sm'
               required
               minLength={3}
               disabled={isLoading}

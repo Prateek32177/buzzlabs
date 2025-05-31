@@ -44,7 +44,7 @@ const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
     'relative px-4 py-2 rounded-md transition-all duration-300 text-white hover:border hover:border-white/30 data-[state=active]:text-violet data-[state=active]:border data-[state=active]:border-white';
 
   return (
-    <div className='container mx-auto p-6 space-y-6'>
+    <div className='container mx-auto space-y-6 px-2'>
       <h1 className='text-3xl text-white font-bold mb-6'>Settings</h1>
 
       <Tabs

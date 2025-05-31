@@ -415,6 +415,9 @@ export function WebhookManagement() {
             </CardHeader>
 
             <CardContent className='pt-0'>
+              <p className='text-sm text-zinc-300 mb-2'>
+                or pick a quick template
+              </p>
               <QuickTemplates onTemplateSelect={handleTemplateSelect} />
             </CardContent>
           </Card>

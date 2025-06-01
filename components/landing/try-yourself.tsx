@@ -56,10 +56,7 @@ interface Webhook {
 
 const App = () => {
   return (
-    <div
-      id='tryityourself'
-      className='min-h-screen bg-gradient-to-b from-purple-950 to-slate-950 overflow-x-hidden'
-    >
+    <div id='tryityourself' className='min-h-screen overflow-x-hidden'>
       <TryYourself />
     </div>
   );

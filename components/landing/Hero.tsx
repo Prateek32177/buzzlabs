@@ -336,7 +336,7 @@ export function WebhookTerminalCard() {
   };
 
   return (
-    <div className='w-full'>
+    <div className='max-w-screen-sm mx-auto  w-full'>
       <div className='relative bg-zinc-950/70 border border-zinc-800 rounded-lg p-3 sm:p-4 shadow-lg'>
         <div className='flex items-center gap-2 mb-3 pb-2 border-b border-zinc-800'>
           <div className='flex gap-1.5'>

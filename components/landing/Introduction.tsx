@@ -16,7 +16,7 @@ const GlowingAsterisk = () => (
 
 export default function Introduction() {
   return (
-    <div className=' text-gray-100 bg-black py-12 px-8 lg:px-8 flex items-center justify-center overflow-hidden'>
+    <div className=' text-gray-100  py-12 px-8 lg:px-8 flex items-center justify-center overflow-hidden'>
       <div className='max-w-3xl mx-auto text-center relative z-10'>
         <motion.div
           className='flex items-center justify-center mb-12'

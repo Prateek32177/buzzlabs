@@ -3,7 +3,7 @@ import { Mail, Slack } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className='bg-[#0A0A0B] py-10 px-4 border-t border-white/5 gradient-background'>
+    <footer className=' py-10 px-4 border-t border-white/5 gradient-background'>
       <div className='container mx-auto max-w-6xl'>
         <div className='flex flex-col md:flex-row justify-between gap-8 mb-8'>
           {/* Logo and description */}

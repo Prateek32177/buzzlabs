@@ -34,7 +34,7 @@ export default function Hero() {
   ];
 
   return (
-    <section className='relative min-h-screen bg-black antialiased flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden'>
+    <section className='relative min-h-screen antialiased flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden'>
       <Spotlight />
       <div className='absolute inset-0 bg-[linear-gradient(to_right,#27272a_1px,transparent_1px),linear-gradient(to_bottom,#27272a_1px,transparent_1px)] bg-[size:14px_24px] opacity-20' />
 
@@ -46,16 +46,25 @@ export default function Hero() {
       </div>
 
       <div className='absolute top-4 sm:top-6 left-4 sm:left-6 z-5'>
-        <Plus className='w-4 h-4 sm:w-6 sm:h-6 text-zinc-600' strokeWidth={1} />
+        <Plus
+          className='w-4 h-4 sm:w-6 sm:h-6 text-[#A692E5]'
+          strokeWidth={1}
+        />
       </div>
       <div className='absolute bottom-8 sm:bottom-12 right-6 sm:right-6 z-5'>
-        <Plus className='w-4 h-4 sm:w-6 sm:h-6 text-zinc-600' strokeWidth={1} />
+        <Plus
+          className='w-4 h-4 sm:w-6 sm:h-6 text-[#A692E5]'
+          strokeWidth={1}
+        />
       </div>
       <div className='absolute bottom-8 sm:bottom-12 left-6 sm:left-6 z-5'>
-        <Plus className='w-4 h-4 sm:w-6 sm:h-6 text-zinc-600' strokeWidth={1} />
+        <Plus
+          className='w-4 h-4 sm:w-6 sm:h-6 text-[#A692E5]'
+          strokeWidth={1}
+        />
       </div>
 
-      <div className='relative z-20 max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center pt-44 pb-16 md:pb-8 px-4'>
+      <div className='relative z-20 max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pt-40 pb-16 md:pb-8 px-4'>
         <section className='flex flex-col items-center lg:items-start text-center lg:text-left'>
           <motion.div
             initial={{ opacity: 0, y: 10 }}

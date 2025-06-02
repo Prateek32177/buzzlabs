@@ -84,7 +84,7 @@ function TryYourself() {
   };
 
   return (
-    <section className='w-full py-24 relative overflow-hidden bg-black/60  p-6 transition-all duration-500 '>
+    <section className='w-full py-24 relative overflow-hidden   p-6 transition-all duration-500 '>
       {/* Background elements */}
 
       <div className='container max-w-6xl mx-auto px-4 relative z-10'>

@@ -9,7 +9,7 @@ import { UseCaseSection } from './Use-case';
 
 const Index = () => {
   return (
-    <div className=' text-white w-full'>
+    <div className=' text-white w-full bg-black'>
       <Navbar />
       <Hero />
       <Introduction />

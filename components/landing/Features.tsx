@@ -71,7 +71,7 @@ export default function Features() {
   return (
     <div
       ref={sectionRef}
-      className='bg-black text-white pb-16 pt-8 px-4 overflow-hidden'
+      className=' text-white pb-16 pt-8 px-4 overflow-hidden'
     >
       <div className='max-w-6xl mx-auto'>
         <div className='flex justify-center mb-6'>

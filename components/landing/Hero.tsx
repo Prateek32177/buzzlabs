@@ -38,14 +38,8 @@ export default function Hero() {
       <NoiseGradientBackground
         vignetteIntensity='strong'
         style={{
-          background: `
-                radial-gradient(
-                  80% 100% at 50% 0%,
-                  transparent 10%,
-                  rgba(0, 0, 0, 0.4) 90%,
-                  rgba(1, 1, 2, 0.3) 50%
-                )
-              `,
+          background:
+            'radial-gradient(135deg, rgba(139, 92, 246, 0.15) 50%, rgba(236, 72, 153, 0.15) 70%, rgba(244, 114, 182, 0.15) 50%, rgba(96, 165, 250, 0.15) 10%)',
         }}
       />
 

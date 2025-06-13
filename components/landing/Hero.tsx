@@ -16,6 +16,7 @@ import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { DodoLogo } from '../Logos/DodoPayments';
 import { SignInDialog } from '@/components/auth/SIgnInDialog';
 import { Button } from '../ui/button';
+import { NoiseGradientBackground } from 'noise-gradient-bg';
 
 export default function Hero() {
   const iconClasses = 'w-5 h-5 transition-colors duration-300';
@@ -34,10 +35,19 @@ export default function Hero() {
 
   return (
     <section className='relative min-h-screen antialiased flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden'>
-
-      <div className='absolute inset-0'>
-
-      </div>
+      <NoiseGradientBackground
+        vignetteIntensity='strong'
+        style={{
+          background: `
+                radial-gradient(
+                  80% 100% at 50% 0%,
+                  transparent 10%,
+                  rgba(0, 0, 0, 0.4) 90%,
+                  rgba(1, 1, 2, 0.3) 50%
+                )
+              `,
+        }}
+      />
 
       <div className='relative z-20 max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pt-40 pb-16 md:pb-8 px-4'>
         <section className='flex flex-col items-center lg:items-start text-center lg:text-left'>
@@ -49,7 +59,7 @@ export default function Hero() {
           >
             <Badge
               variant='outline'
-              className='flex items-center gap-1.5 rounded-full border border-zinc-800/60 bg-zinc-950/90 px-3 py-1.5 text-xs text-zinc-300 shadow-lg backdrop-blur-md transition-all duration-300 hover:border-zinc-700/80 hover:bg-zinc-950/95'
+              className='flex items-center gap-1.5 rounded-full border border-zinc-800/60 bg-zinc-950/50 px-3 py-1.5 text-xs text-zinc-300 shadow-lg backdrop-blur-md transition-all duration-300 hover:border-zinc-700/80 hover:bg-zinc-950/95'
             >
               <ChevronsUp className='h-4 w-4 text-violet-400' />
               <span className='text-violet-400'>Hookflo Public Beta</span>
@@ -153,7 +163,9 @@ export default function Hero() {
                     Integration
                   </span>
                 </div>
-                <div className='text-lg font-light text-white mb-1'>in 5 mins</div>
+                <div className='text-lg font-light text-white mb-1'>
+                  in 5 mins
+                </div>
                 <div className='text-xs text-zinc-500 leading-relaxed'>
                   Instead of days spent on custom solution
                 </div>
@@ -300,10 +312,14 @@ export function WebhookTerminalCard() {
             dangerouslySetInnerHTML={{ __html: getSyntaxHighlight(line) }}
           />
           {isHighlighted && isIfCondition && (
-            <span className='ml-2 text-yellow-400 text-xs font-medium'>← Critical</span>
+            <span className='ml-2 text-yellow-400 text-xs font-medium'>
+              ← Critical
+            </span>
           )}
           {isHighlighted && isFetch && (
-            <span className='ml-2 text-green-400 text-xs font-medium'>← Alert sent</span>
+            <span className='ml-2 text-green-400 text-xs font-medium'>
+              ← Alert sent
+            </span>
           )}
         </div>
       );
@@ -319,7 +335,9 @@ export function WebhookTerminalCard() {
             <div className='w-2.5 h-2.5 rounded-full bg-yellow-400'></div>
             <div className='w-2.5 h-2.5 rounded-full bg-green-500'></div>
           </div>
-          <span className='text-xs text-zinc-400 font-mono ml-2'>monitor.js</span>
+          <span className='text-xs text-zinc-400 font-mono ml-2'>
+            monitor.js
+          </span>
         </div>
 
         <div className='font-mono text-xs leading-relaxed min-h-[200px]'>
@@ -341,7 +359,9 @@ export function WebhookTerminalCard() {
                   <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75'></span>
                   <span className='relative inline-flex size-2 rounded-full bg-yellow-500'></span>
                 </span>
-                <span className='text-xs text-zinc-400 font-medium'>Monitoring</span>
+                <span className='text-xs text-zinc-400 font-medium'>
+                  Monitoring
+                </span>
               </>
             ) : (
               <>
@@ -355,7 +375,9 @@ export function WebhookTerminalCard() {
               </>
             )}
           </div>
-          <span className='ml-auto text-xs text-violet-400 font-semibold'>hookflo</span>
+          <span className='ml-auto text-xs text-violet-400 font-semibold'>
+            hookflo
+          </span>
         </div>
 
         <Button

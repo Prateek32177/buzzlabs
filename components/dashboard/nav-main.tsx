@@ -26,8 +26,8 @@ export function NavMain({
         <SidebarGroupLabel className='text-xs font-semibold text-muted-foreground/70 px-3 pb-1 pt-2'>
           Platform
         </SidebarGroupLabel>
-        <SidebarMenu>
-          {items.slice(0, 4).map((item, index) => (
+        <SidebarMenu className='gap-[2px]'>
+          {items.slice(0, 5).map((item, index) => (
             <SidebarMenuItem key={index}>
               <SidebarMenuButton
                 tooltip={item.title}
@@ -59,7 +59,7 @@ export function NavMain({
                   )}
                   <span
                     className={cn(
-                      'text-sm transition-all duration-200 transform',
+                      'text-xs transition-all duration-200 transform',
                       item.isActive
                         ? 'text-white font-medium'
                         : 'text-zinc-400 group-hover:text-white',
@@ -78,8 +78,8 @@ export function NavMain({
         <SidebarGroupLabel className='text-xs font-semibold text-muted-foreground/70 px-3 pb-1 pt-3'>
           Other
         </SidebarGroupLabel>
-        <SidebarMenu>
-          {items.slice(4).map((item, index) => (
+        <SidebarMenu className='gap-[2px]'>
+          {items.slice(5).map((item, index) => (
             <SidebarMenuItem key={index}>
               <SidebarMenuButton
                 tooltip={item.title}
@@ -97,7 +97,7 @@ export function NavMain({
                       strokeWidth={1.5}
                     />
                   )}
-                  <span className='text-sm text-zinc-400 group-hover:text-white'>
+                  <span className='text-xs text-zinc-400 group-hover:text-white'>
                     {item.title}
                   </span>
                 </a>

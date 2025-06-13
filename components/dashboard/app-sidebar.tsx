@@ -8,6 +8,7 @@ import {
   LayoutPanelTop,
   Mails,
   SlackIcon,
+  Sparkles,
 } from 'lucide-react';
 import { Logo } from '../Logo';
 import { NavMain } from './nav-main';
@@ -47,6 +48,11 @@ const data = {
       title: 'Notification Logs',
       url: '/dashboard/logs',
       icon: Bot,
+    },
+    {
+      title: 'HookSense AI',
+      url: '/dashboard/hooksense',
+      icon: Sparkles,
     },
     {
       title: 'Email Templates',

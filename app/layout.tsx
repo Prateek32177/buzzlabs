@@ -13,19 +13,28 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: 'Hookflo',
-  description: 'No Code Notification Webhook Infrastructure',
+  title:
+    'Hookflo | Webhook Notification Infrastructure for Supabase, Stripe, GitHub & More',
+  description:
+    'Hookflo lets you capture and route webhooks events from Supabase, Stripe, Clerk, GitHub, and more to Slack, Email, or custom channels — no code required. Fast, secure, and customizable webhook alerting.',
   keywords: [
     'webhook',
+    'webhooks',
     'notifications',
-    'no-code',
-    'infrastructure',
-    'api',
-    'integration',
-    'observability',
+    'webhook alerts',
+    'webhook logging',
+    'webhook infrastructure',
+    'no-code webhooks',
+    'supabase webhooks',
+    'stripe webhooks',
+    'clerk webhooks',
+    'github webhooks',
     'developer tools',
-    'software',
+    'webhook monitoring',
+    'webhook delivery',
+    'webhook observability',
   ],
+
   authors: [{ name: 'Hookflo' }],
   creator: 'Hookflo',
   publisher: 'Hookflo',

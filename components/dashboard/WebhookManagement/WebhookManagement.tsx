@@ -549,13 +549,12 @@ export function WebhookManagement() {
                       <TableCell className='text-right px-6 py-4'>
                         <div className='flex items-center justify-end gap-2'>
                           <Button
-                            variant='outline'
                             size='sm'
                             onClick={() => setShowDetails(webhook.id)}
                             disabled={isLoadingId === webhook.id}
-                            className='h-9 px-3 border-border/60 hover:bg-muted flex-shrink-0'
+                            className='bg-emerald-800/70 hover:bg-emerald-700/70 border border-emerald-600 text-white rounded-md text-xs transition-colors disabled:opacity-50'
                           >
-                            <Plug className='h-4 w-4' />
+                            <Plug className='h-4 w-4 -mr-1' />
                             <span className='hidden lg:inline'>Connect</span>
                           </Button>
 
@@ -618,7 +617,10 @@ export function WebhookManagement() {
         <CreateWebhookDialog
           open={showCreateDialog}
           onOpenChange={setShowCreateDialog}
-          onWebhookCreated={fetchWebhooks}
+          onWebhookCreated={async webhookId => {
+            await fetchWebhooks();
+            setShowDetails(webhookId);
+          }}
           initialName={initialWebhookName}
         />
 

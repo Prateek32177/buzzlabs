@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 interface CreateWebhookDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onWebhookCreated: () => void;
+  onWebhookCreated: (id: string) => void;
   initialName?: string;
 }
 
@@ -65,7 +65,7 @@ export function CreateWebhookDialog({
 
       setWebhookName('');
       onOpenChange(false);
-      onWebhookCreated();
+      onWebhookCreated(webhook?.id);
     } catch (error) {
       toast.error('Error', {
         description:

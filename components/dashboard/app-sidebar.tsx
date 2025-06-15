@@ -150,7 +150,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         />
       </SidebarContent>
 
-      <SidebarFooter className='p-3 space-y-2 items-center'>
+      <SidebarFooter className='p-3 items-center'>
         <>
           <UsageBar
             label='Daily Email limit'
@@ -181,66 +181,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 function UsageBar({ label, used, total, isCollapsed }: UsageBarProps) {
   const router = useRouter();
-
-  // Show 0% if total is 0 or not provided
   const percent = total > 0 ? Math.min((used / total) * 100, 100) : 0;
 
-  const radius = 15;
-  const stroke = 4;
-  const normalizedRadius = radius - stroke / 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (percent / 100) * circumference;
-
   return (
-    <div
-      onClick={() => router.push('/dashboard/settings/usage')}
-      className={`w-full cursor-pointer px-2 py-1 ${
-        isCollapsed ? 'flex flex-col items-center' : 'flex items-center gap-4'
-      }`}
-    >
-      <svg height={radius * 2} width={radius * 2} className='shrink-0'>
-        <defs>
-          <linearGradient id='usageGradient' x1='0' y1='0' x2='1' y2='1'>
-            <stop offset='0%' stopColor='#bfaaff' />
-            <stop offset='100%' stopColor='#9d89ea' />
-          </linearGradient>
-        </defs>
-
-        <circle
-          stroke='#27272a'
-          fill='transparent'
-          strokeWidth={stroke}
-          r={normalizedRadius}
-          cx={radius}
-          cy={radius}
-        />
-        <circle
-          stroke='url(#usageGradient)'
-          fill='transparent'
-          strokeWidth={stroke}
-          strokeLinecap='round'
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          r={normalizedRadius}
-          cx={radius}
-          cy={radius}
-          style={{
-            transition: 'stroke-dashoffset 0.5s ease-in-out',
-          }}
-        />
-      </svg>
-
-      <div
-        className={`flex flex-col text-xs font-medium leading-tight text-zinc-400 ${
-          isCollapsed ? 'text-center mt-2 text-xs' : ''
-        }`}
-      >
-        <span className='text-zinc-500 '>{label}</span>
-        <span className='tabular-nums'>
-          {used}/{total}
-        </span>
-      </div>
-    </div>
+    <>
+      {!isCollapsed && (
+        <div
+          onClick={() => router.push('/dashboard/settings/usage')}
+          className='w-full cursor-pointer hover:bg-zinc-800/50 rounded-lg transition-colors px-3 py-2'
+        >
+          <div className='flex items-center gap-2'>
+            <div className='h-1.5 rounded-full bg-zinc-800 relative flex-1'>
+              <div
+                className='absolute h-full rounded-full bg-gradient-to-r from-[#bfaaff] to-[#9d89ea] transition-all duration-300'
+                style={{ width: `${percent}%` }}
+              />
+            </div>
+            <span className='text-xs text-zinc-400 font-medium whitespace-nowrap'>
+              {used}/{total}
+            </span>
+          </div>
+          <div className='mt-1 text-xs text-zinc-500'>{label}</div>
+        </div>
+      )}
+    </>
   );
 }
 

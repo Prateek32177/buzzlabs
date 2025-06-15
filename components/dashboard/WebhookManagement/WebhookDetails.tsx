@@ -116,7 +116,7 @@ export function WebhookDetailsComp({
     <>
       <div className='grid gap-6 py-4'>
         <div className='grid gap-2'>
-          <Label>Webhook Name</Label>
+          <Label>Name</Label>
           <div className='flex gap-2'>
             <Input
               value={name}
@@ -137,7 +137,7 @@ export function WebhookDetailsComp({
 
       <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
         <h4 className='text-base font-medium text-white mb-4'>
-          Select an Application to integrate with
+          1. Select an Application to integrate with
         </h4>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           {Object.values(platformConfigs).map(config => (
@@ -165,47 +165,134 @@ export function WebhookDetailsComp({
           ))}
         </div>
         <div className='space-y-4 my-8'>
-          <Card className='py-4 bg-zinc-900/10'>
-            <CardContent>
-              <div className='flex items-center justify-between mb-4 flex-wrap'>
-                <div>
-                  <CardTitle className='mb-2'>Configuration</CardTitle>
-                  <CardDescription className=' mb-4'>
-                    {currentConfig!.description}
-                  </CardDescription>
-                </div>
-                {currentConfig?.docs && (
-                  <Button variant='outline' size='sm' asChild>
-                    <a
-                      href={currentConfig.docs}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                    >
-                      <ExternalLink className='h-4 w-4' />
-                      View Docs
-                    </a>
-                  </Button>
-                )}
-              </div>
-              <div className='grid gap-2 mt-4'>
-                <Label className='font-mono'>Webhook URL</Label>
-                <p className='text-sm text-muted-foreground'>
-                  Set this as HTTP POST request URL
-                </p>
+          <div className='flex items-center justify-between mb-4 flex-wrap'>
+            <div>
+              <CardTitle className='mb-2 text-base font-medium text-white'>
+                2. Configure Webhook
+              </CardTitle>
+              <CardDescription className=' mb-4'>
+                {currentConfig!.description}
+              </CardDescription>
+            </div>
+            {currentConfig?.docs && (
+              <Button variant='outline' size='sm' asChild>
+                <a
+                  href={currentConfig.docs}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  <ExternalLink className='h-4 w-4' />
+                  View Docs
+                </a>
+              </Button>
+            )}
+          </div>
+          <div className='grid gap-2 mt-4'>
+            <Label className='font-mono'>Webhook URL</Label>
+            <p className='text-sm text-muted-foreground'>
+              Set this as HTTP POST request URL
+            </p>
+            <div className='flex'>
+              <Input
+                value={`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`}
+                readOnly
+                className='rounded-r-none font-mono text-sm'
+              />
+              <Button
+                variant='secondary'
+                className='rounded-l-none'
+                size={'icon'}
+                onClick={() => {
+                  copyToClipboard(
+                    `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`,
+                  );
+                  const button = document.activeElement as HTMLButtonElement;
+                  const originalContent = button.innerHTML;
+                  button.innerHTML =
+                    '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                  setTimeout(() => {
+                    button.innerHTML = originalContent;
+                  }, 2000);
+                }}
+              >
+                <Clipboard className='h-4 w-4' />
+              </Button>
+            </div>
+          </div>
+          {currentConfig!.fields.map(field => (
+            <div key={field.key} className='grid gap-2 mt-4'>
+              <Label htmlFor={field.key}>
+                {field.label}
+                {field.required && <span className='text-red-500'>*</span>}
+              </Label>
+              <p className='text-sm text-muted-foreground'>
+                {field.description}
+              </p>
+              {field.type === 'select' ? (
+                <Select
+                  value={configValues[field.key]}
+                  onValueChange={value =>
+                    setConfigValues({ ...configValues, [field.key]: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select...' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {field.options?.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
                 <div className='flex'>
                   <Input
-                    value={`${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`}
-                    readOnly
+                    id={field.key}
+                    type={
+                      field.type === 'secret'
+                        ? showSecret
+                          ? 'text'
+                          : 'password'
+                        : 'text'
+                    }
+                    placeholder={field.placeholder}
                     className='rounded-r-none font-mono text-sm'
+                    readOnly={field.readOnly || false}
+                    value={currentValues?.[field.key] || ''}
+                    onChange={e => {
+                      const updatedConfig = {
+                        ...configValues,
+                        [platform]: {
+                          ...(currentValues || {}),
+                          [field.key]: e.target.value,
+                        },
+                      };
+                      setConfigValues(updatedConfig);
+                    }}
                   />
+
+                  {field.type === 'secret' && (
+                    <button
+                      type='button'
+                      className='bg-muted p-2 border border-l-0 border-input  hover:bg-muted/70'
+                      onClick={() => setShowSecret(prev => !prev)}
+                    >
+                      {!showSecret ? (
+                        <EyeOff className='h-4 w-4' />
+                      ) : (
+                        <Eye className='h-4 w-4' />
+                      )}
+                    </button>
+                  )}
                   <Button
-                    variant='secondary'
+                    variant={'secondary'}
                     className='rounded-l-none'
                     size={'icon'}
                     onClick={() => {
-                      copyToClipboard(
-                        `${process.env.NEXT_PUBLIC_API_URL}${webhook.url}?utm_source=${platform}`,
-                      );
+                      const textToCopy = currentValues?.[field.key] || '';
+                      copyToClipboard(textToCopy);
                       const button =
                         document.activeElement as HTMLButtonElement;
                       const originalContent = button.innerHTML;
@@ -219,209 +306,119 @@ export function WebhookDetailsComp({
                     <Clipboard className='h-4 w-4' />
                   </Button>
                 </div>
-              </div>
-              {currentConfig!.fields.map(field => (
-                <div key={field.key} className='grid gap-2 mt-4'>
-                  <Label htmlFor={field.key}>
-                    {field.label}
-                    {field.required && <span className='text-red-500'>*</span>}
-                  </Label>
-                  <p className='text-sm text-muted-foreground'>
-                    {field.description}
-                  </p>
-                  {field.type === 'select' ? (
-                    <Select
-                      value={configValues[field.key]}
-                      onValueChange={value =>
-                        setConfigValues({ ...configValues, [field.key]: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder='Select...' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {field.options?.map(option => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className='flex'>
-                      <Input
-                        id={field.key}
-                        type={
-                          field.type === 'secret'
-                            ? showSecret
-                              ? 'text'
-                              : 'password'
-                            : 'text'
-                        }
-                        placeholder={field.placeholder}
-                        className='rounded-r-none font-mono text-sm'
-                        readOnly={field.readOnly || false}
-                        value={currentValues?.[field.key] || ''}
-                        onChange={e => {
-                          const updatedConfig = {
-                            ...configValues,
-                            [platform]: {
-                              ...(currentValues || {}),
-                              [field.key]: e.target.value,
-                            },
-                          };
-                          setConfigValues(updatedConfig);
-                        }}
-                      />
-
-                      {field.type === 'secret' && (
-                        <button
-                          type='button'
-                          className='bg-muted p-2 border border-l-0 border-input  hover:bg-muted/70'
-                          onClick={() => setShowSecret(prev => !prev)}
-                        >
-                          {!showSecret ? (
-                            <EyeOff className='h-4 w-4' />
-                          ) : (
-                            <Eye className='h-4 w-4' />
-                          )}
-                        </button>
-                      )}
-                      <Button
-                        variant={'secondary'}
-                        className='rounded-l-none'
-                        size={'icon'}
-                        onClick={() => {
-                          const textToCopy = currentValues?.[field.key] || '';
-                          copyToClipboard(textToCopy);
-                          const button =
-                            document.activeElement as HTMLButtonElement;
-                          const originalContent = button.innerHTML;
-                          button.innerHTML =
-                            '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-                          setTimeout(() => {
-                            button.innerHTML = originalContent;
-                          }, 2000);
-                        }}
-                      >
-                        <Clipboard className='h-4 w-4' />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ))}
-              {currentConfig!.showSaveButton && (
-                <div className='mt-4'>
-                  <Button
-                    onClick={handleConfigUpdate}
-                    disabled={isLoading}
-                    size={'sm'}
-                  >
-                    {isLoading ? (
-                      <Loader2 className='animate-spin' />
-                    ) : (
-                      'Save Configuration'
-                    )}
-                  </Button>
-                </div>
               )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className='py-4 bg-zinc-900/10'>
-          <CardContent>
-            <div className='flex items-center justify-between mb-4 flex-wrap'>
-              <CardTitle className='mb-2'>Configure Notifications</CardTitle>
-              <Button variant='outline' size='sm' asChild>
-                <a
-                  href={
-                    'https://docs.hookflo.com/notification-channels/overview'
-                  }
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  <ExternalLink className='h-4 w-4' />
-                  View Docs
-                </a>
+            </div>
+          ))}
+          {currentConfig!.showSaveButton && (
+            <div className='mt-4'>
+              <Button
+                onClick={handleConfigUpdate}
+                disabled={isLoading}
+                size={'sm'}
+              >
+                {isLoading ? (
+                  <Loader2 className='animate-spin' />
+                ) : (
+                  'Save Configuration'
+                )}
               </Button>
             </div>
-            <div className='space-y-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <div className='flex items-center gap-2'>
-                    <Mail className='h-4 w-4' />
-                    <span className='text-sm'>Email Notifications</span>
-                  </div>
-                  <Switch
-                    checked={webhook.notify_email}
-                    onCheckedChange={() => {
-                      if (!webhook.email_config?.recipient_email) {
-                        toast.error('Email configuration required', {
-                          description: 'Please configure email settings first',
-                        });
-                        return;
-                      }
-                      onUpdate(webhook.id, {
-                        notify_email: !webhook.notify_email,
-                      });
-                    }}
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className='flex items-center gap-2'>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={() => setShowEmailConfig(webhook.id)}
-                  >
-                    {webhook.email_config ? 'Edit' : 'Configure'}
-                  </Button>
-                </div>
+          )}
+        </div>
+
+        <div className='flex items-center justify-between mb-4 flex-wrap'>
+          <div>
+            <CardTitle className='mb-2 text-base font-medium text-white'>
+              3. Configure Notifications{' '}
+              <span className='text-red-500 text-sm'>(Required)</span>
+            </CardTitle>
+            <CardDescription className='mb-4'>
+              At least one notification channel must be configured to receive
+              alerts.
+            </CardDescription>
+          </div>
+          <Button variant='outline' size='sm' asChild>
+            <a
+              href={'https://docs.hookflo.com/notification-channels/overview'}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              <ExternalLink className='h-4 w-4' />
+              View Docs
+            </a>
+          </Button>
+        </div>
+        <div className='space-y-4'>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-2'>
+                <Mail className='h-4 w-4' />
+                <span className='text-sm'>Email Notifications</span>
               </div>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <div className='flex items-center gap-2'>
-                    <Slack className='h-4 w-4' />
-                    <span className='text-sm'>Slack Notifications</span>
-                  </div>
-                  <Switch
-                    checked={webhook.notify_slack}
-                    onCheckedChange={() => {
-                      if (!webhook.slack_config?.channel_name) {
-                        toast.error('Slack configuration required', {
-                          description: 'Please configure Slack settings first',
-                        });
-                        return;
-                      }
-                      onUpdate(webhook.id, {
-                        notify_slack: !webhook.notify_slack,
-                      });
-                    }}
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className='flex items-center gap-2'>
-                  {webhook?.slack_config?.channel_name && (
-                    <Badge
-                      variant='outline'
-                      className='text-xs hidden sm:block'
-                    >
-                      #{webhook.slack_config.channel_name}
-                    </Badge>
-                  )}
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={() => setShowSlackConfig(webhook.id)}
-                  >
-                    {webhook.slack_config ? 'Edit' : 'Configure'}
-                  </Button>
-                </div>
-              </div>
+              <Switch
+                checked={webhook.notify_email}
+                onCheckedChange={() => {
+                  if (!webhook.email_config?.recipient_email) {
+                    toast.error('Email configuration required', {
+                      description: 'Please configure email settings first',
+                    });
+                    return;
+                  }
+                  onUpdate(webhook.id, {
+                    notify_email: !webhook.notify_email,
+                  });
+                }}
+                disabled={isLoading}
+              />
             </div>
-          </CardContent>
-        </Card>
+            <div className='flex items-center gap-2'>
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => setShowEmailConfig(webhook.id)}
+              >
+                {webhook.email_config ? 'Edit' : 'Configure'}
+              </Button>
+            </div>
+          </div>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-2'>
+                <Slack className='h-4 w-4' />
+                <span className='text-sm'>Slack Notifications</span>
+              </div>
+              <Switch
+                checked={webhook.notify_slack}
+                onCheckedChange={() => {
+                  if (!webhook.slack_config?.channel_name) {
+                    toast.error('Slack configuration required', {
+                      description: 'Please configure Slack settings first',
+                    });
+                    return;
+                  }
+                  onUpdate(webhook.id, {
+                    notify_slack: !webhook.notify_slack,
+                  });
+                }}
+                disabled={isLoading}
+              />
+            </div>
+            <div className='flex items-center gap-2'>
+              {webhook?.slack_config?.channel_name && (
+                <Badge variant='outline' className='text-xs hidden sm:block'>
+                  #{webhook.slack_config.channel_name}
+                </Badge>
+              )}
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={() => setShowSlackConfig(webhook.id)}
+              >
+                {webhook.slack_config ? 'Edit' : 'Configure'}
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

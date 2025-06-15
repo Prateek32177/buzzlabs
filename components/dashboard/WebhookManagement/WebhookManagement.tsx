@@ -561,15 +561,15 @@ export function WebhookManagement() {
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
-                                variant='outline'
+                                variant='link'
                                 size='icon'
                                 disabled={isLoadingId === webhook.id}
-                                className='h-9 w-9 border-border/60 hover:bg-muted hover:text-destructive flex-shrink-0'
+                                className=' hover:text-destructive flex-shrink-0'
                               >
                                 {isLoadingId === webhook.id ? (
-                                  <Loader2 className='h-4 w-4 animate-spin' />
+                                  <Loader2 className='h-5 w-5 animate-spin' />
                                 ) : (
-                                  <Trash2 className='h-4 w-4' />
+                                  <Trash2 className='h-5 w-5' />
                                 )}
                               </Button>
                             </AlertDialogTrigger>

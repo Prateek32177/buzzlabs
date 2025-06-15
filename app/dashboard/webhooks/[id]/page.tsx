@@ -20,7 +20,6 @@ import {
   Loader2,
   X,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -30,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader } from '@/components/ui/loader';
 
 import {
@@ -307,9 +307,12 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           </div>
 
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <h3 className='text-base font-medium text-white mb-4'>
-              Select an Application to integrate with
-            </h3>
+            <CardTitle className='mb-2 text-base font-medium text-white'>
+              1. Choose Integration Platform
+            </CardTitle>
+            <CardDescription className='mb-4'>
+              Select the platform you want to integrate your webhook with
+            </CardDescription>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
               {Object.values(platformConfigs).map(config => (
                 <div
@@ -336,12 +339,12 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           </div>
 
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <h3 className='text-base font-medium text-white mb-1'>
-              Configuration
-            </h3>
-            <p className='text-sm text-muted-foreground mb-4'>
-              {currentConfig?.description}
-            </p>
+            <CardTitle className='mb-2 text-base font-medium text-white'>
+              2. Configure Webhook
+            </CardTitle>
+            <CardDescription className=' mb-4'>
+              {currentConfig!.description}
+            </CardDescription>
 
             <div className='space-y-4'>
               <div className='space-y-2'>
@@ -494,9 +497,12 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
         <div className='space-y-6'>
           <div className='bg-zinc-900/10 backdrop-blur-md border border-zinc-500/20 rounded-xl p-6 shadow-lg'>
-            <div className='flex items-center justify-between mb-4'>
-              <h3 className='text-base font-medium'>Configure Notifications</h3>
-              <Button variant='outline' size='sm' asChild>
+            <div className='flex items-center justify-between mb-2'>
+              <CardTitle className='text-base font-medium text-white'>
+                3. Configure Notifications
+              </CardTitle>
+
+              <Button variant='link' size='sm' asChild>
                 <a
                   href={
                     'https://docs.hookflo.com/notification-channels/overview'
@@ -509,6 +515,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                 </a>
               </Button>
             </div>
+            <CardDescription className='mb-4'>
+              At least one notification channel must be configured.
+            </CardDescription>
             <div className='space-y-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-2'>

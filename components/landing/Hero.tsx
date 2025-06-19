@@ -1,25 +1,19 @@
 'use client';
 
-import {
-  BarChart3,
-  CircleGauge,
-  ChevronsUp,
-  ArrowUpRight,
-  Plus,
-} from 'lucide-react';
+import { BarChart3, CircleGauge, ChevronsUp, ArrowUpRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Badge } from '../ui/badge';
 import { SupabaseLogo, ClerkLogo } from '../Logos';
 import { StripeWordmarkLogo } from '@/components/Logos/StripeLogo';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { DodoLogo } from '../Logos/DodoPayments';
 import { SignInDialog } from '@/components/auth/SIgnInDialog';
 import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
 
 export default function Hero() {
-  const iconClasses = 'w-5 h-5 transition-colors duration-300';
+  const iconClasses = 'w-5 h-5';
 
   const icons = [
     <StripeWordmarkLogo
@@ -28,22 +22,16 @@ export default function Hero() {
       style={{ scale: '0.7' }}
     />,
     <SupabaseLogo key='supabase' className={`${iconClasses} -ml-6`} />,
-    <DodoLogo key='dodo' className={`${iconClasses}`} />,
+    <DodoLogo key='dodo' className={iconClasses} />,
     <GitHubLogoIcon key='github' className={iconClasses} />,
-    <ClerkLogo key='clerk' className={`${iconClasses}`} />,
+    <ClerkLogo key='clerk' className={iconClasses} />,
   ];
 
   return (
-    <section className='relative min-h-screen antialiased flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden'>
-      <NoiseGradientBackground
-        vignetteIntensity='strong'
-        style={{
-          background:
-            'radial-gradient(135deg, rgba(139, 92, 246, 0.15) 50%, rgba(236, 72, 153, 0.15) 70%, rgba(244, 114, 182, 0.15) 50%, rgba(96, 165, 250, 0.15) 10%)',
-        }}
-      />
+    <section className='relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden'>
+      <NoiseGradientBackground vignetteIntensity='strong' theme='zinc' />
 
-      <div className='relative z-20 max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pt-40 pb-16 md:pb-8 px-4'>
+      <div className='relative z-20 max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pt-32 pb-16 md:pb-8'>
         <section className='flex flex-col items-center lg:items-start text-center lg:text-left'>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -56,11 +44,15 @@ export default function Hero() {
               className='flex items-center gap-1.5 rounded-full border border-zinc-800/60 bg-zinc-950/50 px-3 py-1.5 text-xs text-zinc-300 shadow-lg backdrop-blur-md transition-all duration-300 hover:border-zinc-700/80 hover:bg-zinc-950/95'
             >
               <ChevronsUp className='h-4 w-4 text-violet-400' />
-              <span className='text-violet-400'>Hookflo Public Beta</span>
-              <span className='hidden text-zinc-400 sm:inline'>
-                is Now Live
+              <span className='text-violet-400'>
+                Alert, monitor, and debug{' '}
               </span>
-              <span className='inline text-zinc-400 sm:hidden'>is Live</span>
+              <span className='hidden text-zinc-400 sm:inline'>
+                with confidence
+              </span>
+              <span className='inline text-zinc-400 sm:hidden'>
+                with confidence
+              </span>
             </Badge>
           </motion.div>
 
@@ -68,25 +60,43 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className='text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-white mb-4'
+            className='text-4xl md:text-5xl font-semibold leading-[1.1] tracking-tight text-white mb-4'
           >
-            Transform{' '}
-            <span className='text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-violet-300 to-violet-400'>
-              events
+            All-in-one for <br className='sm:hidden' />{' '}
+            <span className='text-transparent bg-clip-text bg-gradient-to-r from-violet-500 via-pink-500 to-blue-500'>
+              Webhook
             </span>{' '}
-            into <br className='hidden sm:inline' />
-            real time notifications
+            Event tracking
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className='text-sm sm:text-base text-zinc-400 max-w-lg leading-relaxed mb-8'
+            className='text-sm sm:text-base text-zinc-400 max-w-md leading-relaxed mb-8'
           >
-            Capture webhook events from any platform and instantly relay
-            notifications across your favorite channels.
+            From real time alerts to AI powered log analysis, Hookflo helps you
+            capture, monitor, and debug every webhook event instantly.
           </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+            className='flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-4'
+          >
+            <SignInDialog>
+              <Button
+                size='sm'
+                className='group inline-flex h-10 items-center justify-center rounded-lg bg-white px-6 text-sm font-medium text-zinc-900 transition-all hover:bg-white/95 hover:shadow-lg ring-1 ring-zinc-300/50 hover:-translate-y-0.5 duration-300'
+              >
+                <span className='relative z-10 flex items-center'>
+                  Start Monitoring
+                  <ArrowUpRight className='ml-2 h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300' />
+                </span>
+              </Button>
+            </SignInDialog>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -112,56 +122,37 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-            className='flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-10'
-          >
-            <SignInDialog>
-              <Button
-                size='sm'
-                className='group inline-flex h-10 items-center justify-center rounded-lg bg-white px-6 text-sm font-medium text-zinc-900 transition-all duration-300 hover:bg-white/95 shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(93,93,93,0.23)] transform hover:-translate-y-0.5'
-              >
-                <span className='relative z-10 flex items-center'>
-                  Start Tracking Events
-                  <ArrowUpRight className='ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
-                </span>
-              </Button>
-            </SignInDialog>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.35 }}
             className='w-full max-w-sm sm:max-w-md'
           >
             <div className='grid grid-cols-2 gap-4'>
-              <div className='rounded-lg border border-zinc-800/60 bg-zinc-950/60 p-4 backdrop-blur-sm text-left hover:border-zinc-700/60 hover:bg-zinc-950/80 transition-all duration-300 group'>
+              <div className='rounded-lg border border-zinc-800/60 bg-zinc-950/40 p-4 backdrop-blur-sm hover:border-zinc-700/60 hover:bg-zinc-950/80 group text-left'>
                 <div className='flex items-center gap-2 text-violet-400 mb-3'>
-                  <CircleGauge className='h-4 w-4 group-hover:scale-110 transition-transform duration-300' />
-                  <span className='text-xs font-medium tracking-wide'>
-                    Built for Speed
+                  <CircleGauge className='h-4 w-4 group-hover:scale-110 transition-transform' />
+                  <span className='text-xs font-medium tracking-tight'>
+                    Real Time Alerts
                   </span>
                 </div>
-                <div className='text-lg font-light text-white mb-1'>
-                  Plug & Play
+                <div className='text-base font-light text-white mb-1 tracking-tight'>
+                  Slack, Email & more
                 </div>
                 <div className='text-xs text-zinc-500 leading-relaxed'>
-                  Set It. Forget It.
+                  Stay instantly informed
                 </div>
               </div>
 
-              <div className='rounded-lg border border-zinc-800/60 bg-zinc-950/60 p-4 backdrop-blur-sm text-left hover:border-zinc-700/60 hover:bg-zinc-950/80 transition-all duration-300 group'>
+              <div className='rounded-lg border border-zinc-800/60 bg-zinc-950/40 p-4 backdrop-blur-sm hover:border-zinc-700/60 hover:bg-zinc-950/80 group text-left'>
                 <div className='flex items-center gap-2 text-violet-400 mb-3'>
-                  <BarChart3 className='h-4 w-4 group-hover:scale-110 transition-transform duration-300' />
-                  <span className='text-xs font-medium tracking-wide'>
-                    Integration
+                  <BarChart3 className='h-4 w-4 group-hover:scale-110 transition-transform' />
+                  <span className='text-xs font-medium tracking-tight'>
+                    AI Powered Logs
                   </span>
                 </div>
-                <div className='text-lg font-light text-white mb-1'>
-                  in 5 mins
+                <div className='text-base font-light text-white mb-1 tracking-tight'>
+                  Smarter debugging
                 </div>
-                <div className='text-xs text-zinc-500 leading-relaxed'>
-                  Instead of days spent on custom solution
+                <div className='text-xs text-zinc-500'>
+                  Search, analyze & fix fast
                 </div>
               </div>
             </div>
@@ -322,7 +313,7 @@ export function WebhookTerminalCard() {
 
   return (
     <div className='max-w-screen-sm mx-auto w-full'>
-      <div className='relative bg-zinc-950/80 border border-zinc-800/60 rounded-xl p-4 shadow-2xl backdrop-blur-sm'>
+      <div className='relative bg-zinc-950/30 border border-zinc-400/10 rounded-xl p-4 shadow-2xl backdrop-blur-md'>
         <div className='flex items-center gap-2 mb-4 pb-3 border-b border-zinc-800/60'>
           <div className='flex gap-1.5'>
             <div className='w-2.5 h-2.5 rounded-full bg-red-500'></div>

@@ -20,7 +20,7 @@ export function Navbar() {
               <div className='flex items-center gap-2 sm:gap-3'>
                 <Button
                   variant='ghost'
-                  className='text-white/70 hover:text-white hover:bg-white/10'
+                  className='text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800'
                   size='sm'
                   asChild
                 >
@@ -28,7 +28,7 @@ export function Navbar() {
                 </Button>
                 <Button
                   variant='ghost'
-                  className='text-white/70 hover:text-white hover:bg-white/10 hidden sm:flex'
+                  className='text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 hidden sm:flex'
                   size='sm'
                   asChild
                 >
@@ -36,12 +36,15 @@ export function Navbar() {
                 </Button>
 
                 <SignInDialog>
-                  <Button
-                    size='sm'
-                    className='bg-[#f5f3ff] text-zinc-900 hover:bg-white border border-zinc-300 shadow-sm transition-colors'
-                  >
-                    Start free trial
-                  </Button>
+                  <button className='relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-zinc-950 text-xs'>
+                    {/* Animated Border */}
+                    <span className='absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#d3baff_0%,#5a55e0_50%,#d3baff_100%)]' />
+
+                    {/* Inner Button */}
+                    <span className='relative inline-flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-zinc-900 to-zinc-800 px-4 py-1.5 text-xs font-semibold text-zinc-100 backdrop-blur-xl'>
+                      Start free trial
+                    </span>
+                  </button>
                 </SignInDialog>
               </div>
             )}

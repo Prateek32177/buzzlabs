@@ -19,16 +19,16 @@ export function Navbar() {
             {!isAuthPage && (
               <div className='flex items-center gap-2 sm:gap-3'>
                 <Button
-                  variant='ghost'
-                  className='text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800'
+                  variant='link'
+                  className='text-zinc-300 hover:text-zinc-100 '
                   size='sm'
                   asChild
                 >
                   <Link href='https://docs.hookflo.com'>Docs</Link>
                 </Button>
                 <Button
-                  variant='ghost'
-                  className='text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 hidden sm:flex'
+                  variant='link'
+                  className='text-zinc-300 hover:text-zinc-100  hidden sm:flex'
                   size='sm'
                   asChild
                 >

@@ -13,8 +13,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title:
-    'Hookflo | Webhook event tracking system for modern SaaS',
+  title: 'Hookflo | Webhook event tracking system for modern SaaS',
   description:
     'Hookflo lets you capture and route webhooks events from Supabase, Stripe, Clerk, GitHub, and more to Slack, Email, or custom channels — no code required. Fast, secure, and customizable webhook alerting.',
   keywords: [

@@ -6,7 +6,7 @@ import { ShineBorder } from "@/components/magicui/shine-border"
 
 const Dashboard: React.FC = () => (
   <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
-    <div className="relative p-3 rounded-3xl bg-gradient-to-br from-zinc-600/40 via-zinc-700/30 to-zinc-600/40 backdrop-blur-2xl border border-zinc-700/50 shadow-2xl shadow-zinc-900/50">
+    <div className="relative p-2 rounded-2xl sm:p-3 sm:rounded-3xl bg-gradient-to-br from-zinc-600/40 via-zinc-700/30 to-zinc-600/40 backdrop-blur-2xl border border-zinc-700/50 shadow-2xl shadow-zinc-900/50">
       <ShineBorder
         shineColor={["#A07CFE"]}
         borderWidth={0.5}
@@ -21,14 +21,14 @@ const Dashboard: React.FC = () => (
             <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/90 shadow-sm" />
             <div className="w-2.5 h-2.5 rounded-full bg-green-500/90 shadow-sm" />
           </div>
-          <div className="flex-1 mx-4 min-w-0 truncate text-center">
+          <div className="flex-1 mx-4 min-w-0 text-center">
             <div className="bg-zinc-800/60 rounded-lg px-3 py-1.5 text-xs text-zinc-300 font-mono border border-zinc-700/30 shadow-inner inline-block">
               <span className="text-zinc-500">https://</span>
               <span className="text-zinc-200">hookflo.com</span>
-              <span className="text-zinc-400">/dashboard/webhooks</span>
+              <span className="text-zinc-400">/dashboard</span>
             </div>
           </div>
-          <div className="flex gap-2 shrink-0">
+          <div className=" gap-2 shrink-0 hidden sm:flex">
             <div className="w-5 h-5 rounded-md bg-zinc-700/50 border border-zinc-600/30" />
             <div className="w-5 h-5 rounded-md bg-zinc-700/50 border border-zinc-600/30" />
           </div>

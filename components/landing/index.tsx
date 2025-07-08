@@ -12,7 +12,7 @@ const Index = () => {
     <div className=' text-white w-full bg-neutral-950/50'>
       <Navbar />
       <Hero />
-      <Dashboard/>
+      <Dashboard />
       <Introduction />
       <Features />
       <UseCaseSection />

@@ -11,6 +11,13 @@ import { SignInDialog } from '@/components/auth/SIgnInDialog';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { NoiseGradientBackground } from 'noise-gradient-bg';
+import { Playfair_Display } from 'next/font/google';
+
+const playfairItalic = Playfair_Display({
+  subsets: ['latin'],
+  style: 'italic',
+  weight: '400',
+});
 
 export default function Hero() {
   const iconClasses = 'w-5 h-5';
@@ -60,15 +67,16 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className='text-4xl md:text-5xl font-semibold leading-[1.1] tracking-tight text-white mb-4'
+            className='text-4xl md:text-5xl leading-[1.15] tracking-tight text-white mb-4'
           >
-            All-in-one for <br className='sm:hidden' />{' '}
-            <span className='text-transparent bg-clip-text bg-gradient-to-r from-violet-500 via-pink-500 to-blue-500'>
-              Webhook
+            Centralized{' '}
+            <span
+              className={`text-transparent bg-clip-text bg-gradient-to-r from-[#facc15] via-[#d946ef] to-[#0ea5e9] rotate-[1deg] inline-block ${playfairItalic.className}`}
+            >
+              event
             </span>{' '}
-            Event tracking
+            logging and alerting for modern stacks
           </motion.h1>
-
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -76,7 +84,7 @@ export default function Hero() {
             className='text-sm sm:text-base text-zinc-400 max-w-md leading-relaxed mb-8'
           >
             From real time alerts to AI powered log analysis, Hookflo helps you
-            capture, monitor, and debug every webhook event instantly.
+            capture, monitor, and debug every event instantly.
           </motion.p>
 
           <motion.div

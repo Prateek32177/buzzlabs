@@ -6,8 +6,23 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.hookflo.com/gradient-showcase</loc>
+    <loc>https://www.hookflo.com/integrations/clerk</loc>
     <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.hookflo.com/integrations/stripe</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.hookflo.com/integrations/github</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.hookflo.com/integrations/supabase</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

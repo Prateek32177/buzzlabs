@@ -38,7 +38,7 @@ export default function Hero() {
     <section className='relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden'>
       <NoiseGradientBackground vignetteIntensity='strong' theme='zinc' />
 
-      <div className='relative z-20 max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pt-40 pb-16 md:pb-8'>
+      <div className='relative z-20 max-w-sm md:max-w-6xl  w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pt-40 pb-16 md:pb-8'>
         <section className='flex flex-col items-center lg:items-start text-center lg:text-left'>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -67,7 +67,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className='text-4xl md:text-5xl leading-[1.15] tracking-tight text-white mb-4'
+            className='text-4xl sm:text-5xl leading-[1.15] tracking-tight text-white mb-4'
           >
             Centralized{' '}
             <span

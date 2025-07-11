@@ -70,11 +70,11 @@ export default function Hero() {
             className='text-3xl sm:text-5xl leading-[1.15] tracking-tight text-white mb-4'
           >
             Centralized{' '}
-                <span
-                  className={`text-transparent bg-clip-text bg-gradient-to-r from-[#facc15] via-[#d946ef] to-[#0ea5e9] rotate-[1deg] inline-block ${playfairItalic.className} text-4xl sm:text-6xl`}
-                >
-                  event
-                </span>{' '}
+            <span
+              className={`text-transparent bg-clip-text bg-gradient-to-r from-[#facc15] via-[#d946ef] to-[#0ea5e9] rotate-[1deg] inline-block ${playfairItalic.className} text-4xl sm:text-6xl`}
+            >
+              event
+            </span>{' '}
             logging and alerting for modern stacks
           </motion.h1>
           <motion.p

@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
 
-
 export const metadata: Metadata = {
   title: 'Supabase Webhooks | Monitor Realtime DB Events with Alerts - Hookflo',
   description:
@@ -15,11 +14,12 @@ export const metadata: Metadata = {
     'Supabase triggers',
     'Slack webhook alerts',
     'hookflo',
-    'email webhook alerts'
+    'email webhook alerts',
   ],
   openGraph: {
     title: 'Monitor Supabase Webhooks | Alerting for DB Events - Hookflo',
-    description: 'Capture real-time Supabase auth and DB changes using Hookflo and get notified instantly.',
+    description:
+      'Capture real-time Supabase auth and DB changes using Hookflo and get notified instantly.',
     url: 'https://www.hookflo.com/integrations/supabase',
     siteName: 'Hookflo',
     type: 'article',
@@ -27,47 +27,63 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Supabase Webhooks Monitoring with Hookflo',
-    description: 'Easily track Supabase database or auth changes and get alerts with Hookflo.',
+    description:
+      'Easily track Supabase database or auth changes and get alerts with Hookflo.',
   },
 };
 
 export default function SupabaseWebhooksPage() {
   return (
-    <article className="max-w-3xl px-6 py-20 mx-auto prose prose-zinc dark:prose-invert">
-      <header className="mb-10">
-        <h1 className="text-4xl font-semibold">Track Supabase Webhooks with Hookflo</h1>
-        <p className="text-lg text-zinc-500 dark:text-zinc-400 mt-2">
-          Monitor authentication or table changes in Supabase and send instant alerts to Slack or Email using Hookflo.
+    <article className='max-w-3xl px-6 py-20 mx-auto prose prose-zinc dark:prose-invert'>
+      <header className='mb-10'>
+        <h1 className='text-4xl font-semibold'>
+          Track Supabase Webhooks with Hookflo
+        </h1>
+        <p className='text-lg text-zinc-500 dark:text-zinc-400 mt-2'>
+          Monitor authentication or table changes in Supabase and send instant
+          alerts to Slack or Email using Hookflo.
         </p>
       </header>
 
       <section>
         <h2>What are Supabase Webhooks?</h2>
         <p>
-          Supabase emits webhook events when specific database or auth events occur — like a new user signup or a row insert. You can use these webhooks to stay informed or trigger workflows.
+          Supabase emits webhook events when specific database or auth events
+          occur — like a new user signup or a row insert. You can use these
+          webhooks to stay informed or trigger workflows.
         </p>
       </section>
-<br/>
+      <br />
       <section>
         <h2>Popular Events Hookflo Supports</h2>
         <ul>
-          <li><code>auth.insert</code> — new user registration</li>
-          <li><code>auth.update</code> — metadata change</li>
-          <li><code>table.insert</code> — new data added</li>
-          <li><code>table.delete</code> — data removed</li>
+          <li>
+            <code>auth.insert</code> — new user registration
+          </li>
+          <li>
+            <code>auth.update</code> — metadata change
+          </li>
+          <li>
+            <code>table.insert</code> — new data added
+          </li>
+          <li>
+            <code>table.delete</code> — data removed
+          </li>
         </ul>
       </section>
-<br/>
+      <br />
       <section>
         <h2>Why Use Hookflo with Supabase?</h2>
         <ul>
           <li>Alert teams about signups, record changes, or deletions</li>
-          <li>Instant Slack or Email notifications for production DB changes</li>
+          <li>
+            Instant Slack or Email notifications for production DB changes
+          </li>
           <li>Track webhook logs and retry failures in Hookflo dashboard</li>
           <li>Combine with other platforms like GitHub, Stripe, Clerk</li>
         </ul>
       </section>
-<br/>
+      <br />
       <section>
         <h2>How to Set Up Supabase Webhooks in Hookflo</h2>
         <ol>
@@ -79,11 +95,13 @@ export default function SupabaseWebhooksPage() {
           <li>Paste the URL and save</li>
         </ol>
       </section>
-<br/>
+      <br />
       <section>
-        <h2>Sample Webhook Payload: <code>auth.insert</code></h2>
+        <h2>
+          Sample Webhook Payload: <code>auth.insert</code>
+        </h2>
         <pre>
-          <code className="language-json">
+          <code className='language-json'>
             {`{
   "type": "INSERT",
   "table": "auth.users",
@@ -96,7 +114,7 @@ export default function SupabaseWebhooksPage() {
           </code>
         </pre>
       </section>
-<br/>
+      <br />
       <section>
         <h2>Common Use Cases</h2>
         <ul>
@@ -105,14 +123,14 @@ export default function SupabaseWebhooksPage() {
           <li>Log inserts or deletes for audit trails</li>
         </ul>
       </section>
-<br/>
+      <br />
       <section>
         <h2>Resources</h2>
         <p>
           <Link
-            href="https://docs.hookflo.com/webhook-platforms/supabase"
-            target="_blank"
-            rel="noopener noreferrer"
+            href='https://docs.hookflo.com/webhook-platforms/supabase'
+            target='_blank'
+            rel='noopener noreferrer'
           >
             → View full Supabase integration guide
           </Link>

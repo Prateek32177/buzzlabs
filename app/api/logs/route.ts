@@ -1,31 +1,52 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
-
-type WebhookLogData = {
-  id: string;
-  webhook_id: string;
-  webhook_name: string;
-  platform: string;
-  channel: string;
-  status: 'success' | 'pending' | 'failed';
-  payload: any;
-  email_sent?: boolean;
-  email_recipient?: string;
-  slack_sent?: boolean;
-  slack_channel?: string;
-  error_message?: string;
-  processed_at: Date;
-};
+import {
+  generateCohereEmbedding,
+  createSearchableText,
+} from '@/lib/embeddings';
+import { NotificationLogType } from '@/lib/types/common';
 
 export async function POST(req: Request) {
   try {
     const supabase = createClient();
-    const log: WebhookLogData = await req.json();
+    const log: NotificationLogType = await req.json();
+
+    if (!log.user_id) {
+      return NextResponse.json(
+        { error: 'user_id is required' },
+        { status: 400 },
+      );
+    }
+
+    let embedding = null;
+    let searchableText = null;
+    let embeddingGenerated = false;
+
+    try {
+      searchableText = createSearchableText(log);
+
+      if (searchableText && searchableText.trim().length > 0) {
+        embedding = await generateCohereEmbedding(searchableText);
+        embeddingGenerated = true;
+      }
+    } catch (embeddingError) {
+      console.warn('Failed to generate embedding for log:', embeddingError);
+    }
+
+    // Prepare log data with embedding info
+    const logWithEmbedding = {
+      ...log,
+      embedding,
+      searchable_text: searchableText,
+      embedding_generated: embeddingGenerated,
+    };
 
     // Insert into notification_logs table
-    const { error: logError } = await (await supabase)
+    const { error: logError, data: insertedLog } = await (await supabase)
       .from('notification_logs')
-      .insert([log]);
+      .insert([logWithEmbedding])
+      .select()
+      .single();
 
     if (logError) {
       console.error('Error inserting notification log:', logError);
@@ -35,7 +56,11 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      log: insertedLog,
+      embedding_generated: embeddingGenerated,
+    });
   } catch (error) {
     console.error('Error processing notification log:', error);
     return NextResponse.json(

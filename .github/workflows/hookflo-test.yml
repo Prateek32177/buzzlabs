@@ -1,0 +1,28 @@
+name: HookFlo Manual Trigger Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  manual_hookflo_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Simulate Task (Fails for Testing)
+        run: |
+          echo "Starting manual task..."
+          exit 1  # Simulate failure for testing (remove/change in real task)
+
+      - name: Notify HookFlo on Failure
+        if: failure()  # Only run if previous step fails
+        run: |
+          curl -X POST https://www.hookflo.com/api/webhooks/12b667d5-5ddc-434c-9de4-0aff3aa54d76/verify?utm_source=supabase \
+               -H "Content-Type: application/json" \
+               -H "x-webhook-id: 12b667d5-5ddc-434c-9de4-0aff3aa54d76" \
+               -H "x-webhook-token: c29f4d5fd48345867d1ba06443038fba909551335258ea15c0e563b455a8de9c" \
+               -d '{
+                     "event": "manual_task_failed",
+                     "repository": "${{ github.repository }}",
+                     "branch": "${{ github.ref }}",
+                     "timestamp": "'"$(date)"'"
+                   }'

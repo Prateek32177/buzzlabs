@@ -2,6 +2,19 @@ name: HookFlo Manual Trigger Test
 
 on:
   workflow_dispatch:
+    inputs:
+      webhook_url:
+        description: 'Target Webhook URL'
+        required: true
+      webhook_id:
+        description: 'Header value to be sent as x-webhook-id.'
+        required: true
+      webhook_secret:
+        description: 'Header value to be sent as x-webhook-secret.'
+        required: true
+      payload:
+        description: 'Optional JSON payload to send'
+        required: false
 
 jobs:
   manual_hookflo_test:
@@ -11,18 +24,13 @@ jobs:
       - name: Simulate Task (Fails for Testing)
         run: |
           echo "Starting manual task..."
-          exit 1  # Simulate failure for testing (remove/change in real task)
+          exit 1  # Simulate failure for testing
 
       - name: Notify HookFlo on Failure
-        if: failure()  # Only run if previous step fails
-        run: |
-          curl -X POST https://www.hookflo.com/api/webhooks/12b667d5-5ddc-434c-9de4-0aff3aa54d76/verify?utm_source=supabase \
-               -H "Content-Type: application/json" \
-               -H "x-webhook-id: 12b667d5-5ddc-434c-9de4-0aff3aa54d76" \
-               -H "x-webhook-token: c29f4d5fd48345867d1ba06443038fba909551335258ea15c0e563b455a8de9c" \
-               -d '{
-                     "event": "manual_task_failed",
-                     "repository": "${{ github.repository }}",
-                     "branch": "${{ github.ref }}",
-                     "timestamp": "'"$(date)"'"
-                   }'
+        if: failure()
+        uses: your-org/hookflo-notify-action@v1.1
+        with:
+          webhook_url: ${{ github.event.inputs.webhook_url }}
+          webhook_id: ${{ github.event.inputs.webhook_id }}
+          webhook_secret: ${{ github.event.inputs.webhook_secret }}
+          payload: ${{ github.event.inputs.payload }}

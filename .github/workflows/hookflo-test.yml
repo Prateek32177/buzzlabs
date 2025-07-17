@@ -28,7 +28,7 @@ jobs:
 
       - name: Notify HookFlo on Failure
         if: failure()
-        uses: Hookflo/hookflo-notify-action@latest
+        uses: Hookflo/hookflo-notify-action@1.3
         with:
           webhook_url: ${{ github.event.inputs.webhook_url }}
           webhook_id: ${{ github.event.inputs.webhook_id }}

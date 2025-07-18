@@ -1,7 +1,6 @@
 import { WebhookPlatformConfig } from './types';
 import { WebhookPlatform } from '../types';
-import { SupabaseLogo } from '@/components/Logos';
-import { ClerkLogo } from '@/components/Logos';
+import { SupabaseLogo, CustomLogo, ClerkLogo } from '@/components/Logos';
 import { StripeLogo } from '@/components/Logos/StripeLogo';
 import { DodoLogo } from '@/components/Logos/DodoPayments';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
@@ -38,39 +37,6 @@ export const platformConfigs: Partial<
     verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
     showSaveButton: false,
   },
-  // custom: {
-  //   id: 'custom',
-  //   name: 'Custom Integration',
-  //   description: 'Use custom headers for webhook authentication',
-  //   icon: Webhook,
-  //   fields: [
-  //     {
-  //       key: 'webhook_id',
-  //       label: 'Webhook ID',
-  //       description: 'Your unique webhook identifier',
-  //       type: 'text',
-  //       required: true,
-  //       readOnly: false,
-  //     },
-  //     {
-  //       key: 'webhook_token',
-  //       label: 'Webhook Token',
-  //       description: 'Secret token for webhook authentication',
-  //       type: 'secret',
-  //       required: true,
-  //       readOnly: false,
-  //     },
-  //   ],
-  //   verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
-  //   exampleCode: {
-  //     curl: `curl -X POST https://api.SuperHook.dev/webhook \
-  // -H "x-webhook-id: your_webhook_id" \
-  // -H "x-webhook-token: your_webhook_token" \
-  // -H "Content-Type: application/json" \
-  // -d '{"event":"test"}'`,
-  //   },
-  //   showSaveButton: true,
-  // },
   clerk: {
     id: 'clerk',
     name: 'Clerk',
@@ -184,5 +150,49 @@ export const platformConfigs: Partial<
   -d '{"payment_id":"pay_12345","status":"succeeded"}'`,
     },
     showSaveButton: true,
+  },
+  custom: {
+    id: 'custom',
+    name: 'Custom',
+    description: 'Use custom headers for webhook authentication',
+    icon: CustomLogo,
+    fields: [
+      // {
+      //   key: 'platform_name',
+      //   label: 'Platform/App Name',
+      //   description: 'Name of the platform or app you want to integrate with',
+      //   type: 'text',
+      //   placeholder: 'e.g. My CRM, Custom App',
+      //   required: true,
+      //   readOnly: false,
+      // },
+      {
+        key: 'webhook_id',
+        label: 'x-webhook-id',
+        description: 'Set x-webhook-id in header',
+        type: 'text',
+        placeholder: 'webhook id',
+        required: true,
+        readOnly: true,
+      },
+      {
+        key: 'webhook_token',
+        label: 'x-webhook-token',
+        description: 'Set x-webhook-token in header',
+        type: 'secret',
+        placeholder: 'webhook secret',
+        required: true,
+        readOnly: true,
+      },
+    ],
+    verificationHeaders: ['x-webhook-id', 'x-webhook-token'],
+    exampleCode: {
+      curl: `curl -X POST https://api.SuperHook.dev/webhook \
+  -H "x-webhook-id: your_webhook_id" \
+  -H "x-webhook-token: your_webhook_token" \
+  -H "Content-Type: application/json" \
+  -d '{"event":"test"}'`,
+    },
+    showSaveButton: false,
   },
 };

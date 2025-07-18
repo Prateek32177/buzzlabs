@@ -131,10 +131,13 @@ export async function POST(req: Request) {
 
     const platforms: string[] = Array.isArray(platform) ? platform : [platform];
 
-    const platformConfig = platforms.reduce((configs: Record<string, any>, p: string) => {
-      configs[p] = getPlatformConfig(p);
-      return configs;
-    }, {});
+    const platformConfig = platforms.reduce(
+      (configs: Record<string, any>, p: string) => {
+        configs[p] = getPlatformConfig(p);
+        return configs;
+      },
+      {},
+    );
 
     const { data: webhook, error } = await supabase
       .from('webhooks')
@@ -167,7 +170,6 @@ export async function POST(req: Request) {
       slack_config: webhook.slack_config,
       platformConfig: webhook.platformConfig,
     });
-
   } catch (error) {
     console.error('Create webhook error:', error);
     return NextResponse.json(

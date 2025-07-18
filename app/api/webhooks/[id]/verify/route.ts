@@ -334,6 +334,8 @@ function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
       return webhook.platformConfig[detectedPlatform].signing_secret;
     case 'supabase':
       return webhook.platformConfig[detectedPlatform];
+    case 'custom':
+      return webhook.platformConfig[detectedPlatform];
     default:
       if (!webhook.secret) {
         throw new Error('Webhook secret is missing');

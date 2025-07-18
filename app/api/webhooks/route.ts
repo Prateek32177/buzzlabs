@@ -61,7 +61,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { name, platform = 'supabase' } = await req.json();
+    const { name, platform = ['supabase', 'custom'] } = await req.json();
     const supabase = await createClient();
     const {
       data: { user },
@@ -71,10 +71,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { allowed, reason, usageDetails } = await checkActionAllowed(
-      user.id,
-      'webhook',
-    );
+    const { allowed, reason } = await checkActionAllowed(user.id, 'webhook');
     if (!allowed) {
       return NextResponse.json(
         {
@@ -85,51 +82,59 @@ export async function POST(req: Request) {
       );
     }
 
-    const webhookSecret = WebhookSecurity.generateSecret();
     const webhookId = crypto.randomUUID();
 
     const getPlatformConfig = (platform: string) => {
+      const platformSecret = WebhookSecurity.generateSecret();
+
       const configs: Record<string, any> = {
         custom: {
           webhook_id: webhookId,
-          webhook_token: webhookSecret,
+          webhook_token: platformSecret,
         },
         supabase: {
           webhook_id: webhookId,
-          webhook_token: webhookSecret,
+          webhook_token: platformSecret,
         },
         clerk: {
           webhook_id: webhookId,
-          signing_secret: webhookSecret || '',
+          signing_secret: platformSecret,
         },
         stripe: {
           webhook_id: webhookId,
-          signing_secret: webhookSecret || '',
+          signing_secret: platformSecret,
         },
         github: {
           webhook_id: webhookId,
-          signing_secret: webhookSecret || '',
+          signing_secret: platformSecret,
         },
         shopify: {
           webhook_id: webhookId,
-          signing_secret: webhookSecret || '',
+          signing_secret: platformSecret,
         },
         vercel: {
           webhook_id: webhookId,
-          signing_secret: webhookSecret || '',
+          signing_secret: platformSecret,
         },
         polar: {
           webhook_id: webhookId,
-          signing_secret: webhookSecret || '',
+          signing_secret: platformSecret,
         },
         dodopayments: {
           webhook_id: webhookId,
-          signing_secret: webhookSecret || '',
+          signing_secret: platformSecret,
         },
       };
 
       return configs[platform as keyof typeof configs] || {};
     };
+
+    const platforms: string[] = Array.isArray(platform) ? platform : [platform];
+
+    const platformConfig = platforms.reduce((configs: Record<string, any>, p: string) => {
+      configs[p] = getPlatformConfig(p);
+      return configs;
+    }, {});
 
     const { data: webhook, error } = await supabase
       .from('webhooks')
@@ -137,12 +142,7 @@ export async function POST(req: Request) {
         id: webhookId,
         user_id: user.id,
         name,
-        platformConfig: Array.isArray(platform)
-          ? platform.reduce((configs: Record<string, any>, p: string) => {
-              configs[p] = getPlatformConfig(p);
-              return configs;
-            }, {})
-          : { [platform]: getPlatformConfig(platform) },
+        platformConfig,
         url: `/api/webhooks/${webhookId}/verify`,
         is_active: true,
         notify_email: false,
@@ -167,9 +167,10 @@ export async function POST(req: Request) {
       slack_config: webhook.slack_config,
       platformConfig: webhook.platformConfig,
     });
+
   } catch (error) {
     console.error('Create webhook error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Failed to create webhook' },
       { status: 500 },
     );

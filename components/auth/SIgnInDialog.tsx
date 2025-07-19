@@ -39,11 +39,9 @@ export function SignInDialog({
         <div className='flex flex-col items-center px-6 pt-8 pb-4 gap-2'>
           <Logo size='xl' />
           <div>
-            <DialogTitle className='text-base font-semibold text-white text-center'>
-              Sign in to Your Account
-            </DialogTitle>
+            <DialogTitle className='text-base font-semibold text-white text-center'></DialogTitle>
             <DialogDescription className='text-sm text-zinc-400 text-center'>
-              Welcome back! Please sign in to continue.
+              Please sign in to continue.
             </DialogDescription>
           </div>
         </div>

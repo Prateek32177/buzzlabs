@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { ShineBorder } from '@/components/magicui/shine-border';
 
 const Dashboard: React.FC = () => (
-  <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10'>
+  <div className='relative max-w-full sm:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 overflow-hidden'>
     <div className='relative p-2 rounded-2xl sm:p-3 sm:rounded-3xl bg-gradient-to-br from-zinc-600/40 via-zinc-700/30 to-zinc-600/40 backdrop-blur-2xl border border-zinc-700/50 shadow-2xl shadow-zinc-900/50'>
       <ShineBorder shineColor={['#A07CFE']} borderWidth={0.5} />
 

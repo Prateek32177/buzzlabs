@@ -4,7 +4,6 @@ import {
   WebhookPlatform,
 } from './types';
 import { ClerkWebhookVerifier } from './verifiers/clerk';
-import { CustomWebhookVerifier } from './verifiers/custom';
 import { GithubWebhookVerifier } from './verifiers/github';
 import { StripeWebhookVerifier } from './verifiers/stripe';
 import { DodoPaymentsWebhookVerifier } from './verifiers/dodo';
@@ -39,11 +38,6 @@ export class WebhookVerificationService {
         );
       case 'dodopayments':
         return new DodoPaymentsWebhookVerifier(
-          config.secret,
-          config.toleranceInSeconds,
-        );
-      case 'custom':
-        return new CustomWebhookVerifier(
           config.secret,
           config.toleranceInSeconds,
         );

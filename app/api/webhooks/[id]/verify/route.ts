@@ -31,6 +31,7 @@ class PlatformDetector {
     if (lastPathPart === 'vercel') return 'vercel';
     if (lastPathPart === 'polar') return 'polar';
     if (lastPathPart === 'dodopayments') return 'dodopayments';
+    if (lastPathPart === 'custom') return 'custom';
 
     return null;
   }
@@ -340,7 +341,7 @@ function getSecretForPlatform(webhook: any, detectedPlatform: string): string {
       if (!webhook.secret) {
         throw new Error('Webhook secret is missing');
       }
-      return webhook.secret;
+      return webhook.platformConfig[detectedPlatform];
   }
 }
 function capitalizeFirstLetter(detectedPlatform: string): string {

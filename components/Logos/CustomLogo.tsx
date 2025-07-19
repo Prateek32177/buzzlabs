@@ -7,9 +7,9 @@ export const CustomLogo = ({ className }: { className?: string }) => {
       viewBox='0 0 24 24'
       fill='none'
       stroke='currentColor'
-      stroke-width='2'
-      stroke-linecap='round'
-      stroke-linejoin='round'
+      strokeWidth='2'
+      strokeLinecap='round'
+      strokeLinejoin='round'
       className={`lucide lucide-workflow-icon lucide-workflow ${className}`}
     >
       <rect width='8' height='8' x='3' y='3' rx='2' />

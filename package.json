@@ -7,6 +7,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@clerk/clerk-js": "^5.74.1",
+    "@clerk/nextjs": "^6.25.4",
     "@hello-pangea/dnd": "^18.0.1",
     "@heroicons/react": "^2.2.0",
     "@monaco-editor/react": "^4.7.0",
@@ -51,6 +53,7 @@
     "sonner": "^1.7.4",
     "standardwebhooks": "^1.0.0",
     "supabase": "^2.15.8",
+    "svix": "^1.69.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

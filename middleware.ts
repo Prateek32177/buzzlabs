@@ -42,6 +42,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(new URL('/unauthorized', request.url));
   }
 
+  // Allow external webhook endpoints to bypass authentication
+  const externalWebhookPaths = ['/api/webhooks/clerk'];
+
+  if (externalWebhookPaths.some(path => requestPathName.startsWith(path))) {
+    return NextResponse.next();
+  }
+
   const protectedRoutes = {
     '/api/logs': {
       allowedMethods: ['GET', 'POST'],

@@ -84,20 +84,20 @@ export function Footer() {
             <p className='text-white/70 text-sm order-2 sm:order-1'>
               © 2025 Hookflo. All rights reserved.
             </p>
-            {/* <div className='flex gap-4 order-1 sm:order-2 mb-4 sm:mb-0'>
+            <div className='flex gap-4 order-1 sm:order-2 mb-4 sm:mb-0'>
               <a
-                href='#'
+                href='/privacy-policy'
                 className='text-white/70 hover:text-white transition-colors text-sm'
               >
                 Privacy Policy
               </a>
-              <a
+              {/* <a
                 href='#'
                 className='text-white/70 hover:text-white transition-colors text-sm'
               >
                 Terms of Service
-              </a>
-            </div> */}
+              </a> */}
+            </div>
           </div>
         </div>
       </div>

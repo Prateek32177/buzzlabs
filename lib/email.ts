@@ -42,10 +42,7 @@ export async function sendEmail({
     );
 
     if (!template) {
-      return {
-        success: false,
-        message: `Template not found: ${templateId}`,
-      };
+      return { success: false, message: `Template not found: ${templateId}` };
     }
 
     let subject, html;
@@ -58,7 +55,7 @@ export async function sendEmail({
       subject = rendered.subject;
     }
 
-    const { data: result, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from,
       to: to
         .split(',')
@@ -71,18 +68,15 @@ export async function sendEmail({
     if (error) {
       return {
         success: false,
-        message: `Failed to send email! ${error.message}`,
+        message: 'Failed to send email. System is under heavy traffic!',
       };
     }
-    return {
-      success: true,
-      message: 'Email notification sent successfully',
-    };
+    return { success: true, message: 'Email notification sent successfully.' };
   } catch (error) {
     console.error('Failed to send email:', error);
     return {
       success: false,
-      message: 'Failed to send email!',
+      message: 'Failed to send email. System is under heavy traffic!',
     };
   }
 }

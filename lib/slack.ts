@@ -23,7 +23,7 @@ export async function sendSlackNotification({
       success: false,
       message:
         checkResult.reason ||
-        'Slack Rate limit exceeded. Please upgrade your plan or try again tomorrow.',
+        'Slack Rate limit exceeded. Please upgrade your plan or try again later.',
     };
   }
 
@@ -44,13 +44,10 @@ export async function sendSlackNotification({
       };
     }
 
-    // If we have customized content, use it directly
     let message;
     if (template.content) {
-      // For Slack, content is the block structure
       message = replaceVariables(template.content, data);
     } else {
-      // Fall back to render function if no customized content
       message = template.render(data);
     }
 
@@ -66,7 +63,7 @@ export async function sendSlackNotification({
     if (response.status !== 200) {
       return {
         success: false,
-        message: `Failed to send Slack notification: ${response.status}`,
+        message: `Failed to send Slack notification: System is under heavy traffic!`,
       };
     }
 

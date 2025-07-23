@@ -23,7 +23,7 @@ export function Logo({
   hideText = false,
   showBeta = false,
 }: LogoProps) {
-  const text = 'hookflo';
+  const text = 'Hookflo';
 
   return (
     <Link href='/' className='cursor-pointer inline-flex items-end gap-1'>

@@ -4,9 +4,10 @@ import IntegrationSection from './inetgration';
 import Features from './Features';
 import { Footer } from './footer';
 import Hero from './Hero';
-import TryYourself from './try-yourself';
 import { UseCaseSection } from './Use-case';
 import Dashboard from './Dashboard';
+import GetStarted from './BottomGetStarted';
+
 const Index = () => {
   return (
     <div className=' text-white w-full bg-neutral-950/50'>
@@ -17,7 +18,7 @@ const Index = () => {
       <Features />
       <UseCaseSection />
       <IntegrationSection />
-      <TryYourself />
+      <GetStarted />
       <Footer />
     </div>
   );

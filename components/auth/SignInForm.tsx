@@ -61,7 +61,7 @@ export function SignInForm({
 
         <CardContent className='space-y-6 pb-0'>
           <Button
-              variant='outline'
+            variant='outline'
             type='button'
             className='w-full flex items-center justify-center gap-3 py-4 bg-zinc-800/60 border border-zinc-700 hover:bg-zinc-700/70 transition rounded-xl text-sm font-medium shadow-sm'
             onClick={signInWithGoogleAction}
@@ -146,7 +146,9 @@ export function SignInForm({
           </div>
         </CardContent>
 
-        <CardFooter className={`flex justify-between space-x-3   ${isDialog ? 'pt-4' : 'pt-2'}`}>
+        <CardFooter
+          className={`flex justify-between space-x-3   ${isDialog ? 'pt-4' : 'pt-2'}`}
+        >
           {showSignUpLink && (
             <Button variant='outline' asChild>
               <Link href='/sign-up'>Sign up</Link>

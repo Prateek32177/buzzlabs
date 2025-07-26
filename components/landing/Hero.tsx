@@ -44,16 +44,14 @@ export default function Hero() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className='mb-6'
+            className='mb-3'
           >
             <Badge
               variant='outline'
               className='flex items-center gap-1.5 rounded-full border border-zinc-800/60 bg-zinc-950/50 px-3 py-1.5 text-xs text-zinc-300 shadow-lg backdrop-blur-md transition-all duration-300 hover:border-zinc-700/80 hover:bg-zinc-950/95'
             >
-              <ChevronsUp className='h-4 w-4 text-violet-400' />
-              <span className='text-violet-400'>
-                Alert, monitor, and debug{' '}
-              </span>
+              <ChevronsUp className='h-4 w-4 text-[#b89eef]' />
+              <span className='text-[#b89eef]'>Alert, monitor, and debug </span>
               <span className='hidden text-zinc-400 sm:inline'>
                 with confidence
               </span>
@@ -67,11 +65,15 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className='text-3xl sm:text-5xl leading-[1.15] tracking-tight text-white mb-4'
+            className='text-3xl sm:text-[40px] leading-[1.15]  text-white/90 font-serif mb-4 '
           >
             Centralized{' '}
             <span
-              className={`text-transparent bg-clip-text bg-gradient-to-r from-[#facc15] via-[#d946ef] to-[#0ea5e9] rotate-[1deg] inline-block ${playfairItalic.className} text-4xl sm:text-6xl`}
+              className='text-4xl sm:text-5xl text-[#c1aaf2] italic mr-2 font-semibold'
+              style={{
+                fontFamily: ' serif',
+                fontStyle: 'italic',
+              }}
             >
               event
             </span>{' '}

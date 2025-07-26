@@ -69,15 +69,15 @@ export default function Hero() {
           >
             Centralized{' '}
             <span
-              className='text-4xl sm:text-5xl text-[#c1aaf2] italic mr-2 font-semibold'
+              className='text-4xl sm:text-5xl  bg-gradient-to-r from-[#c1aaf2] via-[#f0c4fd] to-[#f7c8ff] bg-clip-text text-transparent italic mr-1'
               style={{
-                fontFamily: ' serif',
+                fontFamily: 'serif',
                 fontStyle: 'italic',
               }}
             >
               event
             </span>{' '}
-            logging and alerting for modern stacks
+            alerting and logging for modern stacks
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -85,8 +85,8 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.3 }}
             className='text-sm sm:text-base text-zinc-400 max-w-md leading-relaxed mb-8'
           >
-            From real time alerts to AI powered log analysis, Hookflo helps you
-            capture, monitor, and debug every event instantly.
+            Instantly capture and alert on events from your code, webhooks,
+            GitHub Actions or AI tools.
           </motion.p>
 
           <motion.div

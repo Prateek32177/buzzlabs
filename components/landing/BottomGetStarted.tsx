@@ -69,14 +69,14 @@ export default function GetStarted() {
           {/* Headline */}
 
           <h1 className='relative z-10 font-serif text-4xl sm:text-5xl  tracking-tight text-zinc-900'>
-            Alert and Log from Anywhere. Instantly.
+            Alert and Log Events from Anywhere.
           </h1>
 
           {/* Subheading */}
 
-          <p className='relative z-10 mt-6 text-zinc-600 text-lg md:text-xl max-w-xl mx-auto font-light leading-relaxed'>
-            Instantly send alerts from your code, webhooks, GitHub Actions, or
-            any AI tool with a simple, reliable layer.
+          <p className='relative z-10 mt-6 text-zinc-700 text-base md:text-lg max-w-lg mx-auto font-light leading-normal'>
+            Capture events from across the platform - infra, code, payments,
+            auth. so your SaaS team can move faster.
           </p>
           {/* CTA */}
           <div className='relative z-10 mt-10 justify-center flex'>
